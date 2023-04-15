@@ -92,6 +92,20 @@ class _UserInputDialogState extends State<UserInputDialog> {
     super.dispose();
   }
 
+  void submitUserInput() {
+    setState(() {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          showCloseIcon: true,
+          content: Text('Searching user: ${_textController.text}')),
+    );
+
+    Navigator.pop(context, _textController.text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
@@ -127,6 +141,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
             // },
             autofocus: true,
             controller: _textController,
+            onFieldSubmitted: (value) => submitUserInput(),
             decoration: const InputDecoration(
                 label: Text('Leetcode Username'),
 
@@ -138,19 +153,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
         ),
         SizedBox(
           child: TextButton(
-            onPressed: () {
-              setState(() {
-                ScaffoldMessenger.of(context).removeCurrentSnackBar();
-              });
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    showCloseIcon: true,
-                    content: Text('Searching user: ${_textController.text}')),
-              );
-
-              Navigator.pop(context, _textController.text);
-            },
+            onPressed: () => submitUserInput(),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,

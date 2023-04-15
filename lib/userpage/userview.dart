@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:ui_elements/dataclass/data_parser.dart';
 import 'package:ui_elements/dataclass/user_class/problemdata.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:intl/intl.dart';
 
 class UserView extends StatefulWidget {
   final UserData userData;
@@ -136,6 +138,10 @@ class _UserViewState extends State<UserView> {
                     ),
                   ),
                 ),
+                RecentSubmissionSection(
+                    valueScaler: valueScaler,
+                    submissionList:
+                        widget.userData.recentAcSubmissionList ?? []),
               ],
             ),
           ),
@@ -238,74 +244,160 @@ class ProblemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-        elevation: 2,
-        shadowColor: Colors.amber,
-        child: AspectRatio(
-          aspectRatio: 1.0,
-          child: Column(
-            children: [
-              SizedBox(height: valueScaler(context, 8)),
-              CircularPercentIndicator(
-                radius: valueScaler(context, 60),
-                animation: true,
-                animationDuration: 700,
-                curve: Curves.decelerate,
-                progressColor: getColor(),
-                circularStrokeCap: CircularStrokeCap.round,
-                arcType: ArcType.HALF,
-                arcBackgroundColor: getBackgroundColor(),
-                footer: Card(
-                  elevation: 0,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: valueScaler(context, 8),
-                      vertical: valueScaler(context, 2),
-                    ),
-                    child: Text(
-                      problemCategory,
-                      style: TextStyle(fontSize: valueScaler(context, 20)),
-                    ),
+      elevation: 2,
+      shadowColor: Colors.amber,
+      child: AspectRatio(
+        aspectRatio: 1.0,
+        child: Column(
+          children: [
+            SizedBox(height: valueScaler(context, 8)),
+            CircularPercentIndicator(
+              radius: valueScaler(context, 60),
+              animation: true,
+              animationDuration: 700,
+              curve: Curves.decelerate,
+              progressColor: getColor(),
+              circularStrokeCap: CircularStrokeCap.round,
+              arcType: ArcType.HALF,
+              arcBackgroundColor: getBackgroundColor(),
+              footer: Card(
+                elevation: 0,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: valueScaler(context, 8),
+                    vertical: valueScaler(context, 2),
+                  ),
+                  child: Text(
+                    problemCategory,
+                    style: TextStyle(fontSize: valueScaler(context, 20)),
                   ),
                 ),
-                // rotateLinearGradient: true,
-                center: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '$solved',
-                      style: TextStyle(
-                        fontSize: valueScaler(context, 32),
-                      ),
-                    ),
-                    Divider(
-                      endIndent: valueScaler(context, 32),
-                      indent: valueScaler(context, 32),
-                    ),
-                    Text(
-                      '$total',
-                      style: TextStyle(fontSize: valueScaler(context, 22)),
-                    ),
-                  ],
-                ),
-                percent: calculatePercent(),
               ),
-            ],
-          ),
-        ));
+              // rotateLinearGradient: true,
+              center: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$solved',
+                    style: TextStyle(
+                      fontSize: valueScaler(context, 32),
+                    ),
+                  ),
+                  Divider(
+                    endIndent: valueScaler(context, 32),
+                    indent: valueScaler(context, 32),
+                  ),
+                  Text(
+                    '$total',
+                    style: TextStyle(fontSize: valueScaler(context, 22)),
+                  ),
+                ],
+              ),
+              percent: calculatePercent(),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
-class RecentSubmissionCard extends StatefulWidget {
-  const RecentSubmissionCard({super.key});
-
+class RecentSubmissionSection extends StatefulWidget {
+  const RecentSubmissionSection(
+      {super.key, required this.submissionList, required this.valueScaler});
+  final List submissionList;
+  final Function valueScaler;
   @override
-  State<RecentSubmissionCard> createState() => _RecentSubmissionCardState();
+  State<RecentSubmissionSection> createState() =>
+      _RecentSubmissionSectionState();
 }
 
-class _RecentSubmissionCardState extends State<RecentSubmissionCard> {
+class _RecentSubmissionSectionState extends State<RecentSubmissionSection> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
+            child: Text(
+              'Recent Submissions',
+              style: TextStyle(
+                fontSize: widget.valueScaler(context, 24),
+                color: Colors.amber,
+              ),
+            ),
+          ),
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: widget.submissionList.length,
+            itemBuilder: (context, index) =>
+                RecentSubmissionCard(submission: widget.submissionList[index]),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RecentSubmissionCard extends StatelessWidget {
+  const RecentSubmissionCard({super.key, required this.submission});
+  final Map submission;
+
+  String getOrdinal(DateTime submissionTime) {
+    final day = int.parse(DateFormat('dd').format(submissionTime));
+    if (day >= 10 && day <= 20) return "th";
+
+    return day % 10 == 1
+        ? "st"
+        : day % 10 == 2
+            ? "nd"
+            : day % 10 == 3
+                ? "rd"
+                : "th";
+  }
+
+  String getTimeFromEpochsInSeconds() {
+    final submissionTime = DateTime.fromMillisecondsSinceEpoch(
+            int.parse(submission['timestamp']) * Duration.millisecondsPerSecond)
+        .toLocal();
+
+    final ordinal = getOrdinal(submissionTime);
+    final dateTimeFormatter = DateFormat("dd'$ordinal' MMMM yyyy HH:mm:ss");
+
+    return dateTimeFormatter.format(submissionTime);
+  }
+
+  String getTimeOfDay() {
+    final submissionTime = DateTime.fromMillisecondsSinceEpoch(
+            int.parse(submission['timestamp']) * Duration.millisecondsPerSecond)
+        .toLocal();
+
+    return DateFormat("HH:mm:ss").format(submissionTime);
+  }
+
+  String getDay() {
+    final submissionTime = DateTime.fromMillisecondsSinceEpoch(
+            int.parse(submission['timestamp']) * Duration.millisecondsPerSecond)
+        .toLocal();
+
+    final ordinal = getOrdinal(submissionTime);
+    final dateTimeFormatter = DateFormat("dd'$ordinal' MMMM yyyy");
+
+    return dateTimeFormatter.format(submissionTime);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(submission['title']),
+        trailing: Text(getTimeOfDay()),
+        subtitle: Text(getDay()),
+      ),
+    );
   }
 }
