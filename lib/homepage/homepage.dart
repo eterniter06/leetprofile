@@ -133,22 +133,15 @@ class _UserInputDialogState extends State<UserInputDialog> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 22),
           child: TextFormField(
-            // validator: (str) {
-            //   if (str == null || str.isEmpty) {
-            //     return 'Username cannot be Empty';
-            //   }
-            //   return null;
-            // },
             autofocus: true,
             controller: _textController,
             onFieldSubmitted: (value) => submitUserInput(),
             textInputAction: TextInputAction.done,
             decoration: const InputDecoration(
-                label: Text('Leetcode Username'),
-
-                // alignLabelWithHint: true,
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.all(4)),
+              label: Text('Leetcode Username'),
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.only(left: 8),
+            ),
             enableSuggestions: true,
           ),
         ),
