@@ -221,41 +221,43 @@ class LanguageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: AspectRatio(
-        aspectRatio: 1,
+        aspectRatio: 1.3,
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Center(
-                child: Text(
-                  languageDetails['languageName'],
-                  style: TextStyle(
-                    color: Colors.teal[200],
-                    fontSize: valueScaler(context, 26),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: valueScaler(context, 36),
-              ),
-              Container(
-                width: valueScaler(context, 48),
-                decoration: BoxDecoration(
-                  color: Colors.teal[50],
-                  borderRadius: BorderRadius.circular(
-                    valueScaler(context, 16),
-                  ),
-                ),
+              Expanded(
+                flex: 2,
                 child: Center(
-                  heightFactor: 1,
-                  child: Padding(
-                    padding: EdgeInsets.all(valueScaler(context, 4)),
-                    child: Text(
-                      languageDetails['problemsSolved'].toString(),
-                      style: TextStyle(
-                        fontSize: valueScaler(context, 14),
-                        color: Colors.teal[900],
+                  child: Text(
+                    languageDetails['languageName'],
+                    style: TextStyle(
+                      color: Colors.teal[200],
+                      fontSize: valueScaler(context, 26),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  width: valueScaler(context, 48),
+                  decoration: BoxDecoration(
+                    color: Colors.teal[50],
+                    borderRadius: BorderRadius.circular(
+                      valueScaler(context, 16),
+                    ),
+                  ),
+                  child: Center(
+                    heightFactor: 1,
+                    child: Padding(
+                      padding: EdgeInsets.all(valueScaler(context, 4)),
+                      child: Text(
+                        languageDetails['problemsSolved'].toString(),
+                        style: TextStyle(
+                          fontSize: valueScaler(context, 14),
+                          color: Colors.teal[900],
+                        ),
                       ),
                     ),
                   ),
