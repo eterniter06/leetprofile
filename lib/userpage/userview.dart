@@ -58,6 +58,7 @@ class _UserViewState extends State<UserView> {
         child: SafeArea(
           child: SingleChildScrollView(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   children: [
@@ -116,15 +117,49 @@ class _UserViewState extends State<UserView> {
                             ),
                           ),
                         ),
+                        Padding(
+                          padding: EdgeInsets.all(
+                            valueScaler(context, 12.0),
+                          ),
+                          child: Text(
+                            'Difficulty',
+                            style: TextStyle(
+                              fontSize: valueScaler(context, 16),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
                         DifficultySection(
                           problemData:
                               (currentUser ?? widget.userData).problemData,
                           valueScaler: valueScaler,
                         ),
+                        SizedBox(
+                          height: valueScaler(context, 16),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: valueScaler(context, 6.0),
+                            horizontal: valueScaler(context, 12.0),
+                          ),
+                          child: Text(
+                            'Language',
+                            style: TextStyle(
+                              fontSize: valueScaler(context, 16),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        LanguageSection(
+                            valueScaler: valueScaler,
+                            languageProblemList:
+                                widget.userData.languageProblemCount ?? []),
+                        const Divider(),
                         Container(
                           padding: EdgeInsets.all(valueScaler(context, 4)),
-                          margin:
-                              EdgeInsets.only(top: valueScaler(context, 10)),
+                          margin: EdgeInsets.only(top: valueScaler(context, 5)),
                           child: Text(
                             'Total problems solved: ${getSolvedCount((currentUser ?? widget.userData).problemData)}',
                             style: TextStyle(
@@ -143,6 +178,90 @@ class _UserViewState extends State<UserView> {
                         widget.userData.recentAcSubmissionList ?? []),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class LanguageSection extends StatelessWidget {
+  const LanguageSection(
+      {super.key,
+      required this.languageProblemList,
+      required this.valueScaler});
+  final List languageProblemList;
+  final Function valueScaler;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: valueScaler(context, 140),
+      child: ListView.builder(
+        physics: const ClampingScrollPhysics(),
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: languageProblemList.length,
+        itemBuilder: (BuildContext context, int index) => LanguageCard(
+          languageDetails: languageProblemList[index],
+          valueScaler: valueScaler,
+        ),
+      ),
+    );
+  }
+}
+
+class LanguageCard extends StatelessWidget {
+  const LanguageCard(
+      {super.key, required this.languageDetails, required this.valueScaler});
+  final Map languageDetails;
+  final Function valueScaler;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Center(
+                child: Text(
+                  languageDetails['languageName'],
+                  style: TextStyle(
+                    color: Colors.teal[200],
+                    fontSize: valueScaler(context, 26),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: valueScaler(context, 36),
+              ),
+              Container(
+                width: valueScaler(context, 48),
+                decoration: BoxDecoration(
+                  color: Colors.teal[50],
+                  borderRadius: BorderRadius.circular(
+                    valueScaler(context, 16),
+                  ),
+                ),
+                child: Center(
+                  heightFactor: 1,
+                  child: Padding(
+                    padding: EdgeInsets.all(valueScaler(context, 4)),
+                    child: Text(
+                      languageDetails['problemsSolved'].toString(),
+                      style: TextStyle(
+                        fontSize: valueScaler(context, 14),
+                        color: Colors.teal[900],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
