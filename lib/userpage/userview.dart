@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:ui_elements/dataclass/data_parser.dart';
@@ -394,7 +393,12 @@ class RecentSubmissionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        title: Text(submission['title']),
+        title: Text(
+          submission['title'],
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         trailing: Text(getTimeOfDay()),
         subtitle: Text(getDay()),
       ),

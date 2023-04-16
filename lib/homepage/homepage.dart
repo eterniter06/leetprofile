@@ -142,6 +142,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
             autofocus: true,
             controller: _textController,
             onFieldSubmitted: (value) => submitUserInput(),
+            textInputAction: TextInputAction.done,
             decoration: const InputDecoration(
                 label: Text('Leetcode Username'),
 
