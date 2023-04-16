@@ -54,7 +54,6 @@ class DataParser {
 
       dataMap['userContestRanking'] = json['userContestRanking'];
 
-      // print(json['userContestRankingHistory']);
       dataMap['userContestRankingHistory'] = [];
       for (var contest in json['userContestRankingHistory']) {
         if (contest['attended'] == false) continue;

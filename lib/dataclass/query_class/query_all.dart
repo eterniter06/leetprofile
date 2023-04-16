@@ -1,3 +1,5 @@
+import 'package:http/http.dart' as http;
+
 class AllQuery {
   final String username;
   final String _queryEnder = '}';
@@ -7,7 +9,7 @@ class AllQuery {
 
   Uri getAll() {
     final String queryHttp = '''$_queryStarter
-    recentAcSubmissionList(username: "$username") {title timestamp}
+    recentAcSubmissionList(username: "$username") {title titleSlug timestamp}
     matchedUser(username: "$username"){
       usernamesubmitStats:submitStatsGlobal{
         acSubmissionNum{

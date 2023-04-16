@@ -436,6 +436,7 @@ class RecentSubmissionSection extends StatefulWidget {
 class _RecentSubmissionSectionState extends State<RecentSubmissionSection> {
   @override
   Widget build(BuildContext context) {
+    print(widget.submissionList);
     return Card(
       child: Padding(
         padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
