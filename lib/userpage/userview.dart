@@ -525,14 +525,30 @@ class RecentSubmissionCard extends StatelessWidget {
     }
   }
 
+  Future<void> _launchSubmissionUrl() async {
+    Uri questionLink = Uri.parse(
+        'https://leetcode.com/submissions/detail/${submission['id']}');
+
+    if (await canLaunchUrl(questionLink)) {
+      await launchUrl(questionLink, mode: LaunchMode.externalApplication);
+    } else {
+      throw Exception('Could not open Question url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
-        onTap: () {
-          _launchQuestionUrl();
-        },
+        onTap: () => _launchQuestionUrl(),
         child: ListTile(
+          leading: IconButton(
+            splashRadius: 30,
+            icon: const Icon(Icons.question_answer),
+            onPressed: () async {
+              await _launchSubmissionUrl();
+            },
+          ),
           title: Text(
             submission['title'],
             style: const TextStyle(

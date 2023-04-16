@@ -9,7 +9,7 @@ class AllQuery {
 
   Uri getAll() {
     final String queryHttp = '''$_queryStarter
-    recentAcSubmissionList(username: "$username") {title titleSlug timestamp}
+    recentAcSubmissionList(username: "$username") {title titleSlug id timestamp}
     matchedUser(username: "$username"){
       usernamesubmitStats:submitStatsGlobal{
         acSubmissionNum{
