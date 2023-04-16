@@ -116,7 +116,7 @@ class _UserViewState extends State<UserView> {
                             ),
                           ),
                         ),
-                        ProblemSection(
+                        DifficultySection(
                           problemData:
                               (currentUser ?? widget.userData).problemData,
                           valueScaler: valueScaler,
@@ -150,8 +150,8 @@ class _UserViewState extends State<UserView> {
   }
 }
 
-class ProblemSection extends StatelessWidget {
-  const ProblemSection({
+class DifficultySection extends StatelessWidget {
+  const DifficultySection({
     super.key,
     this.problemData,
     required this.valueScaler,
@@ -316,27 +316,30 @@ class _RecentSubmissionSectionState extends State<RecentSubmissionSection> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
-            child: Text(
-              'Recent Submissions',
-              style: TextStyle(
-                fontSize: widget.valueScaler(context, 24),
-                color: Colors.amber,
+      child: Padding(
+        padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
+              child: Text(
+                'Recent Submissions',
+                style: TextStyle(
+                  fontSize: widget.valueScaler(context, 24),
+                  color: Colors.amber,
+                ),
               ),
             ),
-          ),
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: widget.submissionList.length,
-            itemBuilder: (context, index) =>
-                RecentSubmissionCard(submission: widget.submissionList[index]),
-          ),
-        ],
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: widget.submissionList.length,
+              itemBuilder: (context, index) => RecentSubmissionCard(
+                  submission: widget.submissionList[index]),
+            ),
+          ],
+        ),
       ),
     );
   }
