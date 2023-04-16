@@ -4,6 +4,7 @@ import 'package:ui_elements/dataclass/data_parser.dart';
 import 'package:ui_elements/dataclass/user_class/problemdata.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserView extends StatefulWidget {
   final UserData userData;
@@ -436,7 +437,6 @@ class RecentSubmissionSection extends StatefulWidget {
 class _RecentSubmissionSectionState extends State<RecentSubmissionSection> {
   @override
   Widget build(BuildContext context) {
-    print(widget.submissionList);
     return Card(
       child: Padding(
         padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
@@ -514,18 +514,34 @@ class RecentSubmissionCard extends StatelessWidget {
     return dateTimeFormatter.format(submissionTime);
   }
 
+  Future<void> _launchQuestionUrl() async {
+    Uri questionLink =
+        Uri.parse('https://leetcode.com/problems/${submission['titleSlug']}');
+
+    if (await canLaunchUrl(questionLink)) {
+      await launchUrl(questionLink, mode: LaunchMode.externalApplication);
+    } else {
+      throw Exception('Could not open Question url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        title: Text(
-          submission['title'],
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
+      child: InkWell(
+        onTap: () {
+          _launchQuestionUrl();
+        },
+        child: ListTile(
+          title: Text(
+            submission['title'],
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          trailing: Text(getTimeOfDay()),
+          subtitle: Text(getDay()),
         ),
-        trailing: Text(getTimeOfDay()),
-        subtitle: Text(getDay()),
       ),
     );
   }
