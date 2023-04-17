@@ -9,8 +9,12 @@ class DataParser {
   final String username;
   DataParser({required this.username});
 
-  Future<Map> getAllAsJson() {
+  Future<Map?> getAllAsJson() {
     return http.get(AllQuery(username: username).getAll()).then((response) {
+      if (response.statusCode != 200) {
+        return null;
+      }
+
       var json = jsonDecode(response.body)['data'];
 
       Map dataMap = {};

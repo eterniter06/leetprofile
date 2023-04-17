@@ -1,5 +1,3 @@
-import 'package:http/http.dart' as http;
-
 class AllQuery {
   final String username;
   final String _queryEnder = '}';
@@ -66,7 +64,6 @@ class AllQuery {
       count
     }
     $_queryEnder''';
-
     return Uri.parse(queryHttp);
   }
 }

@@ -37,6 +37,7 @@ class _UserViewState extends State<UserView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text(currentUser?.username ?? widget.userData.username),
         actions: [
           IconButton(
               onPressed: () async {
@@ -45,7 +46,7 @@ class _UserViewState extends State<UserView> {
                     .getAllAsJson();
 
                 setState(() {
-                  currentUser = UserData.fromMap(dataMap: dataMap);
+                  currentUser = UserData.fromMap(dataMap: dataMap!);
                 });
               },
               icon: const Icon(Icons.replay_rounded))
@@ -536,11 +537,21 @@ class RecentSubmissionCard extends StatelessWidget {
     }
   }
 
+  // void _launchQuestionMenu() {
+  //   DropdownButton(
+  //     items: [
+  //       Text('Copy Question URL'),
+
+  //     ],
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
         onTap: () => _launchQuestionUrl(),
+        // onLongPress: () => _launchQuestionMenu(),
         child: ListTile(
           leading: IconButton(
             splashRadius: 30,
@@ -549,6 +560,11 @@ class RecentSubmissionCard extends StatelessWidget {
               await _launchSubmissionUrl();
             },
           ),
+
+          /* Refer to: 
+          *  https://github.com/flutter/flutter/issues/53797
+          *  for why the question title isn't copyable
+          */
           title: Text(
             submission['title'],
             style: const TextStyle(

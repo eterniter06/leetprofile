@@ -27,9 +27,9 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-Future<UserData> createUser(String username) async {
-  var data = await DataParser(username: username).getAllAsJson();
-  return UserData.fromMap(dataMap: data);
+Future<UserData?> createUser(String username) async {
+  Map? data = await DataParser(username: username).getAllAsJson();
+  return data == null ? null : UserData.fromMap(dataMap: data);
 }
 
 class _HomePageState extends State<HomePage> {
@@ -55,9 +55,21 @@ class _HomePageState extends State<HomePage> {
 
               var user = await createUser(username);
 
-              setState(() {
-                userList.add(UserCard(userData: user));
-              });
+              if (user != null) {
+                setState(() {
+                  userList.add(UserCard(userData: user));
+                });
+              } else {
+                setState(() {
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      showCloseIcon: true,
+                      content: Text('Username "$username" does not exist.'),
+                    ),
+                  );
+                });
+              }
             },
           ),
           const SizedBox(width: 20.0),
