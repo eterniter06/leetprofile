@@ -42,16 +42,23 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Home Title'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.local_fire_department_sharp),
+            onPressed: () => 0,
+          ),
+          IconButton(
             tooltip: 'Add new User',
-            // splashRadius: 28.0,
             icon: const Icon(Icons.add),
             onPressed: () async {
-              String username = await showDialog(
+              String? username = await showDialog(
                 context: context,
                 builder: (context) {
                   return const UserInputDialog();
                 },
               );
+
+              if (username == null) {
+                return;
+              }
 
               var user = await createUser(username);
 
