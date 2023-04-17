@@ -62,11 +62,7 @@ class _HomePageState extends State<HomePage> {
 
               var user = await createUser(username);
 
-              if (user != null) {
-                setState(() {
-                  userList.add(UserCard(userData: user));
-                });
-              } else {
+              if (user == null) {
                 setState(() {
                   ScaffoldMessenger.of(context).removeCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -75,6 +71,10 @@ class _HomePageState extends State<HomePage> {
                       content: Text('Username "$username" does not exist.'),
                     ),
                   );
+                });
+              } else {
+                setState(() {
+                  userList.add(UserCard(userData: user));
                 });
               }
             },
@@ -112,23 +112,24 @@ class _UserInputDialogState extends State<UserInputDialog> {
   }
 
   void submitUserInput() {
-    setState(() {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    });
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() {
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          showCloseIcon: true,
-          content: Text('Searching user: ${_textController.text}')),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            showCloseIcon: true,
+            content: Text('Searching user: ${_textController.text}')),
+      );
 
-    Navigator.pop(context, _textController.text);
+      Navigator.pop(context, _textController.text);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      key: _formKey,
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 4),
@@ -151,17 +152,26 @@ class _UserInputDialogState extends State<UserInputDialog> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 22),
-          child: TextFormField(
-            autofocus: true,
-            controller: _textController,
-            onFieldSubmitted: (value) => submitUserInput(),
-            textInputAction: TextInputAction.done,
-            decoration: const InputDecoration(
-              label: Text('Leetcode Username'),
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.only(left: 8),
+          child: Form(
+            key: _formKey,
+            child: TextFormField(
+              autofocus: true,
+              controller: _textController,
+              validator: (String? username) {
+                if (username == null || username.isEmpty) {
+                  return 'Username cannot be empty.';
+                }
+                return null;
+              },
+              onFieldSubmitted: (value) => submitUserInput(),
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(
+                label: Text('Leetcode Username'),
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.only(left: 8),
+              ),
+              enableSuggestions: true,
             ),
-            enableSuggestions: true,
           ),
         ),
         SizedBox(
