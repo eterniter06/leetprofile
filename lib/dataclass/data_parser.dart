@@ -15,7 +15,13 @@ class DataParser {
         return null;
       }
 
-      var json = jsonDecode(response.body)['data'];
+      Map responseBody = jsonDecode(response.body);
+
+      if (responseBody.containsKey('errors')) {
+        return null;
+      }
+
+      Map json = responseBody['data'];
 
       Map dataMap = {};
       dataMap['username'] = username;
