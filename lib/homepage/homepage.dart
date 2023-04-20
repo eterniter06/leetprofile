@@ -174,8 +174,9 @@ class _UserInputDialogState extends State<UserInputDialog> {
             ),
           ),
         ),
-        SizedBox(
-          child: TextButton(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 22),
+          child: ElevatedButton(
             onPressed: () => submitUserInput(),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,

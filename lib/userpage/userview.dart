@@ -37,7 +37,7 @@ class _UserViewState extends State<UserView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(currentUser?.username ?? widget.userData.username),
+        title: Text(currentUser?.nickname ?? widget.userData.nickname),
         actions: [
           IconButton(
               onPressed: () async {
@@ -79,7 +79,7 @@ class _UserViewState extends State<UserView> {
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            (currentUser ?? widget.userData).nickname,
+                            (currentUser ?? widget.userData).username,
                             overflow: TextOverflow.fade,
                             style: TextStyle(
                               color: Colors.amber,
