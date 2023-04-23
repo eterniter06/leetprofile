@@ -12,6 +12,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(fontFamily: 'Overpass'),
+      debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       home: const HomePage(),
     );
@@ -38,50 +39,50 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Add new User',
+        onPressed: () async {
+          String? username = await showDialog(
+            context: context,
+            builder: (context) {
+              return const UserInputDialog();
+            },
+          );
+
+          if (username == null) {
+            return;
+          }
+
+          var user = await createUser(username);
+
+          if (user == null) {
+            setState(() {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  showCloseIcon: true,
+                  content: Text(
+                      'Username "$username" does not exist. Are you sure you typed in the correct username?'),
+                ),
+              );
+            });
+          } else {
+            setState(() {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              userList.add(UserCard(userData: user));
+            });
+          }
+        },
+        child: const Icon(Icons.add),
+      ),
       appBar: AppBar(
         title: const Text('Home Title'),
         actions: [
           IconButton(
+            tooltip: "Today's daily question",
             icon: const Icon(Icons.local_fire_department_sharp),
             onPressed: () => 0,
           ),
-          IconButton(
-            tooltip: 'Add new User',
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              String? username = await showDialog(
-                context: context,
-                builder: (context) {
-                  return const UserInputDialog();
-                },
-              );
-
-              if (username == null) {
-                return;
-              }
-
-              var user = await createUser(username);
-
-              if (user == null) {
-                setState(() {
-                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      showCloseIcon: true,
-                      content: Text(
-                          'Username "$username" does not exist. Are you sure you typed in the correct username?'),
-                    ),
-                  );
-                });
-              } else {
-                setState(() {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  userList.add(UserCard(userData: user));
-                });
-              }
-            },
-          ),
-          const SizedBox(width: 20.0),
         ],
       ),
       body: Center(
@@ -158,6 +159,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
           child: Form(
             key: _formKey,
             child: TextFormField(
+              keyboardType: TextInputType.name,
               autofocus: true,
               controller: _textController,
               validator: (String? username) {
