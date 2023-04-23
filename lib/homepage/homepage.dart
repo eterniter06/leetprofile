@@ -68,12 +68,14 @@ class _HomePageState extends State<HomePage> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       showCloseIcon: true,
-                      content: Text('Username "$username" does not exist.'),
+                      content: Text(
+                          'Username "$username" does not exist. Are you sure you typed in the correct username?'),
                     ),
                   );
                 });
               } else {
                 setState(() {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   userList.add(UserCard(userData: user));
                 });
               }
@@ -130,6 +132,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
+      title: const Text('Enter username'),
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 4),
@@ -145,13 +148,13 @@ class _UserInputDialogState extends State<UserInputDialog> {
         const Padding(
           padding: EdgeInsets.fromLTRB(26.0, 8.0, 26.0, 4.0),
           child: Text(
-            'Enter username of the profile to search',
+            'Enter profile username to search:',
             softWrap: true,
             textWidthBasis: TextWidthBasis.parent,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 22),
+          padding: const EdgeInsets.fromLTRB(22, 16, 22, 8),
           child: Form(
             key: _formKey,
             child: TextFormField(
@@ -173,6 +176,10 @@ class _UserInputDialogState extends State<UserInputDialog> {
               enableSuggestions: true,
             ),
           ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 22),
+          child: Text('Note: Usernames are case sensitive.'),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 22),
