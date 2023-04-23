@@ -441,19 +441,17 @@ class _RecentSubmissionSectionState extends State<RecentSubmissionSection> {
     return Card(
       child: Padding(
         padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
-              child: Text(
-                'Recent Submissions',
-                style: TextStyle(
-                  fontSize: widget.valueScaler(context, 24),
-                  color: Colors.amber,
-                ),
-              ),
+        child: ExpansionTile(
+          initiallyExpanded: false,
+          collapsedTextColor: Colors.amber,
+          textColor: Colors.amberAccent,
+          title: Text(
+            'Recent Submissions',
+            style: TextStyle(
+              fontSize: widget.valueScaler(context, 24),
             ),
+          ),
+          children: [
             ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
