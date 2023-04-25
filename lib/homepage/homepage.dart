@@ -51,9 +51,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<UserData?> createUser(String? username) async {
-    if (username == null) return null;
-
+  Future<UserData?> createUser(String username) async {
     Map? data = await DataParser(username: username).getAllAsJson();
     return data == null ? null : UserData.fromMap(dataMap: data);
   }
@@ -95,7 +93,9 @@ class _HomePageState extends State<HomePage> {
             },
           );
 
-          var user = await createUser(username);
+          if (username == null) return;
+
+          var user = await createUser(username.toLowerCase());
 
           if (user == null) {
             informUser(
@@ -209,10 +209,6 @@ class _UserInputDialogState extends State<UserInputDialog> {
               enableSuggestions: true,
             ),
           ),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 22),
-          child: Text('Note: Usernames are case sensitive.'),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 22),
