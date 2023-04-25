@@ -1,5 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
+import 'package:ui_elements/database.dart';
 import 'package:ui_elements/dataclass/data_parser.dart';
 import 'package:ui_elements/homepage/usercard.dart';
 import '../dataclass/user_class/userdata.dart';
@@ -28,13 +30,57 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-Future<UserData?> createUser(String username) async {
-  Map? data = await DataParser(username: username).getAllAsJson();
-  return data == null ? null : UserData.fromMap(dataMap: data);
-}
-
 class _HomePageState extends State<HomePage> {
-  List<Widget> userList = [];
+  List<UserData> userList = [];
+
+  @override
+  initState() {
+    super.initState();
+    _loadUsers();
+  }
+
+  Future<void> _loadUsers() async {
+    var isar = await Database.isar();
+    var tempUserList =
+        await isar!.userDatas.filter().isarIdGreaterThan(Isar.minId).findAll();
+
+    setState(() {
+      for (var user in tempUserList) {
+        userList.add(user);
+      }
+    });
+  }
+
+  Future<UserData?> createUser(String? username) async {
+    if (username == null) return null;
+
+    Map? data = await DataParser(username: username).getAllAsJson();
+    return data == null ? null : UserData.fromMap(dataMap: data);
+  }
+
+  Future<void> addToList(UserData user) async {
+    var database = await Database.isar();
+    await database!.writeTxn(() async {
+      await Database.database().then((db) => db!.put(user));
+    });
+
+    setState(() {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      userList.add(user);
+    });
+  }
+
+  void informUser(String info) {
+    setState(() {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          showCloseIcon: true,
+          content: Text(info),
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,28 +95,13 @@ class _HomePageState extends State<HomePage> {
             },
           );
 
-          if (username == null) {
-            return;
-          }
-
           var user = await createUser(username);
 
           if (user == null) {
-            setState(() {
-              ScaffoldMessenger.of(context).removeCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  showCloseIcon: true,
-                  content: Text(
-                      'Username "$username" does not exist. Are you sure you typed in the correct username?'),
-                ),
-              );
-            });
+            informUser(
+                'Username "$username" does not exist. Are you sure you typed in the correct username?');
           } else {
-            setState(() {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              userList.add(UserCard(userData: user));
-            });
+            addToList(user);
           }
         },
         child: const Icon(Icons.add),
@@ -88,7 +119,7 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: ListView.builder(
           itemCount: userList.length,
-          itemBuilder: (context, index) => userList[index],
+          itemBuilder: (context, index) => UserCard(userData: userList[index]),
         ),
       ),
     );

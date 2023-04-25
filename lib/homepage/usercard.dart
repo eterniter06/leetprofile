@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ui_elements/database.dart';
 import '../dataclass/user_class/userdata.dart';
 import '../userpage/userview.dart';
 
@@ -12,8 +13,6 @@ class UserCard extends StatefulWidget {
 }
 
 class _UserCardState extends State<UserCard> {
-  UserData? currentUser;
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -24,13 +23,13 @@ class _UserCardState extends State<UserCard> {
             context,
             MaterialPageRoute(
               builder: (context) => UserView(
-                userData: (currentUser ?? widget.userData),
+                userData: widget.userData,
               ),
             ),
           );
 
           setState(() {
-            currentUser = user;
+            widget.userData.update(updatedUser: user);
           });
         },
         onLongPress: () async {
@@ -41,32 +40,41 @@ class _UserCardState extends State<UserCard> {
             },
           );
 
-          if (nickname == null) {
-            return;
-          }
+          if (nickname != null) {
+            var isar = await Database.isar();
+            isar!.writeTxn(() async {
+              await isar.userDatas.put(widget.userData);
+            });
 
-          setState(() {
-            widget.userData.nickname = nickname;
-          });
+            setState(() {
+              widget.userData.nickname = nickname;
+            });
+          }
         },
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8.0, 6.0, 8.0, 6.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SquircleNetworkImage(
-                  imageLink: (currentUser ?? widget.userData).avatar ?? ''),
+              SquircleNetworkImage(imageLink: widget.userData.avatar),
               const SizedBox(
                 height: 0.0,
                 width: 12.0,
               ),
-              Text(
-                (currentUser ?? widget.userData).nickname,
-                style: const TextStyle(
-                  color: Colors.amber,
-                  fontSize: 24.0,
-                  fontFamily: 'Overpass',
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.userData.nickname,
+                    style: const TextStyle(
+                      color: Colors.amber,
+                      fontSize: 24.0,
+                      fontFamily: 'Overpass',
+                    ),
+                  ),
+                  const Padding(padding: EdgeInsets.all(4)),
+                  Text(widget.userData.username),
+                ],
               ),
             ],
           ),
@@ -129,9 +137,10 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            showCloseIcon: true,
-            content: Text(
-                'Nickname changed. ${widget.oldNickname} -> ${_textController.text}')),
+          showCloseIcon: true,
+          content: Text(
+              'Nickname changed. ${widget.oldNickname} -> ${_textController.text}'),
+        ),
       );
 
       Navigator.pop(context, _textController.text);
@@ -141,6 +150,7 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
+      title: const Text('Enter nickname'),
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(26.0, 8.0, 26.0, 4.0),
@@ -182,6 +192,30 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class PillElevatedButton extends StatelessWidget {
+  const PillElevatedButton(
+      {super.key, required this.tapAction, required this.child});
+  final Widget child;
+  final VoidCallback tapAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: tapAction,
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+          ),
+        ),
+        child: child,
+      ),
     );
   }
 }
