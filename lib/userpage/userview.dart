@@ -434,31 +434,50 @@ class RecentSubmissionSection extends StatefulWidget {
 class _RecentSubmissionSectionState extends State<RecentSubmissionSection> {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
-        child: ExpansionTile(
-          initiallyExpanded: false,
-          collapsedTextColor: Colors.amber,
-          textColor: Colors.amberAccent,
-          title: Text(
-            'Recent Submissions',
-            style: TextStyle(
-              fontSize: widget.valueScaler(context, 24),
+    return widget.submissionList.isEmpty
+        ? Card(
+            child: Padding(
+              padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
+                  child: Text(
+                    'No Recent Submissions',
+                    style: TextStyle(
+                      color: Color.lerp(Colors.black, Colors.white, 0.3),
+                      fontSize: widget.valueScaler(context, 24),
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-          children: [
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: widget.submissionList.length,
-              itemBuilder: (context, index) => RecentSubmissionCard(
-                  submission: widget.submissionList[index]),
+          )
+        : Card(
+            child: Padding(
+              padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
+              child: ExpansionTile(
+                initiallyExpanded: false,
+                collapsedTextColor: Colors.amber,
+                textColor: Colors.amberAccent,
+                title: Text(
+                  'Recent Submissions',
+                  style: TextStyle(
+                    fontSize: widget.valueScaler(context, 24),
+                  ),
+                ),
+                children: [
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: widget.submissionList.length,
+                    itemBuilder: (context, index) => RecentSubmissionCard(
+                        submission: widget.submissionList[index]),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }
 
