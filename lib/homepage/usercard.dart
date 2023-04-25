@@ -18,8 +18,8 @@ class _UserCardState extends State<UserCard> {
     return Card(
       margin: const EdgeInsets.fromLTRB(6.0, 8.0, 6.0, 2.0),
       child: InkWell(
-        onTap: () async {
-          var user = await Navigator.push(
+        onTap: () {
+          Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => UserView(
@@ -27,10 +27,6 @@ class _UserCardState extends State<UserCard> {
               ),
             ),
           );
-
-          setState(() {
-            widget.userData.update(updatedUser: user);
-          });
         },
         onLongPress: () async {
           String? nickname = await showDialog(
@@ -42,6 +38,7 @@ class _UserCardState extends State<UserCard> {
 
           if (nickname != null) {
             var isar = await Database.isar();
+
             isar!.writeTxn(() async {
               await isar.userDatas.put(widget.userData);
             });

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:ui_elements/database.dart';
 import 'package:ui_elements/dataclass/data_parser.dart';
-import 'package:ui_elements/dataclass/user_class/problemdata.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,8 +15,6 @@ class UserView extends StatefulWidget {
 }
 
 class _UserViewState extends State<UserView> {
-  UserData? currentUser;
-
   num getSolvedCount(ProblemData? problemData) {
     return problemData == null
         ? 0
@@ -37,149 +35,147 @@ class _UserViewState extends State<UserView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(currentUser?.nickname ?? widget.userData.nickname),
+        title: Text(widget.userData.nickname),
         actions: [
           IconButton(
               onPressed: () async {
-                var dataMap = await DataParser(
-                        username: (currentUser ?? widget.userData).username)
-                    .getAllAsJson();
+                var dataMap =
+                    await DataParser(username: widget.userData.username)
+                        .getAllAsJson();
 
                 setState(() {
-                  currentUser = UserData.fromMap(dataMap: dataMap!);
+                  widget.userData
+                      .update(updatedUser: UserData.fromMap(dataMap: dataMap!));
+                });
+
+                var isar = await Database.isar();
+                isar!.writeTxn(() async {
+                  await isar.userDatas.put(widget.userData);
                 });
               },
               icon: const Icon(Icons.replay_rounded))
         ],
       ),
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.pop(context, currentUser ?? widget.userData);
-          return false;
-        },
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 7,
-                      child: Image.network(
-                        (currentUser ?? widget.userData).avatar ?? '',
-                        fit: BoxFit.scaleDown,
-                      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    flex: 7,
+                    child: Image.network(
+                      widget.userData.avatar,
+                      fit: BoxFit.scaleDown,
                     ),
-                    Flexible(
-                      fit: FlexFit.tight,
-                      flex: 5,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        // crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            (currentUser ?? widget.userData).username,
-                            overflow: TextOverflow.fade,
-                            style: TextStyle(
-                              color: Colors.amber,
-                              fontSize: valueScaler(context, 24.0),
-                              fontFamily: 'Overpass',
-                            ),
-                          ),
-                          Text(
-                              'Contest Rating: ${(currentUser ?? widget.userData).userContestRanking?['rating'].round()}'),
-                          Text(
-                              'Contests Attended: ${(currentUser ?? widget.userData).userContestRanking?['attendedContestsCount']}'),
-                          Text(
-                              'Global Ranking: ${(currentUser ?? widget.userData).userContestRanking?['globalRanking']}'),
-                          Text(
-                              'Top percentage: ${(currentUser ?? widget.userData).userContestRanking?['topPercentage']}'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const Divider(
-                  color: Colors.grey,
-                ),
-                Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(valueScaler(context, 8.0)),
+                  ),
+                  Flexible(
+                    fit: FlexFit.tight,
+                    flex: 5,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      // crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.all(valueScaler(context, 8.0)),
-                          child: Text(
-                            'Solved Problems',
-                            style: TextStyle(
-                              fontSize: valueScaler(context, 24),
-                              color: Colors.amber,
-                            ),
+                        Text(
+                          widget.userData.username,
+                          overflow: TextOverflow.fade,
+                          style: TextStyle(
+                            color: Colors.amber,
+                            fontSize: valueScaler(context, 24.0),
+                            fontFamily: 'Overpass',
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.all(
-                            valueScaler(context, 12.0),
-                          ),
-                          child: Text(
-                            'Difficulty',
-                            style: TextStyle(
-                              fontSize: valueScaler(context, 16),
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                        DifficultySection(
-                          problemData:
-                              (currentUser ?? widget.userData).problemData,
-                          valueScaler: valueScaler,
-                        ),
-                        SizedBox(
-                          height: valueScaler(context, 16),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: valueScaler(context, 6.0),
-                            horizontal: valueScaler(context, 12.0),
-                          ),
-                          child: Text(
-                            'Language',
-                            style: TextStyle(
-                              fontSize: valueScaler(context, 16),
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                        LanguageSection(
-                            valueScaler: valueScaler,
-                            languageProblemList:
-                                widget.userData.languageProblemCount ?? []),
-                        const Divider(),
-                        Container(
-                          padding: EdgeInsets.all(valueScaler(context, 4)),
-                          margin: EdgeInsets.only(top: valueScaler(context, 5)),
-                          child: Text(
-                            'Total problems solved: ${getSolvedCount((currentUser ?? widget.userData).problemData)}',
-                            style: TextStyle(
-                              fontSize: valueScaler(context, 20),
-                              color: const Color.fromRGBO(97, 97, 97, 1),
-                            ),
-                          ),
-                        ),
+                        Text(
+                            'Contest Rating: ${widget.userData.userContestRanking?.rating.round()}'),
+                        Text(
+                            'Contests Attended: ${widget.userData.userContestRanking?.attendedContestsCount}'),
+                        Text(
+                            'Global Ranking: ${widget.userData.userContestRanking?.globalRanking}'),
+                        Text(
+                            'Top percentage: ${widget.userData.userContestRanking?.topPercentage}'),
                       ],
                     ),
                   ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+              ),
+              Card(
+                child: Padding(
+                  padding: EdgeInsets.all(valueScaler(context, 8.0)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(valueScaler(context, 8.0)),
+                        child: Text(
+                          'Solved Problems',
+                          style: TextStyle(
+                            fontSize: valueScaler(context, 24),
+                            color: Colors.amber,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(
+                          valueScaler(context, 12.0),
+                        ),
+                        child: Text(
+                          'Difficulty',
+                          style: TextStyle(
+                            fontSize: valueScaler(context, 16),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      DifficultySection(
+                        problemData: widget.userData.problemData,
+                        valueScaler: valueScaler,
+                      ),
+                      SizedBox(
+                        height: valueScaler(context, 16),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: valueScaler(context, 6.0),
+                          horizontal: valueScaler(context, 12.0),
+                        ),
+                        child: Text(
+                          'Language',
+                          style: TextStyle(
+                            fontSize: valueScaler(context, 16),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      LanguageSection(
+                          valueScaler: valueScaler,
+                          languageProblemList:
+                              widget.userData.languageProblemCount ?? []),
+                      const Divider(),
+                      Container(
+                        padding: EdgeInsets.all(valueScaler(context, 4)),
+                        margin: EdgeInsets.only(top: valueScaler(context, 5)),
+                        child: Text(
+                          'Total problems solved: ${getSolvedCount(widget.userData.problemData)}',
+                          style: TextStyle(
+                            fontSize: valueScaler(context, 20),
+                            color: const Color.fromRGBO(97, 97, 97, 1),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                RecentSubmissionSection(
-                    valueScaler: valueScaler,
-                    submissionList:
-                        widget.userData.recentAcSubmissionList ?? []),
-              ],
-            ),
+              ),
+              RecentSubmissionSection(
+                  valueScaler: valueScaler,
+                  submissionList: widget.userData.recentAcSubmissionList ?? []),
+            ],
           ),
         ),
       ),
@@ -192,7 +188,7 @@ class LanguageSection extends StatelessWidget {
       {super.key,
       required this.languageProblemList,
       required this.valueScaler});
-  final List languageProblemList;
+  final List<LanguageSubmission> languageProblemList;
   final Function valueScaler;
 
   @override
@@ -216,7 +212,7 @@ class LanguageSection extends StatelessWidget {
 class LanguageCard extends StatelessWidget {
   const LanguageCard(
       {super.key, required this.languageDetails, required this.valueScaler});
-  final Map languageDetails;
+  final LanguageSubmission languageDetails;
   final Function valueScaler;
 
   @override
@@ -233,7 +229,7 @@ class LanguageCard extends StatelessWidget {
                 flex: 2,
                 child: Center(
                   child: Text(
-                    languageDetails['languageName'],
+                    languageDetails.languageName!,
                     style: TextStyle(
                       color: Colors.teal[200],
                       fontSize: valueScaler(context, 26),
@@ -255,7 +251,7 @@ class LanguageCard extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.all(valueScaler(context, 4)),
                       child: Text(
-                        languageDetails['problemsSolved'].toString(),
+                        languageDetails.problemsSolved.toString(),
                         style: TextStyle(
                           fontSize: valueScaler(context, 14),
                           color: Colors.teal[900],
@@ -428,7 +424,7 @@ class ProblemCard extends StatelessWidget {
 class RecentSubmissionSection extends StatefulWidget {
   const RecentSubmissionSection(
       {super.key, required this.submissionList, required this.valueScaler});
-  final List submissionList;
+  final List<RecentSubmission> submissionList;
   final Function valueScaler;
   @override
   State<RecentSubmissionSection> createState() =>
@@ -468,7 +464,7 @@ class _RecentSubmissionSectionState extends State<RecentSubmissionSection> {
 
 class RecentSubmissionCard extends StatelessWidget {
   const RecentSubmissionCard({super.key, required this.submission});
-  final Map submission;
+  final RecentSubmission submission;
 
   String getOrdinal(DateTime submissionTime) {
     final day = int.parse(DateFormat('dd').format(submissionTime));
@@ -485,7 +481,7 @@ class RecentSubmissionCard extends StatelessWidget {
 
   String getTimeFromEpochsInSeconds() {
     final submissionTime = DateTime.fromMillisecondsSinceEpoch(
-            int.parse(submission['timestamp']) * Duration.millisecondsPerSecond)
+            int.parse(submission.timestamp!) * Duration.millisecondsPerSecond)
         .toLocal();
 
     final ordinal = getOrdinal(submissionTime);
@@ -496,7 +492,7 @@ class RecentSubmissionCard extends StatelessWidget {
 
   String getTimeOfDay() {
     final submissionTime = DateTime.fromMillisecondsSinceEpoch(
-            int.parse(submission['timestamp']) * Duration.millisecondsPerSecond)
+            int.parse(submission.timestamp!) * Duration.millisecondsPerSecond)
         .toLocal();
 
     return DateFormat("HH:mm:ss").format(submissionTime);
@@ -504,7 +500,7 @@ class RecentSubmissionCard extends StatelessWidget {
 
   String getDay() {
     final submissionTime = DateTime.fromMillisecondsSinceEpoch(
-            int.parse(submission['timestamp']) * Duration.millisecondsPerSecond)
+            int.parse(submission.timestamp!) * Duration.millisecondsPerSecond)
         .toLocal();
 
     final ordinal = getOrdinal(submissionTime);
@@ -515,7 +511,7 @@ class RecentSubmissionCard extends StatelessWidget {
 
   Future<void> _launchQuestionUrl() async {
     Uri questionLink =
-        Uri.parse('https://leetcode.com/problems/${submission['titleSlug']}');
+        Uri.parse('https://leetcode.com/problems/${submission.titleSlug}');
 
     if (await canLaunchUrl(questionLink)) {
       await launchUrl(questionLink, mode: LaunchMode.externalApplication);
@@ -525,8 +521,8 @@ class RecentSubmissionCard extends StatelessWidget {
   }
 
   Future<void> _launchSubmissionUrl() async {
-    Uri questionLink = Uri.parse(
-        'https://leetcode.com/submissions/detail/${submission['id']}');
+    Uri questionLink =
+        Uri.parse('https://leetcode.com/submissions/detail/${submission.id}');
 
     if (await canLaunchUrl(questionLink)) {
       await launchUrl(questionLink, mode: LaunchMode.externalApplication);
@@ -564,7 +560,7 @@ class RecentSubmissionCard extends StatelessWidget {
           *  for why the question title isn't copyable
           */
           title: Text(
-            submission['title'],
+            submission.title!,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
