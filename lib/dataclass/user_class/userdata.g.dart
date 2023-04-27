@@ -67,42 +67,47 @@ const UserDataSchema = CollectionSchema(
       name: r'linkedinUrl',
       type: IsarType.string,
     ),
-    r'nickname': PropertySchema(
+    r'listOrder': PropertySchema(
       id: 9,
+      name: r'listOrder',
+      type: IsarType.long,
+    ),
+    r'nickname': PropertySchema(
+      id: 10,
       name: r'nickname',
       type: IsarType.string,
     ),
     r'problemData': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'problemData',
       type: IsarType.object,
       target: r'ProblemData',
     ),
     r'realname': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'realname',
       type: IsarType.string,
     ),
     r'recentAcSubmissionList': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'recentAcSubmissionList',
       type: IsarType.objectList,
       target: r'RecentSubmission',
     ),
     r'userContestRanking': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'userContestRanking',
       type: IsarType.object,
       target: r'ContestRanking',
     ),
     r'userContestRankingHistory': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'userContestRankingHistory',
       type: IsarType.objectList,
       target: r'ContestSummary',
     ),
     r'username': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'username',
       type: IsarType.string,
     )
@@ -320,33 +325,34 @@ void _userDataSerialize(
     object.languageProblemCount,
   );
   writer.writeString(offsets[8], object.linkedinUrl);
-  writer.writeString(offsets[9], object.nickname);
+  writer.writeLong(offsets[9], object.listOrder);
+  writer.writeString(offsets[10], object.nickname);
   writer.writeObject<ProblemData>(
-    offsets[10],
+    offsets[11],
     allOffsets,
     ProblemDataSchema.serialize,
     object.problemData,
   );
-  writer.writeString(offsets[11], object.realname);
+  writer.writeString(offsets[12], object.realname);
   writer.writeObjectList<RecentSubmission>(
-    offsets[12],
+    offsets[13],
     allOffsets,
     RecentSubmissionSchema.serialize,
     object.recentAcSubmissionList,
   );
   writer.writeObject<ContestRanking>(
-    offsets[13],
+    offsets[14],
     allOffsets,
     ContestRankingSchema.serialize,
     object.userContestRanking,
   );
   writer.writeObjectList<ContestSummary>(
-    offsets[14],
+    offsets[15],
     allOffsets,
     ContestSummarySchema.serialize,
     object.userContestRankingHistory,
   );
-  writer.writeString(offsets[15], object.username);
+  writer.writeString(offsets[16], object.username);
 }
 
 UserData _userDataDeserialize(
@@ -357,9 +363,9 @@ UserData _userDataDeserialize(
 ) {
   final object = UserData(
     avatar: reader.readString(offsets[2]),
-    nickname: reader.readString(offsets[9]),
-    realname: reader.readString(offsets[11]),
-    username: reader.readString(offsets[15]),
+    nickname: reader.readString(offsets[10]),
+    realname: reader.readString(offsets[12]),
+    username: reader.readString(offsets[16]),
   );
   object.advancedTags = reader.readObjectList<TagsSolved>(
     offsets[0],
@@ -394,24 +400,25 @@ UserData _userDataDeserialize(
     LanguageSubmission(),
   );
   object.linkedinUrl = reader.readStringOrNull(offsets[8]);
+  object.listOrder = reader.readLongOrNull(offsets[9]);
   object.problemData = reader.readObjectOrNull<ProblemData>(
-    offsets[10],
+    offsets[11],
     ProblemDataSchema.deserialize,
     allOffsets,
   );
   object.recentAcSubmissionList = reader.readObjectList<RecentSubmission>(
-    offsets[12],
+    offsets[13],
     RecentSubmissionSchema.deserialize,
     allOffsets,
     RecentSubmission(),
   );
   object.userContestRanking = reader.readObjectOrNull<ContestRanking>(
-    offsets[13],
+    offsets[14],
     ContestRankingSchema.deserialize,
     allOffsets,
   );
   object.userContestRankingHistory = reader.readObjectList<ContestSummary>(
-    offsets[14],
+    offsets[15],
     ContestSummarySchema.deserialize,
     allOffsets,
     ContestSummary(),
@@ -470,36 +477,38 @@ P _userDataDeserializeProp<P>(
     case 8:
       return (reader.readStringOrNull(offset)) as P;
     case 9:
-      return (reader.readString(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 10:
+      return (reader.readString(offset)) as P;
+    case 11:
       return (reader.readObjectOrNull<ProblemData>(
         offset,
         ProblemDataSchema.deserialize,
         allOffsets,
       )) as P;
-    case 11:
-      return (reader.readString(offset)) as P;
     case 12:
+      return (reader.readString(offset)) as P;
+    case 13:
       return (reader.readObjectList<RecentSubmission>(
         offset,
         RecentSubmissionSchema.deserialize,
         allOffsets,
         RecentSubmission(),
       )) as P;
-    case 13:
+    case 14:
       return (reader.readObjectOrNull<ContestRanking>(
         offset,
         ContestRankingSchema.deserialize,
         allOffsets,
       )) as P;
-    case 14:
+    case 15:
       return (reader.readObjectList<ContestSummary>(
         offset,
         ContestSummarySchema.deserialize,
         allOffsets,
         ContestSummary(),
       )) as P;
-    case 15:
+    case 16:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1843,6 +1852,75 @@ extension UserDataQueryFilter
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> listOrderIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'listOrder',
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> listOrderIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'listOrder',
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> listOrderEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'listOrder',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> listOrderGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'listOrder',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> listOrderLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'listOrder',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> listOrderBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'listOrder',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterFilterCondition> nicknameEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -2589,6 +2667,18 @@ extension UserDataQuerySortBy on QueryBuilder<UserData, UserData, QSortBy> {
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByListOrder() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listOrder', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByListOrderDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listOrder', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterSortBy> sortByNickname() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nickname', Sort.asc);
@@ -2676,6 +2766,18 @@ extension UserDataQuerySortThenBy
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByListOrder() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listOrder', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByListOrderDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listOrder', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterSortBy> thenByNickname() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nickname', Sort.asc);
@@ -2739,6 +2841,12 @@ extension UserDataQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'linkedinUrl', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QDistinct> distinctByListOrder() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'listOrder');
     });
   }
 
@@ -2831,6 +2939,12 @@ extension UserDataQueryProperty
     });
   }
 
+  QueryBuilder<UserData, int?, QQueryOperations> listOrderProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'listOrder');
+    });
+  }
+
   QueryBuilder<UserData, String, QQueryOperations> nicknameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nickname');
@@ -2880,6 +2994,651 @@ extension UserDataQueryProperty
 // **************************************************************************
 // IsarEmbeddedGenerator
 // **************************************************************************
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const ProblemDataSchema = Schema(
+  name: r'ProblemData',
+  id: 5306759286510392388,
+  properties: {
+    r'easySolved': PropertySchema(
+      id: 0,
+      name: r'easySolved',
+      type: IsarType.long,
+    ),
+    r'easySubmissions': PropertySchema(
+      id: 1,
+      name: r'easySubmissions',
+      type: IsarType.long,
+    ),
+    r'easyTotal': PropertySchema(
+      id: 2,
+      name: r'easyTotal',
+      type: IsarType.long,
+    ),
+    r'hardSolved': PropertySchema(
+      id: 3,
+      name: r'hardSolved',
+      type: IsarType.long,
+    ),
+    r'hardSubmissions': PropertySchema(
+      id: 4,
+      name: r'hardSubmissions',
+      type: IsarType.long,
+    ),
+    r'hardTotal': PropertySchema(
+      id: 5,
+      name: r'hardTotal',
+      type: IsarType.long,
+    ),
+    r'mediumSolved': PropertySchema(
+      id: 6,
+      name: r'mediumSolved',
+      type: IsarType.long,
+    ),
+    r'mediumSubmissions': PropertySchema(
+      id: 7,
+      name: r'mediumSubmissions',
+      type: IsarType.long,
+    ),
+    r'mediumTotal': PropertySchema(
+      id: 8,
+      name: r'mediumTotal',
+      type: IsarType.long,
+    )
+  },
+  estimateSize: _problemDataEstimateSize,
+  serialize: _problemDataSerialize,
+  deserialize: _problemDataDeserialize,
+  deserializeProp: _problemDataDeserializeProp,
+);
+
+int _problemDataEstimateSize(
+  ProblemData object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  return bytesCount;
+}
+
+void _problemDataSerialize(
+  ProblemData object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeLong(offsets[0], object.easySolved);
+  writer.writeLong(offsets[1], object.easySubmissions);
+  writer.writeLong(offsets[2], object.easyTotal);
+  writer.writeLong(offsets[3], object.hardSolved);
+  writer.writeLong(offsets[4], object.hardSubmissions);
+  writer.writeLong(offsets[5], object.hardTotal);
+  writer.writeLong(offsets[6], object.mediumSolved);
+  writer.writeLong(offsets[7], object.mediumSubmissions);
+  writer.writeLong(offsets[8], object.mediumTotal);
+}
+
+ProblemData _problemDataDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = ProblemData(
+    easySolved: reader.readLongOrNull(offsets[0]) ?? 0,
+    easySubmissions: reader.readLongOrNull(offsets[1]) ?? 0,
+    easyTotal: reader.readLongOrNull(offsets[2]) ?? 0,
+    hardSolved: reader.readLongOrNull(offsets[3]) ?? 0,
+    hardSubmissions: reader.readLongOrNull(offsets[4]) ?? 0,
+    hardTotal: reader.readLongOrNull(offsets[5]) ?? 0,
+    mediumSolved: reader.readLongOrNull(offsets[6]) ?? 0,
+    mediumSubmissions: reader.readLongOrNull(offsets[7]) ?? 0,
+    mediumTotal: reader.readLongOrNull(offsets[8]) ?? 0,
+  );
+  return object;
+}
+
+P _problemDataDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 1:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 2:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 3:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 4:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 5:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 6:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 7:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 8:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension ProblemDataQueryFilter
+    on QueryBuilder<ProblemData, ProblemData, QFilterCondition> {
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easySolvedEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'easySolved',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easySolvedGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'easySolved',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easySolvedLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'easySolved',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easySolvedBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'easySolved',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easySubmissionsEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'easySubmissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easySubmissionsGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'easySubmissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easySubmissionsLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'easySubmissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easySubmissionsBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'easySubmissions',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easyTotalEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'easyTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easyTotalGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'easyTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easyTotalLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'easyTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      easyTotalBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'easyTotal',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardSolvedEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hardSolved',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardSolvedGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hardSolved',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardSolvedLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hardSolved',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardSolvedBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hardSolved',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardSubmissionsEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hardSubmissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardSubmissionsGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hardSubmissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardSubmissionsLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hardSubmissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardSubmissionsBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hardSubmissions',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardTotalEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hardTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardTotalGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hardTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardTotalLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hardTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      hardTotalBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hardTotal',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumSolvedEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mediumSolved',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumSolvedGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mediumSolved',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumSolvedLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mediumSolved',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumSolvedBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mediumSolved',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumSubmissionsEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mediumSubmissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumSubmissionsGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mediumSubmissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumSubmissionsLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mediumSubmissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumSubmissionsBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mediumSubmissions',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumTotalEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mediumTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumTotalGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mediumTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumTotalLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mediumTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
+      mediumTotalBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mediumTotal',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension ProblemDataQueryObject
+    on QueryBuilder<ProblemData, ProblemData, QFilterCondition> {}
 
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
@@ -5815,648 +6574,3 @@ extension ContestSummaryQueryFilter
 
 extension ContestSummaryQueryObject
     on QueryBuilder<ContestSummary, ContestSummary, QFilterCondition> {}
-
-// coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
-
-const ProblemDataSchema = Schema(
-  name: r'ProblemData',
-  id: 5306759286510392388,
-  properties: {
-    r'easySolved': PropertySchema(
-      id: 0,
-      name: r'easySolved',
-      type: IsarType.long,
-    ),
-    r'easySubmissions': PropertySchema(
-      id: 1,
-      name: r'easySubmissions',
-      type: IsarType.long,
-    ),
-    r'easyTotal': PropertySchema(
-      id: 2,
-      name: r'easyTotal',
-      type: IsarType.long,
-    ),
-    r'hardSolved': PropertySchema(
-      id: 3,
-      name: r'hardSolved',
-      type: IsarType.long,
-    ),
-    r'hardSubmissions': PropertySchema(
-      id: 4,
-      name: r'hardSubmissions',
-      type: IsarType.long,
-    ),
-    r'hardTotal': PropertySchema(
-      id: 5,
-      name: r'hardTotal',
-      type: IsarType.long,
-    ),
-    r'mediumSolved': PropertySchema(
-      id: 6,
-      name: r'mediumSolved',
-      type: IsarType.long,
-    ),
-    r'mediumSubmissions': PropertySchema(
-      id: 7,
-      name: r'mediumSubmissions',
-      type: IsarType.long,
-    ),
-    r'mediumTotal': PropertySchema(
-      id: 8,
-      name: r'mediumTotal',
-      type: IsarType.long,
-    )
-  },
-  estimateSize: _problemDataEstimateSize,
-  serialize: _problemDataSerialize,
-  deserialize: _problemDataDeserialize,
-  deserializeProp: _problemDataDeserializeProp,
-);
-
-int _problemDataEstimateSize(
-  ProblemData object,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  var bytesCount = offsets.last;
-  return bytesCount;
-}
-
-void _problemDataSerialize(
-  ProblemData object,
-  IsarWriter writer,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  writer.writeLong(offsets[0], object.easySolved);
-  writer.writeLong(offsets[1], object.easySubmissions);
-  writer.writeLong(offsets[2], object.easyTotal);
-  writer.writeLong(offsets[3], object.hardSolved);
-  writer.writeLong(offsets[4], object.hardSubmissions);
-  writer.writeLong(offsets[5], object.hardTotal);
-  writer.writeLong(offsets[6], object.mediumSolved);
-  writer.writeLong(offsets[7], object.mediumSubmissions);
-  writer.writeLong(offsets[8], object.mediumTotal);
-}
-
-ProblemData _problemDataDeserialize(
-  Id id,
-  IsarReader reader,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  final object = ProblemData(
-    easySolved: reader.readLongOrNull(offsets[0]) ?? 0,
-    easySubmissions: reader.readLongOrNull(offsets[1]) ?? 0,
-    easyTotal: reader.readLongOrNull(offsets[2]) ?? 0,
-    hardSolved: reader.readLongOrNull(offsets[3]) ?? 0,
-    hardSubmissions: reader.readLongOrNull(offsets[4]) ?? 0,
-    hardTotal: reader.readLongOrNull(offsets[5]) ?? 0,
-    mediumSolved: reader.readLongOrNull(offsets[6]) ?? 0,
-    mediumSubmissions: reader.readLongOrNull(offsets[7]) ?? 0,
-    mediumTotal: reader.readLongOrNull(offsets[8]) ?? 0,
-  );
-  return object;
-}
-
-P _problemDataDeserializeProp<P>(
-  IsarReader reader,
-  int propertyId,
-  int offset,
-  Map<Type, List<int>> allOffsets,
-) {
-  switch (propertyId) {
-    case 0:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 1:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 2:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 3:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 4:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 5:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 6:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 7:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 8:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    default:
-      throw IsarError('Unknown property with id $propertyId');
-  }
-}
-
-extension ProblemDataQueryFilter
-    on QueryBuilder<ProblemData, ProblemData, QFilterCondition> {
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easySolvedEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'easySolved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easySolvedGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'easySolved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easySolvedLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'easySolved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easySolvedBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'easySolved',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easySubmissionsEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'easySubmissions',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easySubmissionsGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'easySubmissions',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easySubmissionsLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'easySubmissions',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easySubmissionsBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'easySubmissions',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easyTotalEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'easyTotal',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easyTotalGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'easyTotal',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easyTotalLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'easyTotal',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      easyTotalBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'easyTotal',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardSolvedEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'hardSolved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardSolvedGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'hardSolved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardSolvedLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'hardSolved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardSolvedBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'hardSolved',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardSubmissionsEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'hardSubmissions',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardSubmissionsGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'hardSubmissions',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardSubmissionsLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'hardSubmissions',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardSubmissionsBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'hardSubmissions',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardTotalEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'hardTotal',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardTotalGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'hardTotal',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardTotalLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'hardTotal',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      hardTotalBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'hardTotal',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumSolvedEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mediumSolved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumSolvedGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'mediumSolved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumSolvedLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'mediumSolved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumSolvedBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'mediumSolved',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumSubmissionsEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mediumSubmissions',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumSubmissionsGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'mediumSubmissions',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumSubmissionsLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'mediumSubmissions',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumSubmissionsBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'mediumSubmissions',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumTotalEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mediumTotal',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumTotalGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'mediumTotal',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumTotalLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'mediumTotal',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<ProblemData, ProblemData, QAfterFilterCondition>
-      mediumTotalBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'mediumTotal',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-}
-
-extension ProblemDataQueryObject
-    on QueryBuilder<ProblemData, ProblemData, QFilterCondition> {}

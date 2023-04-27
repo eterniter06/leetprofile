@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:ui_elements/database.dart';
 import '../dataclass/user_class/userdata.dart';
 import '../userpage/userview.dart';
 
-class UserCard extends StatefulWidget {
+class UserCard extends StatelessWidget {
   final UserData userData;
+  final Color? color;
+  final double elevation;
+  const UserCard(
+      {super.key, required this.userData, this.color, this.elevation = 1.0});
 
-  const UserCard({super.key, required this.userData});
-
-  @override
-  State<UserCard> createState() => _UserCardState();
-}
-
-class _UserCardState extends State<UserCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: elevation,
+      color: color,
       margin: const EdgeInsets.fromLTRB(6.0, 8.0, 6.0, 2.0),
       child: InkWell(
         onTap: () {
@@ -23,37 +21,38 @@ class _UserCardState extends State<UserCard> {
             context,
             MaterialPageRoute(
               builder: (context) => UserView(
-                userData: widget.userData,
+                userData: userData,
               ),
             ),
           );
         },
-        onLongPress: () async {
-          String? nickname = await showDialog(
-            context: context,
-            builder: (context) {
-              return NicknameInputDialog(oldNickname: widget.userData.nickname);
-            },
-          );
+        // long press is now used to trigger drag to reposition card
+        // onLongPress: () async {
+        //   String? nickname = await showDialog(
+        //     context: context,
+        //     builder: (context) {
+        //       return NicknameInputDialog(oldNickname: widget.userData.nickname);
+        //     },
+        //   );
 
-          if (nickname != null) {
-            var isar = await Database.isar();
+        //   if (nickname != null) {
+        //     var isar = await Database.isar();
 
-            isar!.writeTxn(() async {
-              await isar.userDatas.put(widget.userData);
-            });
+        //     isar!.writeTxn(() async {
+        //       await isar.userDatas.put(widget.userData);
+        //     });
 
-            setState(() {
-              widget.userData.nickname = nickname;
-            });
-          }
-        },
+        //     setState(() {
+        //       widget.userData.nickname = nickname;
+        //     });
+        //   }
+        // },
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8.0, 6.0, 8.0, 6.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SquircleNetworkImage(imageLink: widget.userData.avatar),
+              SquircleNetworkImage(imageLink: userData.avatar),
               const SizedBox(
                 height: 0.0,
                 width: 12.0,
@@ -62,7 +61,7 @@ class _UserCardState extends State<UserCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.userData.nickname,
+                    userData.nickname,
                     style: const TextStyle(
                       color: Colors.amber,
                       fontSize: 24.0,
@@ -70,7 +69,7 @@ class _UserCardState extends State<UserCard> {
                     ),
                   ),
                   const Padding(padding: EdgeInsets.all(4)),
-                  Text(widget.userData.username),
+                  Text(userData.username),
                 ],
               ),
             ],

@@ -31,4 +31,16 @@ class Database {
     if (_isar == null) init();
     return _isar!.collection<UserData>().count();
   }
+
+  static Future<void> put(UserData user) async {
+    var isar = await Database.isar();
+    await isar!.writeTxn(() async {
+      await Database.database().then((db) => db!.put(user));
+    });
+  }
+
+  static Future<void> putAll(List<UserData> userList) async {
+    var isar = await Database.isar();
+    await isar!.writeTxn(() => isar.userDatas.putAll(userList));
+  }
 }

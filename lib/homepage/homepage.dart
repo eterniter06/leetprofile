@@ -1,11 +1,9 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:ui_elements/database.dart';
 import 'package:ui_elements/dataclass/data_parser.dart';
 import 'package:ui_elements/homepage/usercard.dart';
 import '../dataclass/user_class/userdata.dart';
-import '../userpage/userview.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -41,13 +39,14 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadUsers() async {
     var isar = await Database.isar();
-    var tempUserList =
-        await isar!.userDatas.filter().isarIdGreaterThan(Isar.minId).findAll();
+    var tempUserList = await isar!.userDatas
+        .filter()
+        .isarIdGreaterThan(Isar.minId)
+        .sortByListOrder()
+        .findAll();
 
     setState(() {
-      for (var user in tempUserList) {
-        userList.add(user);
-      }
+      userList = tempUserList;
     });
   }
 
@@ -56,15 +55,12 @@ class _HomePageState extends State<HomePage> {
     return data == null ? null : UserData.fromMap(dataMap: data);
   }
 
-  Future<void> addToList(UserData user) async {
-    var database = await Database.isar();
-    await database!.writeTxn(() async {
-      await Database.database().then((db) => db!.put(user));
-    });
+  Future<void> addToList(UserData user, [int? index]) async {
+    await Database.put(user);
 
     setState(() {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      userList.add(user);
+      userList.insert(index ?? userList.length, user);
     });
   }
 
@@ -94,14 +90,17 @@ class _HomePageState extends State<HomePage> {
           );
 
           if (username == null) return;
+          username = username.trim();
 
           var user = await createUser(username.toLowerCase());
 
           if (user == null) {
             informUser(
                 'Username "$username" does not exist. Are you sure you typed in the correct username?');
-          } else {
+          } else if (isNotInList(username.toLowerCase())) {
             addToList(user);
+          } else if (mounted) {
+            informUser('"$username" is already in list.');
           }
         },
         child: const Icon(Icons.add),
@@ -116,13 +115,78 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Center(
-        child: ListView.builder(
-          itemCount: userList.length,
-          itemBuilder: (context, index) => UserCard(userData: userList[index]),
+      body: ReorderableListView(
+        proxyDecorator: (child, index, animation) => UserCard(
+          userData: userList[index],
+          elevation: 3,
+          color: Color.lerp(Colors.white, Colors.black, 0.08),
         ),
+        onReorder: (oldIndex, newIndex) async {
+          setState(() {
+            newIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
+            UserData user = userList.removeAt(oldIndex);
+            addToList(user, newIndex);
+          });
+          refreshListOrder();
+          await Database.putAll(userList);
+        },
+        // itemCount: userList.length,
+        // itemBuilder: (context, index) => Dismissible(
+        // background: Container(color: Colors.redAccent),
+        // onDismissed: (direction) async {
+        //   var isar = await Database.isar();
+        //   await isar!.writeTxn(() async {
+        //     await isar.userDatas.delete(userList[index].isarId);
+        //   });
+        //   setState(() {
+        //     userList.removeAt(index);
+        //   });
+        //   refreshListOrder();
+        //   await isar.writeTxn(() => isar.userDatas.putAll(userList));
+        // },
+        // key: UniqueKey(),
+        // child: genCard(userList, index),
+        // ),
+        children: [
+          for (int index = 0; index < userList.length; ++index)
+            Dismissible(
+              background: Container(color: Colors.redAccent),
+              onDismissed: (direction) async {
+                var isar = await Database.isar();
+                await isar!.writeTxn(() async {
+                  await isar.userDatas.delete(userList[index].isarId);
+                });
+                setState(() {
+                  userList.removeAt(index);
+                });
+                refreshListOrder();
+                await isar.writeTxn(() => isar.userDatas.putAll(userList));
+              },
+              key: Key(userList[index].username),
+              child: genCard(userList, index),
+            ),
+        ],
       ),
     );
+  }
+
+  void refreshListOrder() {
+    for (int i = 0; i < userList.length; ++i) {
+      userList[i].listOrder = i;
+    }
+  }
+
+  UserCard genCard(List<UserData> userList, int index) {
+    userList[index].listOrder = index;
+    Database.put(userList[index]);
+    return UserCard(userData: userList[index]);
+  }
+
+  bool isNotInList(String username) {
+    var index = userList.indexWhere((user) {
+      return user.username == username;
+    });
+    return index == -1;
   }
 }
 
@@ -226,23 +290,6 @@ class _UserInputDialogState extends State<UserInputDialog> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class AnimatedCard extends StatelessWidget {
-  final UserData userData;
-  const AnimatedCard({super.key, required this.userData});
-
-  @override
-  Widget build(BuildContext context) {
-    return OpenContainer(
-      closedBuilder: (context, action) {
-        return UserCard(userData: userData);
-      },
-      openBuilder: (context, action) {
-        return UserView(userData: userData);
-      },
     );
   }
 }
