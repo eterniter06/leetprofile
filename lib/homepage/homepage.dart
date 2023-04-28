@@ -70,6 +70,7 @@ class _HomePageState extends State<HomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           showCloseIcon: true,
+          closeIconColor: Colors.amber,
           content: Text(info),
         ),
       );
@@ -157,7 +158,24 @@ class _HomePageState extends State<HomePage> {
                   await isar.userDatas.delete(userList[index].isarId);
                 });
                 setState(() {
-                  userList.removeAt(index);
+                  UserData removedUser = userList.removeAt(index);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        showCloseIcon: true,
+                        closeIconColor: Colors.amber,
+                        content: Text('User ${removedUser.nickname} removed.'),
+                        action: SnackBarAction(
+                          disabledTextColor: Colors.white,
+                          label: 'Undo?',
+                          textColor: Colors.amberAccent,
+                          onPressed: () {
+                            addToList(removedUser, index);
+                          },
+                        ),
+                      ),
+                    );
+                  }
                 });
                 refreshListOrder();
                 await isar.writeTxn(() => isar.userDatas.putAll(userList));
@@ -218,6 +236,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             showCloseIcon: true,
+            closeIconColor: Colors.amber,
             content: Text('Searching user: ${_textController.text}')),
       );
 
