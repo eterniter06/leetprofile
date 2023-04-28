@@ -64,14 +64,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void informUser(String info) {
+  void informUser(Widget content) {
     setState(() {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           showCloseIcon: true,
           closeIconColor: Colors.amber,
-          content: Text(info),
+          content: content,
         ),
       );
     });
@@ -98,12 +98,39 @@ class _HomePageState extends State<HomePage> {
 
             if (user == null) {
               informUser(
-                  'Username "$username" does not exist. Are you sure you typed in the correct username?');
+                RichText(
+                  text: TextSpan(
+                    text: 'Username ',
+                    children: [
+                      TextSpan(
+                        text: username,
+                        style: const TextStyle(color: Colors.amber),
+                      ),
+                      const TextSpan(
+                          text:
+                              ' does not exist. Are you sure you typed in the correct username?'),
+                    ],
+                  ),
+                ),
+              );
             } else {
               addToList(user);
             }
           } else if (mounted) {
-            informUser('"$username" is already in list.');
+            informUser(
+              RichText(
+                text: TextSpan(
+                  text: username,
+                  style: const TextStyle(color: Colors.amber),
+                  children: const [
+                    TextSpan(
+                      text: ' is already in list.',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
         },
         child: const Icon(Icons.add),
@@ -155,19 +182,28 @@ class _HomePageState extends State<HomePage> {
             Dismissible(
               background: Container(color: Colors.redAccent),
               onDismissed: (direction) async {
-                var isar = await Database.isar();
-                await isar!.writeTxn(() async {
-                  await isar.userDatas.delete(userList[index].isarId);
-                });
+                Database.delete(userList[index]);
                 setState(() {
                   UserData removedUser = userList.removeAt(index);
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
+                        duration: const Duration(seconds: 6),
                         showCloseIcon: true,
                         closeIconColor: Colors.amber,
-                        content:
-                            Text('User "${removedUser.nickname}" removed.'),
+                        content: RichText(
+                          softWrap: true,
+                          text: TextSpan(
+                            text: 'User ',
+                            children: [
+                              TextSpan(
+                                text: removedUser.nickname,
+                                style: const TextStyle(color: Colors.amber),
+                              ),
+                              const TextSpan(text: ' removed'),
+                            ],
+                          ),
+                        ),
                         action: SnackBarAction(
                           disabledTextColor: Colors.white,
                           label: 'Undo?',
@@ -181,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                   }
                 });
                 refreshListOrder();
-                await isar.writeTxn(() => isar.userDatas.putAll(userList));
+                Database.putAll(userList);
               },
               key: Key(userList[index].username),
               child: genCard(userList, index),
@@ -238,9 +274,21 @@ class _UserInputDialogState extends State<UserInputDialog> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            showCloseIcon: true,
-            closeIconColor: Colors.amber,
-            content: Text('Searching user: ${_textController.text}')),
+          duration: const Duration(seconds: 3),
+          showCloseIcon: true,
+          closeIconColor: Colors.amber,
+          content: RichText(
+            text: TextSpan(
+              text: 'Searching user: ',
+              children: [
+                TextSpan(
+                  text: _textController.text,
+                  style: const TextStyle(color: Colors.amber),
+                )
+              ],
+            ),
+          ),
+        ),
       );
 
       Navigator.pop(context, _textController.text);

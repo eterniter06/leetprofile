@@ -43,4 +43,11 @@ class Database {
     var isar = await Database.isar();
     await isar!.writeTxn(() => isar.userDatas.putAll(userList));
   }
+
+  static Future<void> delete(UserData user) async {
+    var isar = await Database.isar();
+    await isar!.writeTxn(() async {
+      await isar.userDatas.delete(user.isarId);
+    });
+  }
 }
