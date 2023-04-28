@@ -48,14 +48,36 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       userList = tempUserList;
     });
+
+    await _updateUsers();
   }
 
-  Future<UserData?> createUser(String username) async {
+  Future<void> _updateUser(UserData user) async {
+    var dataMap = await DataParser(username: user.username).getAllAsJson();
+    user.update(updatedUser: UserData.fromMap(dataMap: dataMap!));
+  }
+
+  Future<void> _updateUsers() async {
+    List<Future> futureJsonList = [];
+    for (var user in userList) {
+      futureJsonList.add(DataParser(username: user.username).getAllAsJson());
+    }
+
+    var jsonList = await Future.wait(futureJsonList);
+
+    setState(() {
+      for (int i = 0; i < userList.length; ++i) {
+        userList[i].update(updatedUser: UserData.fromMap(dataMap: jsonList[i]));
+      }
+    });
+  }
+
+  Future<UserData?> _createUser(String username) async {
     Map? data = await DataParser(username: username).getAllAsJson();
     return data == null ? null : UserData.fromMap(dataMap: data);
   }
 
-  Future<void> addToList(UserData user, [int? index]) async {
+  Future<void> _addToList(UserData user, [int? index]) async {
     await Database.put(user);
 
     setState(() {
@@ -64,7 +86,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void informUser(Widget content) {
+  void _informUser(Widget content) {
     setState(() {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -94,10 +116,10 @@ class _HomePageState extends State<HomePage> {
           username = username.trim();
 
           if (isNotInList(username.toLowerCase())) {
-            var user = await createUser(username.toLowerCase());
+            var user = await _createUser(username.toLowerCase());
 
             if (user == null) {
-              informUser(
+              _informUser(
                 RichText(
                   text: TextSpan(
                     text: 'Username ',
@@ -114,10 +136,10 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             } else {
-              addToList(user);
+              _addToList(user);
             }
           } else if (mounted) {
-            informUser(
+            _informUser(
               RichText(
                 text: TextSpan(
                   text: username,
@@ -155,7 +177,7 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             newIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
             UserData user = userList.removeAt(oldIndex);
-            addToList(user, newIndex);
+            _addToList(user, newIndex);
           });
           refreshListOrder();
           await Database.putAll(userList);
@@ -209,7 +231,7 @@ class _HomePageState extends State<HomePage> {
                           label: 'Undo?',
                           textColor: Colors.amberAccent,
                           onPressed: () {
-                            addToList(removedUser, index);
+                            _addToList(removedUser, index);
                           },
                         ),
                       ),
