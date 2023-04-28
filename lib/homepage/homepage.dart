@@ -93,13 +93,15 @@ class _HomePageState extends State<HomePage> {
           if (username == null) return;
           username = username.trim();
 
-          var user = await createUser(username.toLowerCase());
+          if (isNotInList(username.toLowerCase())) {
+            var user = await createUser(username.toLowerCase());
 
-          if (user == null) {
-            informUser(
-                'Username "$username" does not exist. Are you sure you typed in the correct username?');
-          } else if (isNotInList(username.toLowerCase())) {
-            addToList(user);
+            if (user == null) {
+              informUser(
+                  'Username "$username" does not exist. Are you sure you typed in the correct username?');
+            } else {
+              addToList(user);
+            }
           } else if (mounted) {
             informUser('"$username" is already in list.');
           }
@@ -164,7 +166,8 @@ class _HomePageState extends State<HomePage> {
                       SnackBar(
                         showCloseIcon: true,
                         closeIconColor: Colors.amber,
-                        content: Text('User ${removedUser.nickname} removed.'),
+                        content:
+                            Text('User "${removedUser.nickname}" removed.'),
                         action: SnackBarAction(
                           disabledTextColor: Colors.white,
                           label: 'Undo?',
