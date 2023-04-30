@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:ui_elements/database.dart';
 import 'package:ui_elements/dataclass/data_parser.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
@@ -38,22 +39,27 @@ class _UserViewState extends State<UserView> {
         title: Text(widget.userData.nickname),
         actions: [
           IconButton(
-              onPressed: () async {
-                var dataMap =
-                    await DataParser(username: widget.userData.username)
-                        .getAllAsJson();
+            icon: const Icon(Icons.share),
+            onPressed: () =>
+                Share.share('https://leetcode.com/${widget.userData.username}'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.replay_rounded),
+            onPressed: () async {
+              var dataMap = await DataParser(username: widget.userData.username)
+                  .getAllAsJson();
 
-                setState(() {
-                  widget.userData
-                      .update(updatedUser: UserData.fromMap(dataMap: dataMap!));
-                });
+              setState(() {
+                widget.userData
+                    .update(updatedUser: UserData.fromMap(dataMap: dataMap!));
+              });
 
-                var isar = await Database.isar();
-                isar!.writeTxn(() async {
-                  await isar.userDatas.put(widget.userData);
-                });
-              },
-              icon: const Icon(Icons.replay_rounded))
+              var isar = await Database.isar();
+              isar!.writeTxn(() async {
+                await isar.userDatas.put(widget.userData);
+              });
+            },
+          ),
         ],
       ),
       body: SafeArea(

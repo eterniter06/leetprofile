@@ -17,8 +17,7 @@ class UserCard extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(6.0, 8.0, 6.0, 2.0),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
+          Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => UserView(
                 userData: userData,
