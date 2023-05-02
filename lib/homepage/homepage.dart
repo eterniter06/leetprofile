@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(
-        title: const Text('Home Title'),
+        title: const Text('LeetProfile'),
         actions: [
           IconButton(
             tooltip: "Today's daily question",
