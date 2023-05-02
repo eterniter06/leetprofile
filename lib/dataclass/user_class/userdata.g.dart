@@ -131,7 +131,7 @@ const UserDataSchema = CollectionSchema(
   getId: _userDataGetId,
   getLinks: _userDataGetLinks,
   attach: _userDataAttach,
-  version: '3.1.0',
+  version: '3.1.0+1',
 );
 
 int _userDataEstimateSize(
