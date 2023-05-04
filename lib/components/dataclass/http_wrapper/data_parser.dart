@@ -1,10 +1,10 @@
 import 'package:http/http.dart' as http;
-import 'package:ui_elements/dataclass/query_class/query_all.dart';
-import 'package:ui_elements/dataclass/query_class/user_independent_query.dart';
 import 'dart:convert';
 import 'dart:async';
 
-import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import '../query_class/query_all.dart';
+import '../query_class/user_independent_query.dart';
+import '../user_class/userdata.dart';
 
 class DataParser {
   final String username;

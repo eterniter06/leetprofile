@@ -1,0 +1,191 @@
+import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:ui_elements/components/database/database.dart';
+import 'package:ui_elements/components/recent_submission_list.dart';
+
+import '../components/dataclass/http_wrapper/data_parser.dart';
+import '../components/dataclass/user_class/userdata.dart';
+import '../components/difficulty_section.dart';
+import '../components/language_section.dart';
+
+class UserPage extends StatefulWidget {
+  final UserData userData;
+  const UserPage({super.key, required this.userData});
+
+  @override
+  State<UserPage> createState() => _UserPageState();
+}
+
+class _UserPageState extends State<UserPage> {
+  num getSolvedCount(ProblemData? problemData) {
+    return problemData == null
+        ? 0
+        : problemData.easySolved +
+            problemData.mediumSolved +
+            problemData.hardSolved;
+  }
+
+  double valueScaler(BuildContext context, num value) {
+    Size size = MediaQuery.of(context).size;
+    double width = size.width;
+    double ratio = width / 590.0;
+
+    return ratio * value;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.userData.nickname),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () =>
+                Share.share('https://leetcode.com/${widget.userData.username}'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.replay_rounded),
+            onPressed: () async {
+              var dataMap = await DataParser(username: widget.userData.username)
+                  .getAllAsJson();
+
+              setState(() {
+                widget.userData
+                    .update(updatedUser: UserData.fromMap(dataMap: dataMap!));
+              });
+
+              var isar = await Database.isar();
+              isar!.writeTxn(() async {
+                await isar.userDatas.put(widget.userData);
+              });
+            },
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    flex: 7,
+                    child: Image.network(
+                      widget.userData.avatar,
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
+                  Flexible(
+                    fit: FlexFit.tight,
+                    flex: 5,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.userData.username,
+                          overflow: TextOverflow.fade,
+                          style: TextStyle(
+                            color: Colors.amber,
+                            fontSize: valueScaler(context, 24.0),
+                            fontFamily: 'Overpass',
+                          ),
+                        ),
+                        Text(
+                            'Contest Rating: ${widget.userData.userContestRanking?.rating.round()}'),
+                        Text(
+                            'Contests Attended: ${widget.userData.userContestRanking?.attendedContestsCount}'),
+                        Text(
+                            'Global Ranking: ${widget.userData.userContestRanking?.globalRanking}'),
+                        Text(
+                            'Top percentage: ${widget.userData.userContestRanking?.topPercentage}'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+              ),
+              Card(
+                child: Padding(
+                  padding: EdgeInsets.all(valueScaler(context, 8.0)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(valueScaler(context, 8.0)),
+                        child: Text(
+                          'Solved Problems',
+                          style: TextStyle(
+                            fontSize: valueScaler(context, 24),
+                            color: Colors.amber,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(
+                          valueScaler(context, 12.0),
+                        ),
+                        child: Text(
+                          'Difficulty',
+                          style: TextStyle(
+                            fontSize: valueScaler(context, 16),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      DifficultySection(
+                        problemData: widget.userData.problemData,
+                        valueScaler: valueScaler,
+                      ),
+                      SizedBox(
+                        height: valueScaler(context, 16),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: valueScaler(context, 6.0),
+                          horizontal: valueScaler(context, 12.0),
+                        ),
+                        child: Text(
+                          'Language',
+                          style: TextStyle(
+                            fontSize: valueScaler(context, 16),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      LanguageSection(
+                          valueScaler: valueScaler,
+                          languageProblemList:
+                              widget.userData.languageProblemCount ?? []),
+                      const Divider(),
+                      Container(
+                        padding: EdgeInsets.all(valueScaler(context, 4)),
+                        margin: EdgeInsets.only(top: valueScaler(context, 5)),
+                        child: Text(
+                          'Total problems solved: ${getSolvedCount(widget.userData.problemData)}',
+                          style: TextStyle(
+                            fontSize: valueScaler(context, 20),
+                            color: const Color.fromRGBO(97, 97, 97, 1),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              RecentSubmissionList(
+                  valueScaler: valueScaler,
+                  submissionList: widget.userData.recentAcSubmissionList ?? []),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

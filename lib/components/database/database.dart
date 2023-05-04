@@ -1,6 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import '../dataclass/user_class/userdata.dart';
 
 const String database = 'users.db';
 

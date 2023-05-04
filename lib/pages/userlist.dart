@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:ui_elements/database.dart';
-import 'package:ui_elements/dataclass/data_parser.dart';
-import 'package:ui_elements/homepage/usercard.dart';
-import '../dataclass/user_class/userdata.dart';
+import 'package:ui_elements/components/database/database.dart';
+
+import '../components/dataclass/http_wrapper/data_parser.dart';
+import '../components/dataclass/user_class/userdata.dart';
+import '../components/user_card.dart';
+import '../components/dialog/user_input.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -23,21 +25,21 @@ class MainApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
-      home: const HomePage(),
+      home: const UserListPage(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({
+class UserListPage extends StatefulWidget {
+  const UserListPage({
     super.key,
   });
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<UserListPage> createState() => _UserListPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _UserListPageState extends State<UserListPage> {
   List<UserData> userList = [];
 
   @override
@@ -168,20 +170,20 @@ class _HomePageState extends State<HomePage> {
       ),
       appBar: AppBar(
         title: const Text('LeetProfile'),
-        actions: [
+        actions: const [
           IconButton(
             tooltip: "Today's daily question",
-            icon: const Icon(Icons.local_fire_department_sharp),
-            onPressed: () => 0,
+            icon: Icon(Icons.local_fire_department_sharp),
+            onPressed: null,
           ),
         ],
       ),
       body: ReorderableListView(
-        proxyDecorator: (child, index, animation) => UserCard(
-          userData: userList[index],
-          elevation: 3,
-          color: Color.lerp(Colors.white, Colors.black, 0.08),
-        ),
+        // proxyDecorator: (child, index, animation) => UserCard(
+        //   userData: userList[index],
+        //   elevation: 3,
+        //   color: Color.lerp(Colors.white, Colors.black, 0.08),
+        // ),
         onReorder: (oldIndex, newIndex) async {
           setState(() {
             newIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
@@ -191,6 +193,8 @@ class _HomePageState extends State<HomePage> {
           refreshListOrder();
           await Database.putAll(userList);
         },
+        // ReorderableListView.builder does not work, indexing issues
+        // Preferably create a custom listview that is reorderable and has animations
         // itemCount: userList.length,
         // itemBuilder: (context, index) => Dismissible(
         // background: Container(color: Colors.redAccent),
@@ -264,7 +268,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  UserCard genCard(List<UserData> userList, int index) {
+  dynamic genCard(List<UserData> userList, int index) {
     userList[index].listOrder = index;
     Database.put(userList[index]);
     return UserCard(userData: userList[index]);
@@ -275,122 +279,5 @@ class _HomePageState extends State<HomePage> {
       return user.username == username;
     });
     return index == -1;
-  }
-}
-
-class UserInputDialog extends StatefulWidget {
-  const UserInputDialog({
-    super.key,
-  });
-
-  @override
-  State<UserInputDialog> createState() => _UserInputDialogState();
-}
-
-class _UserInputDialogState extends State<UserInputDialog> {
-  final _textController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-
-  void submitUserInput() {
-    if (_formKey.currentState?.validate() ?? false) {
-      setState(() {
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          duration: const Duration(seconds: 3),
-          showCloseIcon: true,
-          closeIconColor: Colors.amber,
-          content: RichText(
-            text: TextSpan(
-              text: 'Searching user: ',
-              children: [
-                TextSpan(
-                  text: _textController.text,
-                  style: const TextStyle(color: Colors.amber),
-                )
-              ],
-            ),
-          ),
-        ),
-      );
-
-      Navigator.pop(context, _textController.text);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialog(
-      title: const Text('Enter username'),
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: SizedBox(
-            height: 64,
-            width: 64,
-            child: Image.asset(
-              'assets/leetcode_logo.png',
-              semanticLabel: 'Leetcode logo',
-            ),
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(26.0, 8.0, 26.0, 4.0),
-          child: Text(
-            'Enter profile username to search:',
-            softWrap: true,
-            textWidthBasis: TextWidthBasis.parent,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(22, 16, 22, 8),
-          child: Form(
-            key: _formKey,
-            child: TextFormField(
-              keyboardType: TextInputType.name,
-              autofocus: true,
-              controller: _textController,
-              validator: (String? username) {
-                if (username == null || username.isEmpty) {
-                  return 'Username cannot be empty.';
-                }
-                return null;
-              },
-              onFieldSubmitted: (value) => submitUserInput(),
-              textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(
-                label: Text('Leetcode Username'),
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.only(left: 8),
-              ),
-              enableSuggestions: true,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 22),
-          child: ElevatedButton(
-            onPressed: () => submitUserInput(),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                Text('Search'),
-                Icon(Icons.search),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }
