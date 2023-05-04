@@ -21,6 +21,7 @@ class SocialMediaButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
+      tooltip: "Launch $socialMedia profile",
       onPressed: () async {
         Uri link = Uri.parse(this.link);
         if (await canLaunchUrl(link) == true) {

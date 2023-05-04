@@ -139,7 +139,14 @@ class _UserPageState extends State<UserPage> {
                                 SocialMediaButton(
                                   icon: FontAwesomeIcons.github,
                                   link: widget.userData.githubUrl!,
-                                  color: const Color(0xff171515),
+                                  // color: const Color(0xff171515),
+                                  // Workaround so that github logo is visible against dark background
+                                  // Check to see if logo color and background can be adjusted
+                                  color: MediaQuery.of(context)
+                                              .platformBrightness ==
+                                          Brightness.dark
+                                      ? const Color(0xffffffff)
+                                      : const Color(0xff171515),
                                   socialMedia: 'Github',
                                   valueScaler: valueScaler,
                                 )

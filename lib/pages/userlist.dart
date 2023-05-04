@@ -81,7 +81,7 @@ class _UserListPageState extends State<UserListPage> {
       }
     });
 
-    _informUser(const Text('All users have been refreshed'));
+    _informUser(const Text('All user profiles have been refreshed'));
   }
 
   Future<UserData?> _createUser(String username) async {
