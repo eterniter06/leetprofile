@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:ui_elements/components/database/database.dart';
 import 'package:ui_elements/components/recent_submission_list.dart';
@@ -7,6 +8,7 @@ import '../components/dataclass/http_wrapper/data_parser.dart';
 import '../components/dataclass/user_class/userdata.dart';
 import '../components/difficulty_section.dart';
 import '../components/language_section.dart';
+import '../components/social_media_button.dart';
 
 class UserPage extends StatefulWidget {
   final UserData userData;
@@ -101,6 +103,36 @@ class _UserPageState extends State<UserPage> {
                             'Global Ranking: ${widget.userData.userContestRanking?.globalRanking}'),
                         Text(
                             'Top percentage: ${widget.userData.userContestRanking?.topPercentage}'),
+                        if (widget.userData.githubUrl != null ||
+                            widget.userData.linkedinUrl != null) ...[
+                          SizedBox(
+                            height: valueScaler(context, 20),
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (widget.userData.linkedinUrl != null) ...[
+                                SocialMediaButton(
+                                  icon: FontAwesomeIcons.linkedin,
+                                  link: widget.userData.linkedinUrl!,
+                                  color: const Color(0xff0077b5),
+                                  socialMedia: 'Linkedin',
+                                  valueScaler: valueScaler,
+                                ),
+                                SizedBox(width: valueScaler(context, 8)),
+                              ],
+                              if (widget.userData.githubUrl != null)
+                                SocialMediaButton(
+                                  icon: FontAwesomeIcons.github,
+                                  link: widget.userData.githubUrl!,
+                                  color: const Color(0xff171515),
+                                  socialMedia: 'Github',
+                                  valueScaler: valueScaler,
+                                )
+                            ],
+                          )
+                        ],
                       ],
                     ),
                   ),
@@ -174,6 +206,9 @@ class _UserPageState extends State<UserPage> {
                             color: const Color.fromRGBO(97, 97, 97, 1),
                           ),
                         ),
+                      ),
+                      SizedBox(
+                        height: valueScaler(context, 16),
                       ),
                     ],
                   ),
