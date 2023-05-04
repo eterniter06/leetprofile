@@ -23,7 +23,6 @@ class MainApp extends StatelessWidget {
         brightness: Brightness.dark,
         fontFamily: 'Overpass',
       ),
-      debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
       home: const UserListPage(),
     );
@@ -81,6 +80,8 @@ class _UserListPageState extends State<UserListPage> {
         userList[i].update(updatedUser: UserData.fromMap(dataMap: jsonList[i]));
       }
     });
+
+    _informUser(const Text('All users have been refreshed'));
   }
 
   Future<UserData?> _createUser(String username) async {
@@ -170,8 +171,15 @@ class _UserListPageState extends State<UserListPage> {
       ),
       appBar: AppBar(
         title: const Text('LeetProfile'),
-        actions: const [
+        actions: [
           IconButton(
+            tooltip: "Refresh all users",
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: () {
+              _updateUsers();
+            },
+          ),
+          const IconButton(
             tooltip: "Today's daily question",
             icon: Icon(Icons.local_fire_department_sharp),
             onPressed: null,

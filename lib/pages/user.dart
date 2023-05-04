@@ -42,12 +42,8 @@ class _UserPageState extends State<UserPage> {
         title: Text(widget.userData.nickname),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () =>
-                Share.share('https://leetcode.com/${widget.userData.username}'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.replay_rounded),
+            tooltip: 'Refresh user',
+            icon: const Icon(Icons.refresh_rounded),
             onPressed: () async {
               var dataMap = await DataParser(username: widget.userData.username)
                   .getAllAsJson();
@@ -62,6 +58,12 @@ class _UserPageState extends State<UserPage> {
                 await isar.userDatas.put(widget.userData);
               });
             },
+          ),
+          IconButton(
+            tooltip: 'Share leetcode profile',
+            icon: const Icon(Icons.share),
+            onPressed: () =>
+                Share.share('https://leetcode.com/${widget.userData.username}'),
           ),
         ],
       ),

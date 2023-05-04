@@ -31,7 +31,7 @@ class SocialMediaButton extends StatelessWidget {
       },
       icon: FaIcon(
         icon,
-        semanticLabel: "$socialMedia profile link",
+        semanticLabel: "$socialMedia profile",
         color: color,
         size: valueScaler(context, 40),
       ),
