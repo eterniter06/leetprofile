@@ -57,6 +57,17 @@ class _UserPageState extends State<UserPage> {
               isar!.writeTxn(() async {
                 await isar.userDatas.put(widget.userData);
               });
+
+              setState(() {
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    showCloseIcon: true,
+                    closeIconColor: Colors.amber,
+                    content: Text('User profile has been refreshed.'),
+                  ),
+                );
+              });
             },
           ),
           IconButton(
