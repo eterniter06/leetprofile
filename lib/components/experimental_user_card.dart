@@ -7,12 +7,12 @@ class ExperimentalUserCard extends StatelessWidget {
   final UserData userData;
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        leading: CircularNetworkImage(imageLink: userData.avatar),
-        title: Text(userData.nickname),
-        subtitle: Text(userData.username),
-      ),
+    return ListTile(
+      tileColor: const Color(0xff222222),
+      style: ListTileStyle.list,
+      leading: CircularNetworkImage(imageLink: userData.avatar),
+      title: Text(userData.nickname),
+      subtitle: Text(userData.username),
     );
   }
 }

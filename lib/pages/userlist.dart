@@ -150,7 +150,9 @@ class _UserListPageState extends State<UserListPage> {
                 ),
               );
             } else {
-              userList.add(user);
+              setState(() {
+                userList.add(user);
+              });
             }
           } else if (mounted) {
             _informUser(
