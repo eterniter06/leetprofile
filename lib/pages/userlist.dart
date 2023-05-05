@@ -100,7 +100,7 @@ class _UserListPageState extends State<UserListPage> {
   //   });
   // }
 
-  void _informUser(Widget content) {
+  void _informUser(Widget content, [SnackBarAction? action]) {
     setState(() {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -108,6 +108,7 @@ class _UserListPageState extends State<UserListPage> {
           showCloseIcon: true,
           closeIconColor: Colors.amber,
           content: content,
+          action: action,
         ),
       );
     });
@@ -129,7 +130,9 @@ class _UserListPageState extends State<UserListPage> {
           if (username == null) return;
           username = username.trim();
 
-          if (isNotInList(username.toLowerCase())) {
+          int index = userIndex(username.toLowerCase());
+
+          if (index == -1) {
             var user = await _createUser(username.toLowerCase());
 
             if (user == null) {
@@ -167,6 +170,14 @@ class _UserListPageState extends State<UserListPage> {
                     ),
                   ],
                 ),
+              ),
+              SnackBarAction(
+                label: 'Visit',
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          UserPage(userData: userList[index])));
+                },
               ),
             );
           }
@@ -283,10 +294,10 @@ class _UserListPageState extends State<UserListPage> {
     return ExperimentalUserCard(userData: userList[index]);
   }
 
-  bool isNotInList(String username) {
+  int userIndex(String username) {
     var index = userList.indexWhere((user) {
       return user.username == username;
     });
-    return index == -1;
+    return index;
   }
 }
