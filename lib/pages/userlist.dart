@@ -1,10 +1,12 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:ui_elements/components/database/database.dart';
+import 'package:ui_elements/components/experimental_user_card.dart';
+import 'package:ui_elements/pages/user.dart';
 
 import '../components/dataclass/http_wrapper/data_parser.dart';
 import '../components/dataclass/user_class/userdata.dart';
-import '../components/user_card.dart';
 import '../components/dialog/user_input.dart';
 
 class MainApp extends StatelessWidget {
@@ -89,14 +91,14 @@ class _UserListPageState extends State<UserListPage> {
     return data == null ? null : UserData.fromMap(dataMap: data);
   }
 
-  Future<void> _addToList(UserData user, [int? index]) async {
-    await Database.put(user);
+  // Future<void> _addToList(UserData user, [int? index]) async {
+  //   await Database.put(user);
 
-    setState(() {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      userList.insert(index ?? userList.length, user);
-    });
-  }
+  //   setState(() {
+  //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  //     userList.insert(index ?? userList.length, user);
+  //   });
+  // }
 
   void _informUser(Widget content) {
     setState(() {
@@ -148,7 +150,7 @@ class _UserListPageState extends State<UserListPage> {
                 ),
               );
             } else {
-              _addToList(user);
+              userList.add(user);
             }
           } else if (mounted) {
             _informUser(
@@ -187,86 +189,83 @@ class _UserListPageState extends State<UserListPage> {
         ],
       ),
       body: ReorderableListView(
-        // proxyDecorator: (child, index, animation) => UserCard(
-        //   userData: userList[index],
-        //   elevation: 3,
-        //   color: Color.lerp(Colors.white, Colors.black, 0.08),
-        // ),
+        proxyDecorator: (child, index, animation) => ExperimentalUserCard(
+          userData: userList[index],
+        ),
         onReorder: (oldIndex, newIndex) async {
           setState(() {
-            newIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
-            UserData user = userList.removeAt(oldIndex);
-            _addToList(user, newIndex);
+            // These two lines are workarounds for ReorderableListView problems
+            // Source: https://stackoverflow.com/questions/54162721/onreorder-arguments-in-flutter-reorderablelistview?newreg=398dc3a491ee40fbad1b76ab1e303977
+            if (newIndex > userList.length) newIndex = userList.length;
+            if (oldIndex < newIndex) newIndex--;
+
+            UserData user = userList[oldIndex];
+            userList.remove(user);
+            userList.insert(newIndex, user);
           });
           refreshListOrder();
           await Database.putAll(userList);
         },
-        // ReorderableListView.builder does not work, indexing issues
-        // Preferably create a custom listview that is reorderable and has animations
-        // itemCount: userList.length,
-        // itemBuilder: (context, index) => Dismissible(
-        // background: Container(color: Colors.redAccent),
-        // onDismissed: (direction) async {
-        //   var isar = await Database.isar();
-        //   await isar!.writeTxn(() async {
-        //     await isar.userDatas.delete(userList[index].isarId);
-        //   });
-        //   setState(() {
-        //     userList.removeAt(index);
-        //   });
-        //   refreshListOrder();
-        //   await isar.writeTxn(() => isar.userDatas.putAll(userList));
-        // },
-        // key: UniqueKey(),
-        // child: genCard(userList, index),
-        // ),
         children: [
           for (int index = 0; index < userList.length; ++index)
-            Dismissible(
-              background: Container(color: Colors.redAccent),
-              onDismissed: (direction) async {
-                Database.delete(userList[index]);
-                setState(() {
-                  UserData removedUser = userList.removeAt(index);
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        duration: const Duration(seconds: 6),
-                        showCloseIcon: true,
-                        closeIconColor: Colors.amber,
-                        content: RichText(
-                          softWrap: true,
-                          text: TextSpan(
-                            text: 'User ',
-                            children: [
-                              TextSpan(
-                                text: removedUser.nickname,
-                                style: const TextStyle(color: Colors.amber),
-                              ),
-                              const TextSpan(text: ' removed'),
-                            ],
-                          ),
-                        ),
-                        action: SnackBarAction(
-                          disabledTextColor: Colors.white,
-                          label: 'Undo?',
-                          textColor: Colors.amberAccent,
-                          onPressed: () {
-                            _addToList(removedUser, index);
-                          },
-                        ),
-                      ),
-                    );
-                  }
-                });
-                refreshListOrder();
-                Database.putAll(userList);
-              },
-              key: Key(userList[index].username),
-              child: genCard(userList, index),
+            OpenContainer(
+              key: UniqueKey(),
+              openBuilder: (context, action) => UserPage(
+                userData: userList[index],
+              ),
+              closedBuilder: (context, action) =>
+                  dismissableCard(index, context),
             ),
         ],
       ),
+    );
+  }
+
+  Dismissible dismissableCard(int index, BuildContext context) {
+    return Dismissible(
+      background: Container(color: Colors.redAccent),
+      onDismissed: (direction) async {
+        Database.delete(userList[index]);
+        setState(() {
+          UserData removedUser = userList.removeAt(index);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                duration: const Duration(seconds: 6),
+                showCloseIcon: true,
+                closeIconColor: Colors.amber,
+                content: RichText(
+                  softWrap: true,
+                  text: TextSpan(
+                    text: 'User ',
+                    children: [
+                      TextSpan(
+                        text: removedUser.nickname,
+                        style: const TextStyle(color: Colors.amber),
+                      ),
+                      const TextSpan(text: ' removed'),
+                    ],
+                  ),
+                ),
+                action: SnackBarAction(
+                  disabledTextColor: Colors.white,
+                  label: 'Undo?',
+                  textColor: Colors.amberAccent,
+                  onPressed: () {
+                    setState(() {
+                      userList.insert(index, removedUser);
+                    });
+                  },
+                ),
+              ),
+            );
+          }
+        });
+        refreshListOrder();
+        Database.putAll(userList);
+      },
+      key: Key(userList[index].username),
+      child: genCard(userList, index),
     );
   }
 
@@ -279,7 +278,7 @@ class _UserListPageState extends State<UserListPage> {
   dynamic genCard(List<UserData> userList, int index) {
     userList[index].listOrder = index;
     Database.put(userList[index]);
-    return UserCard(userData: userList[index]);
+    return ExperimentalUserCard(userData: userList[index]);
   }
 
   bool isNotInList(String username) {
