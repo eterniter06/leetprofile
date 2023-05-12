@@ -120,15 +120,29 @@ class _UserListPageState extends State<UserListPage> {
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new User',
         onPressed: () async {
-          String? username = await showDialog(
+          String? usernameInput = await showDialog(
             context: context,
             builder: (context) {
               return const UserInputDialog();
             },
           );
 
-          if (username == null) return;
-          username = username.trim();
+          if (usernameInput == null) return;
+
+          String username = usernameInput.trim();
+
+          if (username.contains('leetcode.com/')) {
+            String domainNameWithSlash = 'leetcode.com/';
+            int usernameStart = username.indexOf(domainNameWithSlash) +
+                domainNameWithSlash.length;
+            int? usernameEnd = username.indexOf('/', usernameStart);
+
+            if (usernameEnd < usernameStart) {
+              usernameEnd = null;
+            }
+
+            username = username.substring(usernameStart, usernameEnd);
+          }
 
           int index = userIndex(username.toLowerCase());
 
