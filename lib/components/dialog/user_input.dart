@@ -101,11 +101,11 @@ class _UserInputDialogState extends State<UserInputDialog> {
           padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 22),
           child: ElevatedButton(
             onPressed: () => submitUserInput(),
-            child: Row(
+            child: const Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
-              children: const [
+              children: [
                 Text('Search'),
                 Icon(Icons.search),
               ],

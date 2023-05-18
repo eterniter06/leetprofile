@@ -186,7 +186,7 @@ class _UserListPageState extends State<UserListPage> {
                 ),
               ),
               SnackBarAction(
-                label: 'Visit',
+                label: 'Visit?',
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) =>

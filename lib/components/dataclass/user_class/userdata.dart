@@ -32,12 +32,16 @@ class UserData {
   ContestRanking? userContestRanking;
   List<ContestSummary>? userContestRankingHistory;
 
+  DateTime lastFetchTime;
+
   void update({required UserData updatedUser}) {
     if (updatedUser.username != username) {
       throw '''Usernames do not match:
       Old: "$username"
       New: "${updatedUser.username}"''';
     }
+
+    lastFetchTime = updatedUser.lastFetchTime;
 
     realname = updatedUser.realname;
     nickname = updatedUser.nickname;
@@ -68,10 +72,12 @@ class UserData {
     required this.nickname,
     required this.avatar,
     required this.realname,
+    required this.lastFetchTime,
   });
 
   UserData.fromMap({required Map dataMap})
       : username = dataMap['username'],
+        lastFetchTime = dataMap['lastFetchTime'],
         nickname = dataMap['nickname'],
         realname = dataMap['realname'],
         recentAcSubmissionList = dataMap['recentAcSubmissionList'],

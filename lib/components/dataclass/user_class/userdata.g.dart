@@ -62,52 +62,57 @@ const UserDataSchema = CollectionSchema(
       type: IsarType.objectList,
       target: r'LanguageSubmission',
     ),
-    r'linkedinUrl': PropertySchema(
+    r'lastFetchTime': PropertySchema(
       id: 8,
+      name: r'lastFetchTime',
+      type: IsarType.dateTime,
+    ),
+    r'linkedinUrl': PropertySchema(
+      id: 9,
       name: r'linkedinUrl',
       type: IsarType.string,
     ),
     r'listOrder': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'listOrder',
       type: IsarType.long,
     ),
     r'nickname': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'nickname',
       type: IsarType.string,
     ),
     r'problemData': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'problemData',
       type: IsarType.object,
       target: r'ProblemData',
     ),
     r'realname': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'realname',
       type: IsarType.string,
     ),
     r'recentAcSubmissionList': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'recentAcSubmissionList',
       type: IsarType.objectList,
       target: r'RecentSubmission',
     ),
     r'userContestRanking': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'userContestRanking',
       type: IsarType.object,
       target: r'ContestRanking',
     ),
     r'userContestRankingHistory': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'userContestRankingHistory',
       type: IsarType.objectList,
       target: r'ContestSummary',
     ),
     r'username': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'username',
       type: IsarType.string,
     )
@@ -324,35 +329,36 @@ void _userDataSerialize(
     LanguageSubmissionSchema.serialize,
     object.languageProblemCount,
   );
-  writer.writeString(offsets[8], object.linkedinUrl);
-  writer.writeLong(offsets[9], object.listOrder);
-  writer.writeString(offsets[10], object.nickname);
+  writer.writeDateTime(offsets[8], object.lastFetchTime);
+  writer.writeString(offsets[9], object.linkedinUrl);
+  writer.writeLong(offsets[10], object.listOrder);
+  writer.writeString(offsets[11], object.nickname);
   writer.writeObject<ProblemData>(
-    offsets[11],
+    offsets[12],
     allOffsets,
     ProblemDataSchema.serialize,
     object.problemData,
   );
-  writer.writeString(offsets[12], object.realname);
+  writer.writeString(offsets[13], object.realname);
   writer.writeObjectList<RecentSubmission>(
-    offsets[13],
+    offsets[14],
     allOffsets,
     RecentSubmissionSchema.serialize,
     object.recentAcSubmissionList,
   );
   writer.writeObject<ContestRanking>(
-    offsets[14],
+    offsets[15],
     allOffsets,
     ContestRankingSchema.serialize,
     object.userContestRanking,
   );
   writer.writeObjectList<ContestSummary>(
-    offsets[15],
+    offsets[16],
     allOffsets,
     ContestSummarySchema.serialize,
     object.userContestRankingHistory,
   );
-  writer.writeString(offsets[16], object.username);
+  writer.writeString(offsets[17], object.username);
 }
 
 UserData _userDataDeserialize(
@@ -363,9 +369,10 @@ UserData _userDataDeserialize(
 ) {
   final object = UserData(
     avatar: reader.readString(offsets[2]),
-    nickname: reader.readString(offsets[10]),
-    realname: reader.readString(offsets[12]),
-    username: reader.readString(offsets[16]),
+    lastFetchTime: reader.readDateTime(offsets[8]),
+    nickname: reader.readString(offsets[11]),
+    realname: reader.readString(offsets[13]),
+    username: reader.readString(offsets[17]),
   );
   object.advancedTags = reader.readObjectList<TagsSolved>(
     offsets[0],
@@ -399,26 +406,26 @@ UserData _userDataDeserialize(
     allOffsets,
     LanguageSubmission(),
   );
-  object.linkedinUrl = reader.readStringOrNull(offsets[8]);
-  object.listOrder = reader.readLongOrNull(offsets[9]);
+  object.linkedinUrl = reader.readStringOrNull(offsets[9]);
+  object.listOrder = reader.readLongOrNull(offsets[10]);
   object.problemData = reader.readObjectOrNull<ProblemData>(
-    offsets[11],
+    offsets[12],
     ProblemDataSchema.deserialize,
     allOffsets,
   );
   object.recentAcSubmissionList = reader.readObjectList<RecentSubmission>(
-    offsets[13],
+    offsets[14],
     RecentSubmissionSchema.deserialize,
     allOffsets,
     RecentSubmission(),
   );
   object.userContestRanking = reader.readObjectOrNull<ContestRanking>(
-    offsets[14],
+    offsets[15],
     ContestRankingSchema.deserialize,
     allOffsets,
   );
   object.userContestRankingHistory = reader.readObjectList<ContestSummary>(
-    offsets[15],
+    offsets[16],
     ContestSummarySchema.deserialize,
     allOffsets,
     ContestSummary(),
@@ -475,40 +482,42 @@ P _userDataDeserializeProp<P>(
         LanguageSubmission(),
       )) as P;
     case 8:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 9:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 10:
-      return (reader.readString(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 11:
+      return (reader.readString(offset)) as P;
+    case 12:
       return (reader.readObjectOrNull<ProblemData>(
         offset,
         ProblemDataSchema.deserialize,
         allOffsets,
       )) as P;
-    case 12:
-      return (reader.readString(offset)) as P;
     case 13:
+      return (reader.readString(offset)) as P;
+    case 14:
       return (reader.readObjectList<RecentSubmission>(
         offset,
         RecentSubmissionSchema.deserialize,
         allOffsets,
         RecentSubmission(),
       )) as P;
-    case 14:
+    case 15:
       return (reader.readObjectOrNull<ContestRanking>(
         offset,
         ContestRankingSchema.deserialize,
         allOffsets,
       )) as P;
-    case 15:
+    case 16:
       return (reader.readObjectList<ContestSummary>(
         offset,
         ContestSummarySchema.deserialize,
         allOffsets,
         ContestSummary(),
       )) as P;
-    case 16:
+    case 17:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1703,6 +1712,60 @@ extension UserDataQueryFilter
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> lastFetchTimeEqualTo(
+      DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastFetchTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      lastFetchTimeGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'lastFetchTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> lastFetchTimeLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'lastFetchTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> lastFetchTimeBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'lastFetchTime',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterFilterCondition> linkedinUrlIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -2655,6 +2718,18 @@ extension UserDataQuerySortBy on QueryBuilder<UserData, UserData, QSortBy> {
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByLastFetchTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastFetchTime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByLastFetchTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastFetchTime', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterSortBy> sortByLinkedinUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'linkedinUrl', Sort.asc);
@@ -2754,6 +2829,18 @@ extension UserDataQuerySortThenBy
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByLastFetchTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastFetchTime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByLastFetchTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastFetchTime', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterSortBy> thenByLinkedinUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'linkedinUrl', Sort.asc);
@@ -2834,6 +2921,12 @@ extension UserDataQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'githubUrl', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QDistinct> distinctByLastFetchTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastFetchTime');
     });
   }
 
@@ -2930,6 +3023,12 @@ extension UserDataQueryProperty
       languageProblemCountProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'languageProblemCount');
+    });
+  }
+
+  QueryBuilder<UserData, DateTime, QQueryOperations> lastFetchTimeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lastFetchTime');
     });
   }
 

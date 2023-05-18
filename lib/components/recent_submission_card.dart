@@ -8,7 +8,7 @@ class RecentSubmissionCard extends StatelessWidget {
   const RecentSubmissionCard({super.key, required this.submission});
   final RecentSubmission submission;
 
-  String getOrdinal(DateTime submissionTime) {
+  String orindal(DateTime submissionTime) {
     final day = int.parse(DateFormat('dd').format(submissionTime));
     if (day >= 10 && day <= 20) return "th";
 
@@ -21,18 +21,18 @@ class RecentSubmissionCard extends StatelessWidget {
                 : "th";
   }
 
-  String getTimeFromEpochsInSeconds() {
+  String timeFromEpochsInSeconds() {
     final submissionTime = DateTime.fromMillisecondsSinceEpoch(
             int.parse(submission.timestamp!) * Duration.millisecondsPerSecond)
         .toLocal();
 
-    final ordinal = getOrdinal(submissionTime);
+    final ordinal = orindal(submissionTime);
     final dateTimeFormatter = DateFormat("dd'$ordinal' MMMM yyyy HH:mm:ss");
 
     return dateTimeFormatter.format(submissionTime);
   }
 
-  String getTimeOfDay() {
+  String timeOfDay() {
     final submissionTime = DateTime.fromMillisecondsSinceEpoch(
             int.parse(submission.timestamp!) * Duration.millisecondsPerSecond)
         .toLocal();
@@ -45,8 +45,8 @@ class RecentSubmissionCard extends StatelessWidget {
             int.parse(submission.timestamp!) * Duration.millisecondsPerSecond)
         .toLocal();
 
-    final ordinal = getOrdinal(submissionTime);
-    final dateTimeFormatter = DateFormat("dd'$ordinal' MMMM yyyy");
+    final sumbissionOrdinal = orindal(submissionTime);
+    final dateTimeFormatter = DateFormat("dd'$sumbissionOrdinal' MMMM yyyy");
 
     return dateTimeFormatter.format(submissionTime);
   }
@@ -88,27 +88,29 @@ class RecentSubmissionCard extends StatelessWidget {
       child: InkWell(
         onTap: () => _launchQuestionUrl(),
         // onLongPress: () => _launchQuestionMenu(),
-        child: ListTile(
-          leading: IconButton(
-            splashRadius: 30,
-            icon: const Icon(Icons.question_answer),
-            onPressed: () async {
-              await _launchSubmissionUrl();
-            },
-          ),
-
-          /* Refer to: 
-          *  https://github.com/flutter/flutter/issues/53797
-          *  for why the question title isn't copyable
-          */
-          title: Text(
-            submission.title!,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
+        child: Material(
+          child: ListTile(
+            leading: IconButton(
+              splashRadius: 30,
+              icon: const Icon(Icons.question_answer),
+              onPressed: () async {
+                await _launchSubmissionUrl();
+              },
             ),
+
+            /* Refer to: 
+            *  https://github.com/flutter/flutter/issues/53797
+            *  for why the question title isn't copyable
+            */
+            title: Text(
+              submission.title!,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            trailing: Text(timeOfDay()),
+            subtitle: Text(getDay()),
           ),
-          trailing: Text(getTimeOfDay()),
-          subtitle: Text(getDay()),
         ),
       ),
     );

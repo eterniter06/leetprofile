@@ -10,6 +10,54 @@ class DataParser {
   final String username;
   DataParser({required this.username});
 
+  String _reverseDayOrder(String dayTime) {
+    String day = dayTime.substring(0, 2);
+    String month = dayTime.substring(3, 5);
+    String year = dayTime.substring(6, 10);
+
+    String reversedDayFormat = "$year-$month-$day";
+    return dayTime.replaceFirst(dayTime.substring(0, 10), reversedDayFormat);
+  }
+
+  String _monthToNumberAsString(String month) {
+    // shift to lowercase even though the standard says day names are case-sensitive anyway
+    month = month.toLowerCase().trim();
+
+    if (month == 'jan') return '01';
+    if (month == 'feb') return '02';
+    if (month == 'mar') return '03';
+    if (month == 'apr') return '04';
+    if (month == 'may') return '05';
+    if (month == 'jun') return '06';
+    if (month == 'jul') return '07';
+    if (month == 'aug') return '08';
+    if (month == 'sep') return '09';
+    if (month == 'oct') return '10';
+    if (month == 'nov') return '11';
+    if (month == 'dec') return '12';
+
+    throw "Month not in list. Month value passed: $month";
+  }
+
+  // HTTP date format: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date
+  // ignore: non_constant_identifier_names
+  DateTime _HTTPDateToISO8601(String HTTPDate) {
+    String timeWithoutDayName = HTTPDate.substring(4).trim();
+    String timeWithoutGMT =
+        timeWithoutDayName.substring(0, timeWithoutDayName.length - 4).trim();
+
+    String monthInWords = timeWithoutGMT.substring(3, 7);
+    String timeMonthReplacedWithNumer = timeWithoutGMT.replaceFirst(
+        monthInWords, "${_monthToNumberAsString(monthInWords)} ");
+    String timeFormatted = timeMonthReplacedWithNumer
+        .replaceFirst(' ', '-')
+        .replaceFirst(' ', '-');
+    String dayOrderReveresed = _reverseDayOrder(timeFormatted);
+
+    DateTime time = DateTime.parse("$dayOrderReveresed z").toLocal();
+    return time;
+  }
+
   Future<Map?> getAllAsJson() {
     return http.get(AllQuery(username: username).getAll()).then((response) {
       if (response.statusCode != 200) {
@@ -29,6 +77,8 @@ class DataParser {
       dataMap['username'] = dataMap['nickname'] = username;
       dataMap['realname'] = json['matchedUser']['profile']['realName'];
       dataMap['avatar'] = json['matchedUser']['profile']['userAvatar'];
+
+      dataMap['lastFetchTime'] = _HTTPDateToISO8601(response.headers['date']!);
 
       dataMap['linkedinUrl'] = json['matchedUser']['linkedinUrl'];
       dataMap['githubUrl'] = json['matchedUser']['githubUrl'];
