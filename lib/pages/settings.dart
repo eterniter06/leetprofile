@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:path/path.dart' as p;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_elements/components/database/database.dart';
@@ -94,7 +97,7 @@ class _SettingsState extends State<Settings> {
             ),
             description:
                 Text('Current theme: ${_themeModeAsString(themeMode)}'),
-            callback: () {
+            onTap: () {
               showDialog(
                 context: context,
                 builder: (context) =>
@@ -157,13 +160,38 @@ class _SettingsState extends State<Settings> {
               ),
             ),
           ),
-          const SettingTile(
-            title: Text(
+          SettingTile(
+            title: const Text(
               'Export users',
               style: TextStyle(color: Colors.white),
             ),
-            description: Text(
+            description: const Text(
                 'Save all usernames in the app as a csv file that can be imported. No detail other than the username is exported'),
+            onTap: () async {
+              String time = DateTime.now()
+                  .toLocal()
+                  .toString()
+                  .replaceAll('-', '_')
+                  .replaceAll(':', '')
+                  .replaceAll(' ', '');
+              time = time.substring(0, time.indexOf('.'));
+
+              String filename = "LP_$time.csv";
+
+              String usernameListAsString;
+              // Do work
+
+              String? directory = await FilePicker.platform.getDirectoryPath(
+                dialogTitle: 'Pick export location',
+              );
+
+              if (directory == null) {
+                return;
+              }
+
+              File exportFile = File(p.join(directory, filename));
+              await exportFile.writeAsString(usernameListAsString);
+            },
           ),
           const SettingTile(
             title: Text(
@@ -191,16 +219,16 @@ class _SettingsState extends State<Settings> {
 }
 
 class SettingTile extends StatelessWidget {
-  const SettingTile({super.key, this.title, this.description, this.callback});
+  const SettingTile({super.key, this.title, this.description, this.onTap});
 
   final Widget? title;
   final Widget? description;
-  final void Function()? callback;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: callback,
+      onTap: onTap,
       child: ListTile(
         title: title,
         subtitle: description,
