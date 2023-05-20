@@ -38,6 +38,7 @@ class _RecentSubmissionListState extends State<RecentSubmissionList> {
             child: Padding(
               padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
               child: ExpansionTile(
+                shape: const Border(),
                 initiallyExpanded: false,
                 collapsedTextColor: Colors.amber,
                 textColor: Colors.amberAccent,
@@ -48,12 +49,15 @@ class _RecentSubmissionListState extends State<RecentSubmissionList> {
                   ),
                 ),
                 children: [
-                  ListView.builder(
+                  ListView.separated(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: widget.submissionList.length,
                     itemBuilder: (context, index) => RecentSubmissionCard(
                         submission: widget.submissionList[index]),
+                    separatorBuilder: (context, index) => const Divider(
+                      height: 0,
+                    ),
                   ),
                 ],
               ),

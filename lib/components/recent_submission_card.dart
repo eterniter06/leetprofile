@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vibration/vibration.dart';
 
 import 'dataclass/user_class/userdata.dart';
 
@@ -84,33 +85,38 @@ class RecentSubmissionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Tooltip(
+      message: 'Visit question',
       child: InkWell(
         onTap: () => _launchQuestionUrl(),
-        // onLongPress: () => _launchQuestionMenu(),
-        child: Material(
-          child: ListTile(
-            leading: IconButton(
-              splashRadius: 30,
+        child: ListTile(
+          leading: Material(
+            elevation: 1,
+            shape: const CircleBorder(),
+            child: IconButton(
+              tooltip: 'View user submission',
               icon: const Icon(Icons.question_answer),
               onPressed: () async {
+                if (await Vibration.hasVibrator() ?? false) {
+                  Vibration.vibrate(duration: 10);
+                }
                 await _launchSubmissionUrl();
               },
             ),
-
-            /* Refer to: 
-            *  https://github.com/flutter/flutter/issues/53797
-            *  for why the question title isn't copyable
-            */
-            title: Text(
-              submission.title!,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            trailing: Text(timeOfDay()),
-            subtitle: Text(getDay()),
           ),
+
+          /* Refer to: 
+          *  https://github.com/flutter/flutter/issues/53797
+          *  for why the question title isn't copyable
+          */
+          title: Text(
+            submission.title!,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          trailing: Text(timeOfDay()),
+          subtitle: Text(getDay()),
         ),
       ),
     );
