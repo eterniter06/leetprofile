@@ -53,7 +53,7 @@ class _UserPageState extends State<UserPage> {
                     .update(updatedUser: UserData.fromMap(dataMap: dataMap!));
               });
 
-              var isar = await Database.isar();
+              var isar = await UserDatabase.isar();
               isar!.writeTxn(() async {
                 await isar.userDatas.put(widget.userData);
               });

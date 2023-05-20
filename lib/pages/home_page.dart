@@ -1,35 +1,34 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
 import 'package:ui_elements/components/database/database.dart';
 import 'package:ui_elements/components/experimental_user_card.dart';
-import 'package:ui_elements/pages/user.dart';
+import 'package:ui_elements/components/theme.dart';
+import 'package:ui_elements/pages/settings.dart';
+import 'package:ui_elements/pages/user_details.dart';
 
 import '../components/dataclass/http_wrapper/data_parser.dart';
 import '../components/dataclass/user_class/userdata.dart';
 import '../components/dialog/user_input.dart';
+import 'about.dart';
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        fontFamily: 'Overpass',
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        fontFamily: 'Overpass',
-      ),
-      themeMode: ThemeMode.system,
+      theme: ThemeModeModel.light,
+      darkTheme: ThemeModeModel.dark,
+      themeMode: Provider.of<ThemeModeModel>(context).themeMode,
       home: const UserListPage(),
     );
   }
 }
+
+enum HomePopupMenuValue { about, settings }
 
 class UserListPage extends StatefulWidget {
   const UserListPage({
@@ -50,7 +49,7 @@ class _UserListPageState extends State<UserListPage> {
   }
 
   Future<void> _loadUsers() async {
-    var isar = await Database.isar();
+    var isar = await UserDatabase.isar();
     var tempUserList = await isar!.userDatas
         .filter()
         .isarIdGreaterThan(Isar.minId)
@@ -61,7 +60,9 @@ class _UserListPageState extends State<UserListPage> {
       userList = tempUserList;
     });
 
-    await _updateUsers();
+    if (SettingsDatabase.refreshAllUsersOnStartup()) {
+      await _updateUsers();
+    }
   }
 
   Future<void> _updateUser(UserData user) async {
@@ -201,6 +202,11 @@ class _UserListPageState extends State<UserListPage> {
       appBar: AppBar(
         title: const Text('LeetProfile'),
         actions: [
+          const IconButton(
+            tooltip: "Today's daily question",
+            icon: Icon(Icons.local_fire_department_sharp),
+            onPressed: null,
+          ),
           IconButton(
             tooltip: "Refresh all users",
             icon: const Icon(Icons.refresh_rounded),
@@ -208,10 +214,30 @@ class _UserListPageState extends State<UserListPage> {
               _updateUsers();
             },
           ),
-          const IconButton(
-            tooltip: "Today's daily question",
-            icon: Icon(Icons.local_fire_department_sharp),
-            onPressed: null,
+          PopupMenuButton(
+            onSelected: (value) {
+              Widget? page;
+              switch (value) {
+                case HomePopupMenuValue.settings:
+                  page = const Settings();
+                  break;
+                case HomePopupMenuValue.about:
+                  page = const About();
+                  break;
+              }
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => page!));
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: HomePopupMenuValue.settings,
+                child: Text('Settings'),
+              ),
+              const PopupMenuItem(
+                value: HomePopupMenuValue.about,
+                child: Text('About'),
+              ),
+            ],
           ),
         ],
       ),
@@ -219,6 +245,7 @@ class _UserListPageState extends State<UserListPage> {
         proxyDecorator: (child, index, animation) => ExperimentalUserCard(
           userData: userList[index],
         ),
+        onReorderStart: (index) => HapticFeedback.lightImpact(),
         onReorder: (oldIndex, newIndex) async {
           setState(() {
             // These two lines are workarounds for ReorderableListView problems
@@ -231,7 +258,7 @@ class _UserListPageState extends State<UserListPage> {
             userList.insert(newIndex, user);
           });
           refreshListOrder();
-          await Database.putAll(userList);
+          await UserDatabase.putAll(userList);
         },
         children: [
           for (int index = 0; index < userList.length; ++index)
@@ -252,7 +279,7 @@ class _UserListPageState extends State<UserListPage> {
     return Dismissible(
       background: Container(color: Colors.redAccent),
       onDismissed: (direction) async {
-        Database.delete(userList[index]);
+        UserDatabase.delete(userList[index]);
         setState(() {
           UserData removedUser = userList.removeAt(index);
           if (mounted) {
@@ -289,7 +316,7 @@ class _UserListPageState extends State<UserListPage> {
           }
         });
         refreshListOrder();
-        Database.putAll(userList);
+        UserDatabase.putAll(userList);
       },
       key: Key(userList[index].username),
       child: genCard(userList, index),
@@ -304,7 +331,7 @@ class _UserListPageState extends State<UserListPage> {
 
   dynamic genCard(List<UserData> userList, int index) {
     userList[index].listOrder = index;
-    Database.put(userList[index]);
+    UserDatabase.put(userList[index]);
     return ExperimentalUserCard(userData: userList[index]);
   }
 

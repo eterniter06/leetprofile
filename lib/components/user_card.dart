@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dataclass/user_class/userdata.dart';
-import '../pages/user.dart';
+import '../pages/user_details.dart';
 import 'image/squircle_network.dart';
 
 class UserCard extends StatelessWidget {
