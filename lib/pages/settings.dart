@@ -181,6 +181,7 @@ class _SettingsState extends State<Settings> {
 
                 String filename = "LP_$time.csv";
 
+                //Todo: Add option to export as profile links or as usernames
                 String usernameListAsString =
                     userListModel.exportUsernamesAsCSV(withTLD: false);
 

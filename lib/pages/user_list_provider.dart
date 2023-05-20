@@ -68,11 +68,6 @@ class UserListModel extends ChangeNotifier {
 
     userList = tempUserList;
     notifyListeners();
-
-    if (SettingsDatabase.refreshAllUsersOnStartup()) {
-      await updateUsers();
-      notifyListeners();
-    }
   }
 
   Future<void> updateUser(UserData user) async {

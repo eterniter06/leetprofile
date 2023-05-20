@@ -2,7 +2,8 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:ui_elements/components/database/database.dart';
+import 'package:ui_elements/components/database/settings_database.dart';
+import 'package:ui_elements/components/database/user_database.dart';
 import 'package:ui_elements/components/experimental_user_card.dart';
 import 'package:ui_elements/components/theme.dart';
 import 'package:ui_elements/pages/settings.dart';
@@ -55,6 +56,9 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
 
   Future<void> _loadUsers() async {
     await widget.userListModel.loadUsers();
+    if (SettingsDatabase.refreshAllUsersOnStartup()) {
+      _updateUsers();
+    }
   }
 
   Future<void> _updateUsers() async {
