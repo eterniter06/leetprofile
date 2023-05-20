@@ -193,6 +193,13 @@ class _SettingsState extends State<Settings> {
 
                 File exportFile = File(p.join(directory, filename));
                 await exportFile.writeAsString(usernameListAsString);
+
+                if (mounted) {
+                  ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(
+                    content: Text('Export file created in Folder: $directory'),
+                    duration: const Duration(seconds: 6),
+                  ));
+                }
               },
             ),
           ),
