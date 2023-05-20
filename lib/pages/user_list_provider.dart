@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import '../components/database/database.dart';
+import '../components/database/settings_database.dart';
+import '../components/database/user_database.dart';
 import '../components/dataclass/http_wrapper/data_parser.dart';
 import '../components/dataclass/user_class/userdata.dart';
 

@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
-import 'package:ui_elements/components/database/database.dart';
+import 'package:ui_elements/components/database/user_database.dart';
 import 'package:ui_elements/components/experimental_user_card.dart';
 import 'package:ui_elements/components/theme.dart';
 import 'package:ui_elements/pages/settings.dart';
 import 'package:ui_elements/pages/user_details.dart';
 import 'package:ui_elements/pages/user_list_provider.dart';
 
+import '../components/database/settings_database.dart';
 import '../components/dataclass/http_wrapper/data_parser.dart';
 import '../components/dataclass/user_class/userdata.dart';
 import '../components/dialog/user_input.dart';

@@ -3,10 +3,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
-import 'package:ui_elements/components/database/database.dart';
 import 'package:ui_elements/components/dialog/setting_option.dart';
 import 'package:ui_elements/components/theme.dart';
 import 'package:ui_elements/pages/user_list_provider.dart';
+
+import '../components/database/settings_database.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});

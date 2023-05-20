@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:ui_elements/components/database/database.dart';
+import 'package:ui_elements/components/database/user_database.dart';
 import 'package:ui_elements/components/recent_submission_list.dart';
 
 import '../components/dataclass/http_wrapper/data_parser.dart';
