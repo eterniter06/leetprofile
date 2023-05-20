@@ -1,11 +1,12 @@
 import 'dart:io';
-import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 import 'package:ui_elements/components/database/database.dart';
 import 'package:ui_elements/components/dialog/setting_option.dart';
 import 'package:ui_elements/components/theme.dart';
+import 'package:ui_elements/pages/user_list_provider.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -160,38 +161,40 @@ class _SettingsState extends State<Settings> {
               ),
             ),
           ),
-          SettingTile(
-            title: const Text(
-              'Export users',
-              style: TextStyle(color: Colors.white),
+          Consumer<UserListModel>(
+            builder: (context, userListModel, child) => SettingTile(
+              title: const Text(
+                'Export users',
+                style: TextStyle(color: Colors.white),
+              ),
+              description: const Text(
+                  'Save all usernames in the app as a csv file that can be imported. No detail other than the username is exported'),
+              onTap: () async {
+                String time = DateTime.now()
+                    .toLocal()
+                    .toString()
+                    .replaceAll('-', '_')
+                    .replaceAll(':', '')
+                    .replaceAll(' ', '');
+                time = time.substring(0, time.indexOf('.'));
+
+                String filename = "LP_$time.csv";
+
+                String usernameListAsString =
+                    userListModel.exportUsernamesAsCSV(withTLD: false);
+
+                String? directory = await FilePicker.platform.getDirectoryPath(
+                  dialogTitle: 'Pick export location',
+                );
+
+                if (directory == null) {
+                  return;
+                }
+
+                File exportFile = File(p.join(directory, filename));
+                await exportFile.writeAsString(usernameListAsString);
+              },
             ),
-            description: const Text(
-                'Save all usernames in the app as a csv file that can be imported. No detail other than the username is exported'),
-            onTap: () async {
-              String time = DateTime.now()
-                  .toLocal()
-                  .toString()
-                  .replaceAll('-', '_')
-                  .replaceAll(':', '')
-                  .replaceAll(' ', '');
-              time = time.substring(0, time.indexOf('.'));
-
-              String filename = "LP_$time.csv";
-
-              String usernameListAsString;
-              // Do work
-
-              String? directory = await FilePicker.platform.getDirectoryPath(
-                dialogTitle: 'Pick export location',
-              );
-
-              if (directory == null) {
-                return;
-              }
-
-              File exportFile = File(p.join(directory, filename));
-              await exportFile.writeAsString(usernameListAsString);
-            },
           ),
           const SettingTile(
             title: Text(

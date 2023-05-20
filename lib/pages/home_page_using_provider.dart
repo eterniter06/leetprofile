@@ -1,7 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_elements/components/database/database.dart';
 import 'package:ui_elements/components/experimental_user_card.dart';
@@ -14,24 +13,19 @@ import '../components/dataclass/http_wrapper/data_parser.dart';
 import '../components/dataclass/user_class/userdata.dart';
 import '../components/dialog/user_input.dart';
 import 'about.dart';
-import 'home_page_using_provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => UserListModel(),
-      child: MaterialApp(
-        theme: ThemeModeModel.light,
-        darkTheme: ThemeModeModel.dark,
-        themeMode: Provider.of<ThemeModeModel>(context).themeMode,
-        home: Consumer<UserListModel>(
-          builder: (context, userListModel, child) =>
-              UserListPageExperimental(userListModel: userListModel),
-        ),
-        // home: const UserListPage(),
+    return MaterialApp(
+      theme: ThemeModeModel.light,
+      darkTheme: ThemeModeModel.dark,
+      themeMode: Provider.of<ThemeModeModel>(context).themeMode,
+      home: Consumer<UserListModel>(
+        builder: (context, userListModel, child) =>
+            UserListPageExperimental(userListModel: userListModel),
       ),
     );
   }
@@ -39,18 +33,20 @@ class MyApp extends StatelessWidget {
 
 enum HomePopupMenuValue { about, settings }
 
-class UserListPage extends StatefulWidget {
-  const UserListPage({
+class UserListPageExperimental extends StatefulWidget {
+  const UserListPageExperimental({
     super.key,
+    required this.userListModel,
   });
 
+  final UserListModel userListModel;
+
   @override
-  State<UserListPage> createState() => _UserListPageState();
+  State<UserListPageExperimental> createState() =>
+      _UserListPageExperimentalState();
 }
 
-class _UserListPageState extends State<UserListPage> {
-  List<UserData> userList = [];
-
+class _UserListPageExperimentalState extends State<UserListPageExperimental> {
   @override
   initState() {
     super.initState();
@@ -58,41 +54,11 @@ class _UserListPageState extends State<UserListPage> {
   }
 
   Future<void> _loadUsers() async {
-    var isar = await UserDatabase.isar();
-    var tempUserList = await isar!.userDatas
-        .filter()
-        .isarIdGreaterThan(Isar.minId)
-        .sortByListOrder()
-        .findAll();
-
-    setState(() {
-      userList = tempUserList;
-    });
-
-    if (SettingsDatabase.refreshAllUsersOnStartup()) {
-      await _updateUsers();
-    }
-  }
-
-  Future<void> _updateUser(UserData user) async {
-    var dataMap = await DataParser(username: user.username).getAllAsJson();
-    user.update(updatedUser: UserData.fromMap(dataMap: dataMap!));
+    await widget.userListModel.loadUsers();
   }
 
   Future<void> _updateUsers() async {
-    List<Future> futureJsonList = [];
-    for (var user in userList) {
-      futureJsonList.add(DataParser(username: user.username).getAllAsJson());
-    }
-
-    var jsonList = await Future.wait(futureJsonList);
-
-    setState(() {
-      for (int i = 0; i < userList.length; ++i) {
-        userList[i].update(updatedUser: UserData.fromMap(dataMap: jsonList[i]));
-      }
-    });
-
+    await widget.userListModel.updateUsers();
     _informUser(const Text('All user profiles have been refreshed'));
   }
 
@@ -100,15 +66,6 @@ class _UserListPageState extends State<UserListPage> {
     Map? data = await DataParser(username: username).getAllAsJson();
     return data == null ? null : UserData.fromMap(dataMap: data);
   }
-
-  // Future<void> _addToList(UserData user, [int? index]) async {
-  //   await Database.put(user);
-
-  //   setState(() {
-  //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-  //     userList.insert(index ?? userList.length, user);
-  //   });
-  // }
 
   void _informUser(Widget content, [SnackBarAction? action]) {
     setState(() {
@@ -178,7 +135,7 @@ class _UserListPageState extends State<UserListPage> {
               );
             } else {
               setState(() {
-                userList.add(user);
+                widget.userListModel.addUser(user);
               });
             }
           } else if (mounted) {
@@ -199,8 +156,8 @@ class _UserListPageState extends State<UserListPage> {
                 label: 'Visit?',
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          UserPage(userData: userList[index])));
+                      builder: (context) => UserPage(
+                          userData: widget.userListModel.userList[index])));
                 },
               ),
             );
@@ -252,29 +209,32 @@ class _UserListPageState extends State<UserListPage> {
       ),
       body: ReorderableListView(
         proxyDecorator: (child, index, animation) => ExperimentalUserCard(
-          userData: userList[index],
+          userData: widget.userListModel.userList[index],
         ),
         onReorderStart: (index) => HapticFeedback.lightImpact(),
         onReorder: (oldIndex, newIndex) async {
           setState(() {
             // These two lines are workarounds for ReorderableListView problems
             // Source: https://stackoverflow.com/questions/54162721/onreorder-arguments-in-flutter-reorderablelistview?newreg=398dc3a491ee40fbad1b76ab1e303977
-            if (newIndex > userList.length) newIndex = userList.length;
+            if (newIndex > widget.userListModel.length()) {
+              newIndex = widget.userListModel.length();
+            }
             if (oldIndex < newIndex) newIndex--;
-
-            UserData user = userList[oldIndex];
-            userList.remove(user);
-            userList.insert(newIndex, user);
+            UserData user = widget.userListModel.userList[oldIndex];
+            widget.userListModel.userList.remove(user);
+            widget.userListModel.userList.insert(newIndex, user);
           });
           refreshListOrder();
-          await UserDatabase.putAll(userList);
+          await UserDatabase.putAll(widget.userListModel.userList);
         },
         children: [
-          for (int index = 0; index < userList.length; ++index)
+          for (int index = 0;
+              index < widget.userListModel.userList.length;
+              ++index)
             OpenContainer(
               key: UniqueKey(),
               openBuilder: (context, action) => UserPage(
-                userData: userList[index],
+                userData: widget.userListModel.userList[index],
               ),
               closedBuilder: (context, action) =>
                   dismissableCard(index, context),
@@ -288,9 +248,9 @@ class _UserListPageState extends State<UserListPage> {
     return Dismissible(
       background: Container(color: Colors.redAccent),
       onDismissed: (direction) async {
-        UserDatabase.delete(userList[index]);
+        UserDatabase.delete(widget.userListModel.userList[index]);
         setState(() {
-          UserData removedUser = userList.removeAt(index);
+          UserData removedUser = widget.userListModel.userList.removeAt(index);
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -316,7 +276,7 @@ class _UserListPageState extends State<UserListPage> {
                   textColor: Colors.amberAccent,
                   onPressed: () {
                     setState(() {
-                      userList.insert(index, removedUser);
+                      widget.userListModel.userList.insert(index, removedUser);
                     });
                   },
                 ),
@@ -325,16 +285,16 @@ class _UserListPageState extends State<UserListPage> {
           }
         });
         refreshListOrder();
-        UserDatabase.putAll(userList);
+        UserDatabase.putAll(widget.userListModel.userList);
       },
-      key: Key(userList[index].username),
-      child: genCard(userList, index),
+      key: Key(widget.userListModel.userList[index].username),
+      child: genCard(widget.userListModel.userList, index),
     );
   }
 
   void refreshListOrder() {
-    for (int i = 0; i < userList.length; ++i) {
-      userList[i].listOrder = i;
+    for (int i = 0; i < widget.userListModel.userList.length; ++i) {
+      widget.userListModel.userList[i].listOrder = i;
     }
   }
 
@@ -345,7 +305,7 @@ class _UserListPageState extends State<UserListPage> {
   }
 
   int userIndex(String username) {
-    var index = userList.indexWhere((user) {
+    var index = widget.userListModel.userList.indexWhere((user) {
       return user.username == username;
     });
     return index;
