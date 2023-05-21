@@ -12,8 +12,16 @@ void main() async {
 
   await SettingsDatabase.init();
   SharedPreferences pref = await SettingsDatabase.sharedPreferences();
+
+  String? themeModePreference = pref.getString('themeMode');
+
+  if (themeModePreference == null) {
+    SettingsDatabase.changeTheme(ThemeMode.system);
+    themeModePreference = ThemeMode.system.toString();
+  }
+
   ThemeMode startupThemeMode =
-      ThemeModeModel.themeModeFromString(pref.getString('themeMode'));
+      ThemeModeModel.themeModeFromString(themeModePreference);
 
   runApp(ChangeNotifierProvider(
     create: (context) => ThemeModeModel(themeMode: startupThemeMode),
