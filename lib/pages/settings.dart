@@ -273,14 +273,22 @@ class _SettingsState extends State<Settings> {
                     if (!listUpdated && mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text('All users are already in list'),
+                        showCloseIcon: true,
                       ));
                       return;
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Loading user data'),
+                        duration: Duration(seconds: 2),
+                        showCloseIcon: true,
+                      ));
                     }
 
                     List userList = await Future.wait(futureGroup);
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text('Users added'),
+                        showCloseIcon: true,
                       ));
                     }
                     userListModel.importUsersFromList(userList);
