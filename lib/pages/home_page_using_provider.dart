@@ -20,13 +20,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeModeModel.light,
-      darkTheme: ThemeModeModel.dark,
-      themeMode: Provider.of<ThemeModeModel>(context).themeMode,
-      home: Consumer<UserListModel>(
-        builder: (context, userListModel, child) =>
-            UserListPageExperimental(userListModel: userListModel),
+    return Consumer<ThemeModeModel>(
+      builder: (context, themeModeModel, child) => MaterialApp(
+        theme: ThemeModeModel.light,
+        darkTheme: ThemeModeModel.dark,
+        themeMode: themeModeModel.themeMode,
+        home: Consumer<UserListModel>(
+          builder: (context, userListModel, child) =>
+              UserListPageExperimental(userListModel: userListModel),
+        ),
       ),
     );
   }
@@ -63,7 +65,11 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
 
   Future<void> _updateUsers() async {
     await widget.userListModel.updateUsers();
-    _informUser(const Text('All user profiles have been refreshed'));
+    String snackbarMessage = widget.userListModel.isEmpty()
+        ? 'Nothing to refresh'
+        : 'All user profiles have been refreshed';
+
+    _informUser(Text(snackbarMessage));
   }
 
   Future<UserData?> _createUser(String username) async {
@@ -93,9 +99,7 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
         onPressed: () async {
           String? usernameInput = await showDialog(
             context: context,
-            builder: (context) {
-              return const UserInputDialog();
-            },
+            builder: (context) => const UserInputDialog(),
           );
 
           if (usernameInput == null) return;
@@ -115,7 +119,7 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
             username = username.substring(usernameStart, usernameEnd);
           }
 
-          int index = userIndex(username.toLowerCase());
+          int index = widget.userListModel.indexOfUsername(username);
 
           if (index == -1) {
             var user = await _createUser(username.toLowerCase());
@@ -161,7 +165,8 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => UserPage(
-                          userData: widget.userListModel.userList[index])));
+                          userData: widget.userListModel
+                              .userFromUsername(username)!)));
                 },
               ),
             );
@@ -213,7 +218,7 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
       ),
       body: ReorderableListView(
         proxyDecorator: (child, index, animation) => ExperimentalUserCard(
-          userData: widget.userListModel.userList[index],
+          userData: widget.userListModel.userAtIndex(index),
         ),
         onReorderStart: (index) => HapticFeedback.lightImpact(),
         onReorder: (oldIndex, newIndex) async {
@@ -224,21 +229,19 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
               newIndex = widget.userListModel.length();
             }
             if (oldIndex < newIndex) newIndex--;
-            UserData user = widget.userListModel.userList[oldIndex];
-            widget.userListModel.userList.remove(user);
-            widget.userListModel.userList.insert(newIndex, user);
+            UserData user = widget.userListModel.userAtIndex(oldIndex);
+            widget.userListModel.deleteUser(user);
+            widget.userListModel.insertUser(newIndex, user);
           });
-          refreshListOrder();
-          await UserDatabase.putAll(widget.userListModel.userList);
+          widget.userListModel.refreshListOrder();
+          await widget.userListModel.syncDatabase();
         },
         children: [
-          for (int index = 0;
-              index < widget.userListModel.userList.length;
-              ++index)
+          for (int index = 0; index < widget.userListModel.length(); ++index)
             OpenContainer(
               key: UniqueKey(),
               openBuilder: (context, action) => UserPage(
-                userData: widget.userListModel.userList[index],
+                userData: widget.userListModel.userAtIndex(index),
               ),
               closedBuilder: (context, action) =>
                   dismissableCard(index, context),
@@ -252,9 +255,9 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
     return Dismissible(
       background: Container(color: Colors.redAccent),
       onDismissed: (direction) async {
-        UserDatabase.delete(widget.userListModel.userList[index]);
+        UserDatabase.delete(widget.userListModel.userAtIndex(index));
         setState(() {
-          UserData removedUser = widget.userListModel.userList.removeAt(index);
+          UserData removedUser = widget.userListModel.deleteUserAt(index);
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -280,7 +283,7 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
                   textColor: Colors.amberAccent,
                   onPressed: () {
                     setState(() {
-                      widget.userListModel.userList.insert(index, removedUser);
+                      widget.userListModel.insertUser(index, removedUser);
                     });
                   },
                 ),
@@ -288,30 +291,18 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
             );
           }
         });
-        refreshListOrder();
-        UserDatabase.putAll(widget.userListModel.userList);
+        widget.userListModel.refreshListOrder();
+        widget.userListModel.syncDatabase();
       },
-      key: Key(widget.userListModel.userList[index].username),
-      child: genCard(widget.userListModel.userList, index),
+      key: Key(widget.userListModel.userAtIndex(index).username),
+      child: genCard(index),
     );
   }
 
-  void refreshListOrder() {
-    for (int i = 0; i < widget.userListModel.userList.length; ++i) {
-      widget.userListModel.userList[i].listOrder = i;
-    }
-  }
-
-  dynamic genCard(List<UserData> userList, int index) {
-    userList[index].listOrder = index;
-    UserDatabase.put(userList[index]);
-    return ExperimentalUserCard(userData: userList[index]);
-  }
-
-  int userIndex(String username) {
-    var index = widget.userListModel.userList.indexWhere((user) {
-      return user.username == username;
-    });
-    return index;
+  dynamic genCard(int index) {
+    var user = widget.userListModel.userAtIndex(index);
+    user.listOrder = index;
+    UserDatabase.put(user);
+    return ExperimentalUserCard(userData: user);
   }
 }

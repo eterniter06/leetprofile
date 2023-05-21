@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
@@ -169,8 +171,19 @@ class _SettingsState extends State<Settings> {
                 style: TextStyle(color: Colors.white),
               ),
               description: const Text(
-                  'Save all usernames in the app as a csv file that can be imported. No detail other than the username is exported'),
+                  'Save all usernames in the app to a file that can be imported. No detail other than the username is exported'),
               onTap: () async {
+                if (userListModel.isEmpty()) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('No data to export'),
+                      duration: Duration(seconds: 2),
+                      showCloseIcon: true,
+                    ),
+                  );
+                  return;
+                }
+
                 String time = DateTime.now()
                     .toLocal()
                     .toString()
@@ -179,9 +192,11 @@ class _SettingsState extends State<Settings> {
                     .replaceAll(' ', '');
                 time = time.substring(0, time.indexOf('.'));
 
-                String filename = "LP_$time.csv";
+                String csvFilename = "LP_$time.csv";
 
                 //Todo: Add option to export as profile links or as usernames
+                //Todo: Contemplate using json vs csv
+
                 String usernameListAsString =
                     userListModel.exportUsernamesAsCSV(withTLD: false);
 
@@ -193,7 +208,7 @@ class _SettingsState extends State<Settings> {
                   return;
                 }
 
-                File exportFile = File(p.join(directory, filename));
+                File exportFile = File(p.join(directory, csvFilename));
                 await exportFile.writeAsString(usernameListAsString);
 
                 if (mounted) {
@@ -205,13 +220,73 @@ class _SettingsState extends State<Settings> {
               },
             ),
           ),
-          const SettingTile(
-            title: Text(
-              'Import users',
-              style: TextStyle(color: Colors.white),
-            ),
-            description: Text(
-              'Load all users from the import file',
+          Consumer<UserListModel>(
+            builder: (context, userListModel, child) => SettingTile(
+              title: const Text(
+                'Import users',
+                style: TextStyle(color: Colors.white),
+              ),
+              description: const Text(
+                'Load all users from the import file',
+              ),
+              onTap: () async {
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                  allowMultiple: false,
+                  allowedExtensions: ['json', 'csv'],
+                  type: FileType.custom,
+                  dialogTitle: 'Pick import file',
+                );
+
+                if (result == null) {
+                  return;
+                }
+
+                String importFile = result.files[0].path!;
+                final inputFile = File(importFile).openRead();
+
+                final csvList = await inputFile
+                    .transform(utf8.decoder)
+                    .transform(const CsvToListConverter())
+                    .toList();
+
+                for (List columns in csvList) {
+                  String column = columns[0];
+
+                  List<String> values = column.split('\n');
+                  String header = values[0].trim().toLowerCase();
+
+                  if (header.toLowerCase().trim() == 'username') {
+                    values.remove(values[0]);
+                    var futureGroup = <Future>[];
+
+                    bool listUpdated = false;
+                    for (var username in values) {
+                      if (userListModel.inList(username)) {
+                        continue;
+                      }
+
+                      listUpdated = true;
+                      futureGroup
+                          .add(userListModel.createUserFromUsername(username));
+                    }
+
+                    if (!listUpdated && mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('All users are already in list'),
+                      ));
+                      return;
+                    }
+
+                    List userList = await Future.wait(futureGroup);
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Users added'),
+                      ));
+                    }
+                    userListModel.importUsersFromList(userList);
+                  }
+                }
+              },
             ),
           ),
           SettingTile(

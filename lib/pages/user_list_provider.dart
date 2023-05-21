@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import '../components/database/settings_database.dart';
 import '../components/database/user_database.dart';
 import '../components/dataclass/http_wrapper/data_parser.dart';
 import '../components/dataclass/user_class/userdata.dart';
@@ -14,20 +13,31 @@ class UserListModel extends ChangeNotifier {
     return userList.length;
   }
 
-  bool inList(String username) {
-    int index = userList.indexWhere((userInList) {
-      return userInList.username == username;
-    });
-
-    return index != -1;
+  bool isEmpty() {
+    return userList.isEmpty;
   }
 
-  UserData? user(String username) {
-    int index = userList.indexWhere((userInList) {
+  int indexOfUsername(String username) {
+    return userList.indexWhere((userInList) {
       return userInList.username == username;
     });
+  }
 
-    return index != -1 ? userList[index] : null;
+  bool inList(String username) {
+    return indexOfUsername(username) != -1;
+  }
+
+  UserData? userFromUsername(String username) {
+    int index = indexOfUsername(username);
+    return index == -1 ? null : userList[index];
+  }
+
+  UserData userAtIndex(int index) {
+    if (index >= userList.length) {
+      throw "Out of bounds. Index accessed: $index, length of list: ${userList.length}";
+    }
+
+    return userList[index];
   }
 
   void addUser(UserData user) {
@@ -42,11 +52,11 @@ class UserListModel extends ChangeNotifier {
   }
 
   void insertUser(int index, UserData user) {
-    int index = userList.indexWhere((userInList) {
+    int existingIndex = userList.indexWhere((userInList) {
       return userInList.username == user.username;
     });
 
-    if (index == -1) {
+    if (existingIndex == -1) {
       userList.insert(index, user);
       notifyListeners();
     }
@@ -97,6 +107,15 @@ class UserListModel extends ChangeNotifier {
     return data == null ? null : UserData.fromMap(dataMap: data);
   }
 
+  Future<void> addUserFromUsername(String username) async {
+    UserData? user = await createUserFromUsername(username);
+    if (user == null) {
+      return;
+    }
+
+    addUser(user);
+  }
+
   void refreshListOrder() {
     bool didUpdate = false;
 
@@ -116,10 +135,10 @@ class UserListModel extends ChangeNotifier {
     String headerColumn = 'Username';
 
     String csv = headerColumn;
-    String TLD = withTLD ? 'https://leetcode.com/' : '';
+    String topLevelDomain = withTLD ? 'https://leetcode.com/' : '';
 
     for (var user in userList) {
-      csv = "$csv\n$TLD${user.username}";
+      csv = "$csv\n$topLevelDomain${user.username}";
     }
 
     return csv;
@@ -130,7 +149,31 @@ class UserListModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  UserData deleteUserAt(int index) {
+    if (index >= userList.length) {
+      throw "Out of bounds. Index accessed: $index, length of list: ${userList.length}";
+    }
+
+    UserData deleted = userList.removeAt(index);
+    notifyListeners();
+    return deleted;
+  }
+
   Future<void> syncDatabase() async {
     await UserDatabase.putAll(userList);
+  }
+
+  void importUsersFromList(List userList) {
+    bool userAdded = false;
+    for (var user in userList) {
+      if (!inList(user.username)) {
+        addUser(user);
+        userAdded = true;
+      }
+    }
+
+    if (userAdded) {
+      notifyListeners();
+    }
   }
 }
