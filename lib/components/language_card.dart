@@ -22,10 +22,6 @@ class LanguageCard extends StatelessWidget {
                 child: Center(
                   child: Text(
                     languageDetails.languageName!,
-                    style: TextStyle(
-                      color: Colors.teal[200],
-                      fontSize: valueScaler(context, 26),
-                    ),
                   ),
                 ),
               ),
@@ -33,7 +29,6 @@ class LanguageCard extends StatelessWidget {
                 child: Container(
                   width: valueScaler(context, 48),
                   decoration: BoxDecoration(
-                    color: Colors.teal[50],
                     borderRadius: BorderRadius.circular(
                       valueScaler(context, 16),
                     ),
@@ -46,7 +41,6 @@ class LanguageCard extends StatelessWidget {
                         languageDetails.problemsSolved.toString(),
                         style: TextStyle(
                           fontSize: valueScaler(context, 14),
-                          color: Colors.teal[900],
                         ),
                       ),
                     ),

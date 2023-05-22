@@ -63,7 +63,6 @@ class _UserPageState extends State<UserPage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     showCloseIcon: true,
-                    closeIconColor: Colors.amber,
                     content: Text('User profile has been refreshed.'),
                   ),
                 );
@@ -102,11 +101,6 @@ class _UserPageState extends State<UserPage> {
                         Text(
                           widget.userData.username,
                           overflow: TextOverflow.fade,
-                          style: TextStyle(
-                            color: Colors.amber,
-                            fontSize: valueScaler(context, 24.0),
-                            fontFamily: 'Overpass',
-                          ),
                         ),
                         Text(
                             'Contest Rating: ${widget.userData.userContestRanking?.rating.round()}'),
@@ -158,9 +152,7 @@ class _UserPageState extends State<UserPage> {
                   ),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
-              ),
+              const Divider(),
               Card(
                 child: Padding(
                   padding: EdgeInsets.all(valueScaler(context, 8.0)),
@@ -169,25 +161,16 @@ class _UserPageState extends State<UserPage> {
                     children: [
                       Padding(
                         padding: EdgeInsets.all(valueScaler(context, 8.0)),
-                        child: Text(
+                        child: const Text(
                           'Solved Problems',
-                          style: TextStyle(
-                            fontSize: valueScaler(context, 24),
-                            color: Colors.amber,
-                          ),
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.all(
                           valueScaler(context, 12.0),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Difficulty',
-                          style: TextStyle(
-                            fontSize: valueScaler(context, 16),
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
-                          ),
                         ),
                       ),
                       DifficultySection(
@@ -202,13 +185,8 @@ class _UserPageState extends State<UserPage> {
                           vertical: valueScaler(context, 6.0),
                           horizontal: valueScaler(context, 12.0),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Language',
-                          style: TextStyle(
-                            fontSize: valueScaler(context, 16),
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
-                          ),
                         ),
                       ),
                       LanguageSection(
@@ -221,10 +199,6 @@ class _UserPageState extends State<UserPage> {
                         margin: EdgeInsets.only(top: valueScaler(context, 5)),
                         child: Text(
                           'Total problems solved: ${getSolvedCount(widget.userData.problemData)}',
-                          style: TextStyle(
-                            fontSize: valueScaler(context, 20),
-                            color: const Color.fromRGBO(97, 97, 97, 1),
-                          ),
                         ),
                       ),
                       SizedBox(

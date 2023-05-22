@@ -51,7 +51,6 @@ class DifficultyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      shadowColor: Colors.amber,
       child: AspectRatio(
         aspectRatio: 1.0,
         child: Column(
@@ -62,10 +61,8 @@ class DifficultyCard extends StatelessWidget {
               animation: true,
               animationDuration: 700,
               curve: Curves.decelerate,
-              progressColor: getColor(),
               circularStrokeCap: CircularStrokeCap.round,
               arcType: ArcType.HALF,
-              arcBackgroundColor: getBackgroundColor(),
               footer: Card(
                 elevation: 0,
                 child: Padding(
@@ -75,7 +72,6 @@ class DifficultyCard extends StatelessWidget {
                   ),
                   child: Text(
                     problemCategory,
-                    style: TextStyle(fontSize: valueScaler(context, 20)),
                   ),
                 ),
               ),
@@ -86,9 +82,6 @@ class DifficultyCard extends StatelessWidget {
                 children: [
                   Text(
                     '$solved',
-                    style: TextStyle(
-                      fontSize: valueScaler(context, 32),
-                    ),
                   ),
                   Divider(
                     endIndent: valueScaler(context, 32),
@@ -96,7 +89,6 @@ class DifficultyCard extends StatelessWidget {
                   ),
                   Text(
                     '$total',
-                    style: TextStyle(fontSize: valueScaler(context, 22)),
                   ),
                 ],
               ),

@@ -111,9 +111,6 @@ class RecentSubmissionCard extends StatelessWidget {
           */
           title: Text(
             submission.title!,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
           ),
           trailing: Text(timeOfDay()),
           subtitle: Text(getDay()),

@@ -81,7 +81,6 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           showCloseIcon: true,
-          closeIconColor: Colors.amber,
           content: content,
           action: action,
         ),
@@ -130,7 +129,6 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
                     children: [
                       TextSpan(
                         text: username,
-                        style: const TextStyle(color: Colors.amber),
                       ),
                       const TextSpan(
                           text:
@@ -149,11 +147,9 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
               RichText(
                 text: TextSpan(
                   text: username,
-                  style: const TextStyle(color: Colors.amber),
                   children: const [
                     TextSpan(
                       text: ' is already in list.',
-                      style: TextStyle(color: Colors.white),
                     ),
                   ],
                 ),
@@ -256,7 +252,6 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
 
   Dismissible dismissableCard(int index, BuildContext context) {
     return Dismissible(
-      background: Container(color: Colors.redAccent),
       onDismissed: (direction) async {
         // Remove from userDatabase first since it is likely to be more time taking
         UserDatabase.delete(widget.userListModel.userAtIndex(index));
@@ -267,7 +262,6 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
               SnackBar(
                 duration: const Duration(seconds: 6),
                 showCloseIcon: true,
-                closeIconColor: Colors.amber,
                 content: RichText(
                   softWrap: true,
                   text: TextSpan(
@@ -275,16 +269,13 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
                     children: [
                       TextSpan(
                         text: removedUser.nickname,
-                        style: const TextStyle(color: Colors.amber),
                       ),
                       const TextSpan(text: ' removed'),
                     ],
                   ),
                 ),
                 action: SnackBarAction(
-                  disabledTextColor: Colors.white,
                   label: 'Undo?',
-                  textColor: Colors.amberAccent,
                   onPressed: () {
                     setState(() {
                       widget.userListModel.insertUser(index, removedUser);

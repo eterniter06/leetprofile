@@ -11,7 +11,6 @@ class ExperimentalUserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       child: ListTile(
-        tileColor: const Color(0xff222222),
         style: ListTileStyle.list,
         leading: CircularNetworkImage(imageLink: userData.avatar),
         title: Text(userData.nickname),

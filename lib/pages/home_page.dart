@@ -117,7 +117,6 @@ class _UserListPageState extends State<UserListPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           showCloseIcon: true,
-          closeIconColor: Colors.amber,
           content: content,
           action: action,
         ),
@@ -168,7 +167,6 @@ class _UserListPageState extends State<UserListPage> {
                     children: [
                       TextSpan(
                         text: username,
-                        style: const TextStyle(color: Colors.amber),
                       ),
                       const TextSpan(
                           text:
@@ -187,11 +185,9 @@ class _UserListPageState extends State<UserListPage> {
               RichText(
                 text: TextSpan(
                   text: username,
-                  style: const TextStyle(color: Colors.amber),
                   children: const [
                     TextSpan(
                       text: ' is already in list.',
-                      style: TextStyle(color: Colors.white),
                     ),
                   ],
                 ),
@@ -287,7 +283,6 @@ class _UserListPageState extends State<UserListPage> {
 
   Dismissible dismissableCard(int index, BuildContext context) {
     return Dismissible(
-      background: Container(color: Colors.redAccent),
       onDismissed: (direction) async {
         UserDatabase.delete(userList[index]);
         setState(() {
@@ -297,7 +292,6 @@ class _UserListPageState extends State<UserListPage> {
               SnackBar(
                 duration: const Duration(seconds: 6),
                 showCloseIcon: true,
-                closeIconColor: Colors.amber,
                 content: RichText(
                   softWrap: true,
                   text: TextSpan(
@@ -305,16 +299,13 @@ class _UserListPageState extends State<UserListPage> {
                     children: [
                       TextSpan(
                         text: removedUser.nickname,
-                        style: const TextStyle(color: Colors.amber),
                       ),
                       const TextSpan(text: ' removed'),
                     ],
                   ),
                 ),
                 action: SnackBarAction(
-                  disabledTextColor: Colors.white,
                   label: 'Undo?',
-                  textColor: Colors.amberAccent,
                   onPressed: () {
                     setState(() {
                       userList.insert(index, removedUser);

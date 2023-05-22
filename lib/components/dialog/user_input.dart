@@ -29,14 +29,12 @@ class _UserInputDialogState extends State<UserInputDialog> {
         SnackBar(
           duration: const Duration(seconds: 3),
           showCloseIcon: true,
-          closeIconColor: Colors.amber,
           content: RichText(
             text: TextSpan(
               text: 'Searching user: ',
               children: [
                 TextSpan(
                   text: _textController.text,
-                  style: const TextStyle(color: Colors.amber),
                 )
               ],
             ),

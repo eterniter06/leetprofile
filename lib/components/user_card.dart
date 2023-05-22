@@ -41,11 +41,6 @@ class UserCard extends StatelessWidget {
                 children: [
                   Text(
                     userData.nickname,
-                    style: const TextStyle(
-                      color: Colors.amber,
-                      fontSize: 24.0,
-                      fontFamily: 'Overpass',
-                    ),
                   ),
                   const Padding(padding: EdgeInsets.all(4)),
                   Text(userData.username),

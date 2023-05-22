@@ -23,12 +23,8 @@ class _RecentSubmissionListState extends State<RecentSubmissionList> {
                 width: MediaQuery.of(context).size.width,
                 child: Padding(
                   padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
-                  child: Text(
+                  child: const Text(
                     'No Recent Submissions',
-                    style: TextStyle(
-                      color: Color.lerp(Colors.black, Colors.white, 0.3),
-                      fontSize: widget.valueScaler(context, 24),
-                    ),
                   ),
                 ),
               ),
@@ -40,13 +36,8 @@ class _RecentSubmissionListState extends State<RecentSubmissionList> {
               child: ExpansionTile(
                 shape: const Border(),
                 initiallyExpanded: false,
-                collapsedTextColor: Colors.amber,
-                textColor: Colors.amberAccent,
-                title: Text(
+                title: const Text(
                   'Recent Submissions',
-                  style: TextStyle(
-                    fontSize: widget.valueScaler(context, 24),
-                  ),
                 ),
                 children: [
                   ListView.separated(
