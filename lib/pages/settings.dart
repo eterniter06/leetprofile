@@ -62,15 +62,11 @@ class _SettingsState extends State<Settings> {
             padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
             child: Text(
               'General',
-              style: TextStyle(
-                color: Colors.amber,
-              ),
             ),
           ),
           const SettingTileSwitch(
             title: Text(
               'Refresh all users when app loads',
-              style: TextStyle(color: Colors.white),
             ),
             trueDescription: Text(
               'Profiles will be updated when app loads',
@@ -89,15 +85,11 @@ class _SettingsState extends State<Settings> {
             padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
             child: Text(
               'Theme',
-              style: TextStyle(
-                color: Colors.amber,
-              ),
             ),
           ),
           SettingTile(
             title: const Text(
               'Theme',
-              style: TextStyle(color: Colors.white),
             ),
             description:
                 Text('Current theme: ${_themeModeAsString(themeMode)}'),
@@ -159,72 +151,72 @@ class _SettingsState extends State<Settings> {
             padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
             child: Text(
               'Data',
-              style: TextStyle(
-                color: Colors.amber,
-              ),
             ),
           ),
           Consumer<UserListModel>(
             builder: (context, userListModel, child) => SettingTile(
               title: const Text(
                 'Export users',
-                style: TextStyle(color: Colors.white),
               ),
               description: const Text(
                   'Save all usernames in the app to a file that can be imported. No detail other than the username is exported'),
-              onTap: () async {
-                if (userListModel.isEmpty()) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('No data to export'),
-                      duration: Duration(seconds: 2),
-                      showCloseIcon: true,
-                    ),
-                  );
-                  return;
-                }
+              onTap: userListModel.isEmpty()
+                  ? null
+                  : () async {
+                      if (userListModel.isEmpty()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('No data to export'),
+                            duration: Duration(seconds: 2),
+                            showCloseIcon: true,
+                          ),
+                        );
+                        return;
+                      }
 
-                String time = DateTime.now()
-                    .toLocal()
-                    .toString()
-                    .replaceAll('-', '_')
-                    .replaceAll(':', '')
-                    .replaceAll(' ', '');
-                time = time.substring(0, time.indexOf('.'));
+                      String time = DateTime.now()
+                          .toLocal()
+                          .toString()
+                          .replaceAll('-', '_')
+                          .replaceAll(':', '')
+                          .replaceAll(' ', '');
+                      time = time.substring(0, time.indexOf('.'));
 
-                String csvFilename = "LP_$time.csv";
+                      String csvFilename = "LP_$time.csv";
 
-                //Todo: Add option to export as profile links or as usernames
-                //Todo: Contemplate using json vs csv
+                      //Todo: Add option to export as profile links or as usernames
+                      //Todo: Contemplate using json vs csv
 
-                String usernameListAsString =
-                    userListModel.exportUsernamesAsCSV(withTLD: false);
+                      String usernameListAsString =
+                          userListModel.exportUsernamesAsCSV(withTLD: false);
 
-                String? directory = await FilePicker.platform.getDirectoryPath(
-                  dialogTitle: 'Pick export location',
-                );
+                      String? directory =
+                          await FilePicker.platform.getDirectoryPath(
+                        dialogTitle: 'Pick export location',
+                      );
 
-                if (directory == null) {
-                  return;
-                }
+                      if (directory == null) {
+                        return;
+                      }
 
-                File exportFile = File(p.join(directory, csvFilename));
-                await exportFile.writeAsString(usernameListAsString);
+                      File exportFile = File(p.join(directory, csvFilename));
+                      await exportFile.writeAsString(usernameListAsString);
 
-                if (mounted) {
-                  ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(
-                    content: Text('Export file created in Folder: $directory'),
-                    duration: const Duration(seconds: 6),
-                  ));
-                }
-              },
+                      if (mounted) {
+                        ScaffoldMessenger.maybeOf(context)
+                            ?.showSnackBar(SnackBar(
+                          content:
+                              Text('Export file created in Folder: $directory'),
+                          duration: const Duration(seconds: 6),
+                        ));
+                      }
+                    },
             ),
           ),
           Consumer<UserListModel>(
             builder: (context, userListModel, child) => SettingTile(
               title: const Text(
                 'Import users',
-                style: TextStyle(color: Colors.white),
               ),
               description: const Text(
                 'Load all users from the import file',
@@ -297,14 +289,57 @@ class _SettingsState extends State<Settings> {
               },
             ),
           ),
-          SettingTile(
-            title: const Text(
-              'Clear Data',
-              style: TextStyle(color: Colors.red),
-            ),
-            description: Text(
-              'Remove all users and their stored data. This cannot be undone',
-              style: TextStyle(color: Colors.red[100]),
+          Consumer<UserListModel>(
+            builder: (context, userListModel, child) => SettingTile(
+              title: const Text(
+                'Clear Data',
+              ),
+              description: const Text(
+                'Remove all users and their stored data. This cannot be undone',
+              ),
+              onTap: userListModel.isEmpty()
+                  ? null
+                  : () {
+                      showDialog(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          title: const Text('Delete all data?'),
+                          content: const Text(
+                              'Existing data will be erased. You can still restore the users using a import file.'),
+                          actions: [
+                            ElevatedButton(
+                              child: const Text(
+                                'Delete data',
+                              ),
+                              onPressed: () async {
+                                String snackBarMessage = userListModel.isEmpty()
+                                    ? 'Nothing to delete. Add some profiles first.'
+                                    : 'Profiles deleted';
+
+                                if (!userListModel.isEmpty()) {
+                                  await userListModel.deleteAllDatabaseSync();
+                                }
+
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(snackBarMessage),
+                                      showCloseIcon: true,
+                                      duration: const Duration(seconds: 3),
+                                    ),
+                                  );
+                                  Navigator.pop(dialogContext);
+                                }
+                              },
+                            ),
+                            ElevatedButton(
+                              child: const Text('Cancel'),
+                              onPressed: () => Navigator.pop(dialogContext),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
             ),
           ),
         ],
@@ -314,20 +349,28 @@ class _SettingsState extends State<Settings> {
 }
 
 class SettingTile extends StatelessWidget {
-  const SettingTile({super.key, this.title, this.description, this.onTap});
+  const SettingTile(
+      {super.key,
+      this.title,
+      this.description,
+      this.titleTextStyle,
+      this.subtitleTextStyle,
+      this.onTap});
 
   final Widget? title;
   final Widget? description;
   final void Function()? onTap;
-
+  final TextStyle? titleTextStyle;
+  final TextStyle? subtitleTextStyle;
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return ListTile(
+      enabled: onTap == null ? false : true,
+      titleTextStyle: titleTextStyle,
+      subtitleTextStyle: subtitleTextStyle,
       onTap: onTap,
-      child: ListTile(
-        title: title,
-        subtitle: description,
-      ),
+      title: title,
+      subtitle: description,
     );
   }
 }

@@ -46,8 +46,11 @@ class UserDatabase {
 
   static Future<void> delete(UserData user) async {
     var isar = await UserDatabase.isar();
-    await isar!.writeTxn(() async {
-      await isar.userDatas.delete(user.isarId);
-    });
+    await isar!.writeTxn(() async => await isar.userDatas.delete(user.isarId));
+  }
+
+  static Future<void> deleteAll() async {
+    var isar = await UserDatabase.isar();
+    await isar!.writeTxn(() async => await isar.userDatas.clear());
   }
 }

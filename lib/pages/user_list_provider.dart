@@ -27,7 +27,7 @@ class UserListModel extends ChangeNotifier {
     return indexOfUsername(username) != -1;
   }
 
-  UserData? userFromUsername(String username) {
+  UserData? findUserFromUsername(String username) {
     int index = indexOfUsername(username);
     return index == -1 ? null : userList[index];
   }
@@ -157,6 +157,12 @@ class UserListModel extends ChangeNotifier {
     UserData deleted = userList.removeAt(index);
     notifyListeners();
     return deleted;
+  }
+
+  Future<void> deleteAllDatabaseSync() async {
+    UserDatabase.deleteAll();
+    userList.clear();
+    notifyListeners();
   }
 
   Future<void> syncDatabase() async {

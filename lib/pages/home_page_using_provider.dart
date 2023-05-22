@@ -65,11 +65,9 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
 
   Future<void> _updateUsers() async {
     await widget.userListModel.updateUsers();
-    String snackbarMessage = widget.userListModel.isEmpty()
-        ? 'Nothing to refresh'
-        : 'All user profiles have been refreshed';
-
-    _informUser(Text(snackbarMessage));
+    if (!widget.userListModel.isEmpty()) {
+      _informUser(const Text('All user profiles have been refreshed'));
+    }
   }
 
   Future<UserData?> _createUser(String username) async {
@@ -166,7 +164,7 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => UserPage(
                           userData: widget.userListModel
-                              .userFromUsername(username)!)));
+                              .findUserFromUsername(username)!)));
                 },
               ),
             );
@@ -187,6 +185,10 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
             icon: const Icon(Icons.refresh_rounded),
             onPressed: () {
               _updateUsers();
+              if (widget.userListModel.isEmpty()) {
+                _informUser(
+                    const Text('Nothing to refersh. Add some profiles first'));
+              }
             },
           ),
           PopupMenuButton(
@@ -230,6 +232,7 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
             }
             if (oldIndex < newIndex) newIndex--;
             UserData user = widget.userListModel.userAtIndex(oldIndex);
+            // Remove from the application list
             widget.userListModel.deleteUser(user);
             widget.userListModel.insertUser(newIndex, user);
           });
@@ -255,6 +258,7 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
     return Dismissible(
       background: Container(color: Colors.redAccent),
       onDismissed: (direction) async {
+        // Remove from userDatabase first since it is likely to be more time taking
         UserDatabase.delete(widget.userListModel.userAtIndex(index));
         setState(() {
           UserData removedUser = widget.userListModel.deleteUserAt(index);
