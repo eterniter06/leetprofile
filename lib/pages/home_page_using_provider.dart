@@ -9,10 +9,10 @@ import 'package:ui_elements/components/theme.dart';
 import 'package:ui_elements/pages/settings.dart';
 import 'package:ui_elements/pages/user_details.dart';
 import 'package:ui_elements/pages/user_list_provider.dart';
-
 import '../components/dataclass/http_wrapper/data_parser.dart';
 import '../components/dataclass/user_class/userdata.dart';
 import '../components/dialog/user_input.dart';
+import '../components/dismissible_background.dart';
 import 'about.dart';
 
 class MyApp extends StatelessWidget {
@@ -243,16 +243,28 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
                 userData: widget.userListModel.userAtIndex(index),
               ),
               closedBuilder: (context, action) =>
-                  dismissableCard(index, context),
+                  dismissibleCard(index, context),
             ),
         ],
       ),
     );
   }
 
-  Dismissible dismissableCard(int index, BuildContext context) {
+  Dismissible dismissibleCard(int index, BuildContext context) {
     return Dismissible(
-      onDismissed: (direction) async {
+      background: const DismissableBackground(
+        alignment: AlignmentDirectional.centerStart,
+      ),
+      secondaryBackground: const DismissableBackground(
+        alignment: AlignmentDirectional.centerEnd,
+      ),
+      onUpdate: (details) {
+        if (!details.previousReached && details.reached) {
+          HapticFeedback.lightImpact();
+        }
+      },
+      dismissThresholds: const {DismissDirection.horizontal: 0.45},
+      onDismissed: (DismissDirection direction) async {
         // Remove from userDatabase first since it is likely to be more time taking
         UserDatabase.delete(widget.userListModel.userAtIndex(index));
         setState(() {
@@ -289,7 +301,7 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
         widget.userListModel.refreshListOrder();
         widget.userListModel.syncDatabase();
       },
-      key: Key(widget.userListModel.userAtIndex(index).username),
+      key: UniqueKey(),
       child: genCard(index),
     );
   }
