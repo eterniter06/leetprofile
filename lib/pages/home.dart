@@ -20,15 +20,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeModeModel>(
-      builder: (context, themeModeModel, child) => MaterialApp(
+    return ChangeNotifierProvider(
+      create: (context) => UserListModel(),
+      child: MaterialApp(
         theme: ThemeModeModel.light,
         darkTheme: ThemeModeModel.dark,
-        themeMode: themeModeModel.themeMode,
+        themeMode: Provider.of<ThemeModeModel>(context).themeMode,
         home: Consumer<UserListModel>(
           builder: (context, userListModel, child) =>
               UserListPageExperimental(userListModel: userListModel),
         ),
+        // home: const UserListPage(),
       ),
     );
   }
