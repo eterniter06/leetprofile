@@ -2,9 +2,9 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import '../components/database/user_database.dart';
-import '../components/dataclass/http_wrapper/data_parser.dart';
-import '../components/dataclass/user_class/userdata.dart';
+import '../database/user_database.dart';
+import '../dataclass/http_wrapper/data_parser.dart';
+import '../dataclass/user_class/userdata.dart';
 
 class UserListModel extends ChangeNotifier {
   List<UserData> userList = [];
@@ -25,7 +25,7 @@ class UserListModel extends ChangeNotifier {
     });
   }
 
-  bool inList(String username) {
+  bool contains(String username) {
     return indexOfUsername(username) != -1;
   }
 
@@ -43,25 +43,21 @@ class UserListModel extends ChangeNotifier {
   }
 
   void addUser(UserData user) {
-    int index = userList.indexWhere((userInList) {
-      return userInList.username == user.username;
-    });
-
-    if (index == -1) {
-      userList.add(user);
-      notifyListeners();
+    if (contains(user.username)) {
+      return;
     }
+
+    userList.add(user);
+    notifyListeners();
   }
 
   void insertUser(int index, UserData user) {
-    int existingIndex = userList.indexWhere((userInList) {
-      return userInList.username == user.username;
-    });
-
-    if (existingIndex == -1) {
-      userList.insert(index, user);
-      notifyListeners();
+    if (contains(user.username)) {
+      return;
     }
+
+    userList.insert(index, user);
+    notifyListeners();
   }
 
   Future<void> loadUsersFromDatabase() async {
@@ -80,6 +76,8 @@ class UserListModel extends ChangeNotifier {
 
     userList = tempUserList;
     notifyListeners();
+
+    // refreshListOrder(); // investigate if redundant
   }
 
   Future<void> updateUser(UserData user) async {
@@ -186,11 +184,15 @@ class UserListModel extends ChangeNotifier {
 
   void importUsersFromList(List userList) {
     bool userAdded = false;
-    for (var user in userList) {
-      if (!inList(user.username)) {
-        addUser(user);
-        userAdded = true;
+
+    for (UserData user in userList) {
+      if (contains(user.username)) {
+        continue;
       }
+
+      user.listOrder = length();
+      addUser(user);
+      userAdded = true;
     }
 
     if (userAdded) {

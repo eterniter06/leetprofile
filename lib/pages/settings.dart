@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 import 'package:ui_elements/components/dialog/setting_option.dart';
-import 'package:ui_elements/components/theme.dart';
-import 'package:ui_elements/pages/user_list_provider.dart';
+import 'package:ui_elements/components/change_notifiers/theme.dart';
+import 'package:ui_elements/components/change_notifiers/user_list.dart';
 
 import '../components/database/settings_database.dart';
 
@@ -253,7 +253,7 @@ class _SettingsState extends State<Settings> {
 
                     bool listUpdated = false;
                     for (var username in values) {
-                      if (userListModel.inList(username)) {
+                      if (userListModel.contains(username)) {
                         continue;
                       }
 
@@ -284,6 +284,7 @@ class _SettingsState extends State<Settings> {
                       ));
                     }
                     userListModel.importUsersFromList(userList);
+                    userListModel.syncDatabase();
                   }
                 }
               },
