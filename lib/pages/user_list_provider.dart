@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import '../components/database/user_database.dart';
@@ -62,7 +64,7 @@ class UserListModel extends ChangeNotifier {
     }
   }
 
-  Future<void> loadUsers() async {
+  Future<void> loadUsersFromDatabase() async {
     if (_isInitialized) {
       return;
     }
@@ -87,22 +89,35 @@ class UserListModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateUsers() async {
+  Future<void> updateUsersFromServer() async {
     List<Future> futureJsonList = [];
     for (var user in userList) {
       futureJsonList.add(DataParser(username: user.username).getAllAsJson());
     }
 
-    var jsonList = await Future.wait(futureJsonList);
+    Queue<dynamic> jsonQueue = Queue.from(await Future.wait(futureJsonList));
 
-    for (int i = 0; i < userList.length; ++i) {
-      userList[i].update(updatedUser: UserData.fromMap(dataMap: jsonList[i]));
+    // Take care of reordering that occurs in between refreshing
+    // Consider using mapping from Username to userData and index
+
+    while (jsonQueue.isNotEmpty) {
+      var first = jsonQueue.first;
+      jsonQueue.removeFirst();
+      var updatedUser = UserData.fromMap(dataMap: first);
+
+      int index = indexOfUsername(updatedUser.username);
+      // User was removed in between refreshing
+      if (index == -1) {
+        continue;
+      }
+
+      userList[index].update(updatedUser: updatedUser);
     }
 
     notifyListeners();
   }
 
-  Future<UserData?> createUserFromUsername(String username) async {
+  static Future<UserData?> createUserFromUsername(String username) async {
     Map? data = await DataParser(username: username).getAllAsJson();
     return data == null ? null : UserData.fromMap(dataMap: data);
   }

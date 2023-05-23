@@ -9,7 +9,6 @@ import 'package:ui_elements/components/theme.dart';
 import 'package:ui_elements/pages/settings.dart';
 import 'package:ui_elements/pages/user_details.dart';
 import 'package:ui_elements/pages/user_list_provider.dart';
-import '../components/dataclass/http_wrapper/data_parser.dart';
 import '../components/dataclass/user_class/userdata.dart';
 import '../components/dialog/user_input.dart';
 import '../components/dismissible_background.dart';
@@ -59,22 +58,17 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
   }
 
   Future<void> _loadUsers() async {
-    await widget.userListModel.loadUsers();
+    await widget.userListModel.loadUsersFromDatabase();
     if (SettingsDatabase.refreshAllUsersOnStartup()) {
       _updateUsers();
     }
   }
 
   Future<void> _updateUsers() async {
-    await widget.userListModel.updateUsers();
+    await widget.userListModel.updateUsersFromServer();
     if (!widget.userListModel.isEmpty()) {
       _informUser(const Text('All user profiles have been refreshed'));
     }
-  }
-
-  Future<UserData?> _createUser(String username) async {
-    Map? data = await DataParser(username: username).getAllAsJson();
-    return data == null ? null : UserData.fromMap(dataMap: data);
   }
 
   void _informUser(Widget content, [SnackBarAction? action]) {
@@ -103,25 +97,12 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
 
           if (usernameInput == null) return;
 
-          String username = usernameInput.trim();
-
-          if (username.contains('leetcode.com/')) {
-            String domainNameWithSlash = 'leetcode.com/';
-            int usernameStart = username.indexOf(domainNameWithSlash) +
-                domainNameWithSlash.length;
-            int? usernameEnd = username.indexOf('/', usernameStart);
-
-            if (usernameEnd < usernameStart) {
-              usernameEnd = null;
-            }
-
-            username = username.substring(usernameStart, usernameEnd);
-          }
-
+          String username = _processInputtedUsername(usernameInput);
           int index = widget.userListModel.indexOfUsername(username);
 
-          if (index == -1) {
-            var user = await _createUser(username.toLowerCase());
+          if (_isNotInList(index)) {
+            var user = await UserListModel.createUserFromUsername(
+                username.toLowerCase());
 
             if (user == null) {
               _informUser(
@@ -175,7 +156,7 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
         actions: [
           const IconButton(
             tooltip: "Today's daily question",
-            icon: Icon(Icons.local_fire_department_sharp),
+            icon: Icon(Icons.local_fire_department_rounded),
             onPressed: null,
           ),
           IconButton(
@@ -222,18 +203,18 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
         ),
         onReorderStart: (index) => HapticFeedback.lightImpact(),
         onReorder: (oldIndex, newIndex) async {
-          setState(() {
-            // These two lines are workarounds for ReorderableListView problems
-            // Source: https://stackoverflow.com/questions/54162721/onreorder-arguments-in-flutter-reorderablelistview?newreg=398dc3a491ee40fbad1b76ab1e303977
-            if (newIndex > widget.userListModel.length()) {
-              newIndex = widget.userListModel.length();
-            }
-            if (oldIndex < newIndex) newIndex--;
-            UserData user = widget.userListModel.userAtIndex(oldIndex);
-            // Remove from the application list
-            widget.userListModel.deleteUser(user);
-            widget.userListModel.insertUser(newIndex, user);
-          });
+          // setState(() {
+          // These two lines are workarounds for ReorderableListView problems
+          // Source: https://stackoverflow.com/questions/54162721/onreorder-arguments-in-flutter-reorderablelistview?newreg=398dc3a491ee40fbad1b76ab1e303977
+          if (newIndex > widget.userListModel.length()) {
+            newIndex = widget.userListModel.length();
+          }
+          if (oldIndex < newIndex) newIndex--;
+          UserData user = widget.userListModel.userAtIndex(oldIndex);
+          // Remove from the application list
+          widget.userListModel.deleteUser(user);
+          widget.userListModel.insertUser(newIndex, user);
+          // });
           widget.userListModel.refreshListOrder();
           await widget.userListModel.syncDatabase();
         },
@@ -252,6 +233,27 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
     );
   }
 
+  bool _isNotInList(int index) => index == -1;
+
+  String _processInputtedUsername(String usernameInput) {
+    String username = usernameInput.trim();
+
+    if (username.contains('leetcode.com/')) {
+      String domainNameWithSlash = 'leetcode.com/';
+      int usernameStart =
+          username.indexOf(domainNameWithSlash) + domainNameWithSlash.length;
+      int? usernameEnd = username.indexOf('/', usernameStart);
+
+      if (usernameEnd < usernameStart) {
+        usernameEnd = null;
+      }
+
+      username = username.substring(usernameStart, usernameEnd);
+    }
+    return username;
+  }
+
+  /// Multiple concurrent dismisses don't work for reasons undiscovered
   Dismissible dismissibleCard(int index, BuildContext context) {
     return Dismissible(
       background: const DismissableBackground(
@@ -267,41 +269,44 @@ class _UserListPageExperimentalState extends State<UserListPageExperimental> {
       },
       dismissThresholds: const {DismissDirection.horizontal: 0.45},
       onDismissed: (DismissDirection direction) async {
-        // Remove from userDatabase first since it is likely to be more time taking
-        UserDatabase.delete(widget.userListModel.userAtIndex(index));
-        setState(() {
-          UserData removedUser = widget.userListModel.deleteUserAt(index);
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                duration: const Duration(seconds: 6),
-                showCloseIcon: true,
-                content: RichText(
-                  softWrap: true,
-                  text: TextSpan(
-                    text: 'User ',
-                    children: [
-                      TextSpan(
-                        text: removedUser.nickname,
-                      ),
-                      const TextSpan(text: ' removed'),
-                    ],
-                  ),
-                ),
-                action: SnackBarAction(
-                  label: 'Undo?',
-                  onPressed: () {
-                    setState(() {
-                      widget.userListModel.insertUser(index, removedUser);
-                    });
-                  },
+        UserData? removedUser = widget.userListModel.deleteUserAt(index);
+        if (mounted) {
+          // Cannot add both, flexibility to insert back at same index
+          // and option to stack undo users due to indexing conflict
+          // e.g. Delete user at index 5 in a list of size 6 and then delete 2 more users
+          // Since list size is now smaller than initial index, exception is thrown
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              duration: const Duration(seconds: 6),
+              showCloseIcon: true,
+              content: RichText(
+                softWrap: true,
+                text: TextSpan(
+                  text: 'User ',
+                  children: [
+                    TextSpan(
+                      text: removedUser.nickname,
+                    ),
+                    const TextSpan(text: ' removed'),
+                  ],
                 ),
               ),
-            );
-          }
-        });
-        widget.userListModel.refreshListOrder();
-        widget.userListModel.syncDatabase();
+              action: SnackBarAction(
+                label: 'Undo?',
+                onPressed: () {
+                  widget.userListModel.insertUser(index, removedUser!);
+                  removedUser = null;
+                },
+              ),
+            ),
+          );
+        }
+        if (removedUser != null) {
+          UserDatabase.delete(removedUser!);
+          widget.userListModel.refreshListOrder();
+          await widget.userListModel.syncDatabase();
+        }
       },
       key: UniqueKey(),
       child: genCard(index),

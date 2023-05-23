@@ -259,7 +259,7 @@ class _SettingsState extends State<Settings> {
 
                       listUpdated = true;
                       futureGroup
-                          .add(userListModel.createUserFromUsername(username));
+                          .add(UserListModel.createUserFromUsername(username));
                     }
 
                     if (!listUpdated && mounted) {

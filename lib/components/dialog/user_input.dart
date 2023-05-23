@@ -78,6 +78,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
               keyboardType: TextInputType.name,
               autofocus: true,
               controller: _textController,
+              onTapOutside: (event) => FocusScope.of(context).unfocus(),
               validator: (String? username) {
                 if (username == null || username.isEmpty) {
                   return 'Username cannot be empty.';
