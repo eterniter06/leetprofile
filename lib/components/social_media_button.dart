@@ -8,7 +8,6 @@ class SocialMediaButton extends StatelessWidget {
     required this.link,
     required this.icon,
     required this.socialMedia,
-    required this.valueScaler,
     this.color,
   });
 
@@ -16,7 +15,6 @@ class SocialMediaButton extends StatelessWidget {
   final String link;
   final String socialMedia;
   final Color? color;
-  final Function valueScaler;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +32,7 @@ class SocialMediaButton extends StatelessWidget {
         icon,
         semanticLabel: "$socialMedia profile",
         color: color,
-        size: valueScaler(context, 40),
+        size: 40,
       ),
     );
   }

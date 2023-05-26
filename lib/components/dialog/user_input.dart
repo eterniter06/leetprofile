@@ -58,7 +58,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
         const Padding(
           padding: EdgeInsets.fromLTRB(26.0, 8.0, 26.0, 4.0),
           child: Text(
-            'Enter profile username to search:',
+            'Enter profile link or username:',
             softWrap: true,
             textWidthBasis: TextWidthBasis.parent,
           ),

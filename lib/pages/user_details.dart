@@ -18,7 +18,12 @@ class UserPage extends StatefulWidget {
   State<UserPage> createState() => _UserPageState();
 }
 
-class _UserPageState extends State<UserPage> {
+class _UserPageState extends State<UserPage>
+    with SingleTickerProviderStateMixin {
+  bool isRefreshing = false;
+  late final AnimationController _controller =
+      AnimationController(vsync: this, duration: const Duration(seconds: 1));
+
   num getSolvedCount(ProblemData? problemData) {
     return problemData == null
         ? 0
@@ -27,12 +32,42 @@ class _UserPageState extends State<UserPage> {
             problemData.hardSolved;
   }
 
-  double valueScaler(BuildContext context, num value) {
-    Size size = MediaQuery.of(context).size;
-    double width = size.width;
-    double ratio = width / 590.0;
+  Future<void> refreshUser() async {
+    setState(() {
+      isRefreshing = true;
+    });
 
-    return ratio * value;
+    _controller.repeat();
+
+    await _refreshUserImpl();
+
+    setState(() {
+      isRefreshing = false;
+    });
+
+    _controller.stop();
+    await _controller.forward();
+  }
+
+  Future<void> _refreshUserImpl() async {
+    var dataMap =
+        await DataParser(username: widget.userData.username).getAllAsJson();
+
+    setState(() {
+      widget.userData.update(updatedUser: UserData.fromMap(dataMap: dataMap!));
+    });
+
+    await UserDatabase.put(widget.userData);
+
+    setState(() {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          showCloseIcon: true,
+          content: Text('User profile has been refreshed.'),
+        ),
+      );
+    });
   }
 
   @override
@@ -41,33 +76,17 @@ class _UserPageState extends State<UserPage> {
       appBar: AppBar(
         title: Text(widget.userData.nickname),
         actions: [
-          IconButton(
-            tooltip: 'Refresh user',
-            icon: const Icon(Icons.refresh_rounded),
-            onPressed: () async {
-              var dataMap = await DataParser(username: widget.userData.username)
-                  .getAllAsJson();
-
-              setState(() {
-                widget.userData
-                    .update(updatedUser: UserData.fromMap(dataMap: dataMap!));
-              });
-
-              var isar = await UserDatabase.isar();
-              isar!.writeTxn(() async {
-                await isar.userDatas.put(widget.userData);
-              });
-
-              setState(() {
-                ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    showCloseIcon: true,
-                    content: Text('User profile has been refreshed.'),
-                  ),
-                );
-              });
-            },
+          RotationTransition(
+            turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
+            child: IconButton(
+              tooltip: 'Refresh user',
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: isRefreshing
+                  ? null
+                  : () async {
+                      await refreshUser();
+                    },
+            ),
           ),
           IconButton(
             tooltip: 'Share leetcode profile',
@@ -112,8 +131,8 @@ class _UserPageState extends State<UserPage> {
                             'Top percentage: ${widget.userData.userContestRanking?.topPercentage}'),
                         if (widget.userData.githubUrl != null ||
                             widget.userData.linkedinUrl != null) ...[
-                          SizedBox(
-                            height: valueScaler(context, 20),
+                          const SizedBox(
+                            height: 20,
                           ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -125,9 +144,8 @@ class _UserPageState extends State<UserPage> {
                                   link: widget.userData.linkedinUrl!,
                                   color: const Color(0xff0077b5),
                                   socialMedia: 'Linkedin',
-                                  valueScaler: valueScaler,
                                 ),
-                                SizedBox(width: valueScaler(context, 8)),
+                                const SizedBox(width: 8),
                               ],
                               if (widget.userData.githubUrl != null)
                                 SocialMediaButton(
@@ -142,7 +160,6 @@ class _UserPageState extends State<UserPage> {
                                       ? const Color(0xffffffff)
                                       : const Color(0xff171515),
                                   socialMedia: 'Github',
-                                  valueScaler: valueScaler,
                                 )
                             ],
                           )
@@ -155,61 +172,56 @@ class _UserPageState extends State<UserPage> {
               const Divider(),
               Card(
                 child: Padding(
-                  padding: EdgeInsets.all(valueScaler(context, 8.0)),
+                  padding: const EdgeInsets.all(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.all(valueScaler(context, 8.0)),
-                        child: const Text(
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
                           'Solved Problems',
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(
-                          valueScaler(context, 12.0),
-                        ),
-                        child: const Text(
+                      const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Text(
                           'Difficulty',
                         ),
                       ),
                       DifficultySection(
                         problemData: widget.userData.problemData,
-                        valueScaler: valueScaler,
                       ),
-                      SizedBox(
-                        height: valueScaler(context, 16),
+                      const SizedBox(
+                        height: 16,
                       ),
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.symmetric(
-                          vertical: valueScaler(context, 6.0),
-                          horizontal: valueScaler(context, 12.0),
+                          vertical: 6.0,
+                          horizontal: 12.0,
                         ),
-                        child: const Text(
+                        child: Text(
                           'Language',
                         ),
                       ),
                       LanguageSection(
-                          valueScaler: valueScaler,
                           languageProblemList:
                               widget.userData.languageProblemCount ?? []),
                       const Divider(),
                       Container(
-                        padding: EdgeInsets.all(valueScaler(context, 4)),
-                        margin: EdgeInsets.only(top: valueScaler(context, 5)),
+                        padding: const EdgeInsets.all(4),
+                        margin: const EdgeInsets.only(top: 5),
                         child: Text(
                           'Total problems solved: ${getSolvedCount(widget.userData.problemData)}',
                         ),
                       ),
-                      SizedBox(
-                        height: valueScaler(context, 16),
+                      const SizedBox(
+                        height: 16,
                       ),
                     ],
                   ),
                 ),
               ),
               RecentSubmissionList(
-                  valueScaler: valueScaler,
                   submissionList: widget.userData.recentAcSubmissionList ?? []),
             ],
           ),

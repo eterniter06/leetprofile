@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'dataclass/user_class/userdata.dart';
 
 class LanguageCard extends StatelessWidget {
-  const LanguageCard(
-      {super.key, required this.languageDetails, required this.valueScaler});
+  const LanguageCard({
+    super.key,
+    required this.languageDetails,
+  });
   final LanguageSubmission languageDetails;
-  final Function valueScaler;
 
   @override
   Widget build(BuildContext context) {
@@ -27,20 +28,20 @@ class LanguageCard extends StatelessWidget {
               ),
               Expanded(
                 child: Container(
-                  width: valueScaler(context, 48),
+                  width: 48,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(
-                      valueScaler(context, 16),
+                      16,
                     ),
                   ),
                   child: Center(
                     heightFactor: 1,
                     child: Padding(
-                      padding: EdgeInsets.all(valueScaler(context, 4)),
+                      padding: const EdgeInsets.all(4),
                       child: Text(
                         languageDetails.problemsSolved.toString(),
-                        style: TextStyle(
-                          fontSize: valueScaler(context, 14),
+                        style: const TextStyle(
+                          fontSize: 14,
                         ),
                       ),
                     ),

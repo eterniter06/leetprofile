@@ -3,17 +3,13 @@ import 'dataclass/user_class/userdata.dart';
 import 'language_card.dart';
 
 class LanguageSection extends StatelessWidget {
-  const LanguageSection(
-      {super.key,
-      required this.languageProblemList,
-      required this.valueScaler});
+  const LanguageSection({super.key, required this.languageProblemList});
   final List<LanguageSubmission> languageProblemList;
-  final Function valueScaler;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: valueScaler(context, 140),
+      height: 140,
       child: ListView.builder(
         physics: const ClampingScrollPhysics(),
         shrinkWrap: true,
@@ -21,7 +17,6 @@ class LanguageSection extends StatelessWidget {
         itemCount: languageProblemList.length,
         itemBuilder: (BuildContext context, int index) => LanguageCard(
           languageDetails: languageProblemList[index],
-          valueScaler: valueScaler,
         ),
       ),
     );

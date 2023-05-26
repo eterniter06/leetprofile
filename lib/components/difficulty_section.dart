@@ -7,11 +7,9 @@ class DifficultySection extends StatelessWidget {
   const DifficultySection({
     super.key,
     this.problemData,
-    required this.valueScaler,
   });
 
   final ProblemData? problemData;
-  final Function valueScaler;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +17,6 @@ class DifficultySection extends StatelessWidget {
       children: [
         Expanded(
           child: DifficultyCard(
-            valueScaler: valueScaler,
             problemCategory: 'Easy',
             solved: problemData?.easySolved ?? 0,
             total: problemData?.easyTotal ?? 0,
@@ -27,7 +24,6 @@ class DifficultySection extends StatelessWidget {
         ),
         Expanded(
           child: DifficultyCard(
-            valueScaler: valueScaler,
             problemCategory: 'Medium',
             solved: problemData?.mediumSolved ?? 0,
             total: problemData?.mediumTotal ?? 0,
@@ -35,7 +31,6 @@ class DifficultySection extends StatelessWidget {
         ),
         Expanded(
           child: DifficultyCard(
-            valueScaler: valueScaler,
             problemCategory: 'Hard',
             solved: problemData?.hardSolved ?? 0,
             total: problemData?.hardTotal ?? 0,

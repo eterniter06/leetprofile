@@ -46,11 +46,81 @@ class UserListPage extends StatefulWidget {
   State<UserListPage> createState() => _UserListPageState();
 }
 
-class _UserListPageState extends State<UserListPage> {
+class RefreshIconButton extends StatefulWidget {
+  const RefreshIconButton({super.key, required this.task, this.controller});
+  final Function task;
+  final AnimationController? controller;
+
+  @override
+  State<RefreshIconButton> createState() => _RefreshIconButtonState();
+}
+
+class _RefreshIconButtonState extends State<RefreshIconButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = widget.controller == null
+      ? AnimationController(vsync: this, duration: const Duration(seconds: 1))
+      : widget.controller!;
+  late bool isUpdating = _controller.isAnimating;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RotationTransition(
+      turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
+      child: IconButton(
+        tooltip: "Refresh all users",
+        icon: const Icon(Icons.refresh_rounded),
+        onPressed: isUpdating
+            ? null
+            : () async {
+                _controller.repeat();
+
+                setState(() {
+                  isUpdating = _controller.isAnimating;
+                });
+
+                await widget.task();
+                _controller.stop();
+                await _controller.forward();
+
+                setState(() {
+                  isUpdating = _controller.isAnimating;
+                });
+              },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+}
+
+class _UserListPageState extends State<UserListPage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  bool isRefreshing = false;
+
   @override
   initState() {
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
     _loadUsers();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUsers() async {
@@ -61,10 +131,26 @@ class _UserListPageState extends State<UserListPage> {
   }
 
   Future<void> _updateUsers() async {
+    setState(() {
+      isRefreshing = true;
+    });
+
+    _controller.repeat();
+
     await widget.userListModel.updateUsersFromServer();
+
+    setState(() {
+      isRefreshing = false;
+    });
+
+    _controller.stop();
+    await _controller.forward();
+
     if (!widget.userListModel.isEmpty()) {
-      _informUser(const Text('All user profiles have been refreshed'));
+      _informUser(const Text('User profiles have been refreshed'));
     }
+
+    await widget.userListModel.syncDatabase();
   }
 
   void _informUser(Widget content, [SnackBarAction? action]) {
@@ -136,16 +222,17 @@ class _UserListPageState extends State<UserListPage> {
             icon: Icon(Icons.local_fire_department_rounded),
             onPressed: null,
           ),
-          IconButton(
-            tooltip: "Refresh all users",
-            icon: const Icon(Icons.refresh_rounded),
-            onPressed: () {
-              _updateUsers();
-              if (widget.userListModel.isEmpty()) {
-                _informUser(
-                    const Text('Nothing to refersh. Add some profiles first'));
-              }
-            },
+          RotationTransition(
+            turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
+            child: IconButton(
+              tooltip: "Refresh all users",
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: isRefreshing
+                  ? null
+                  : () async {
+                      await _updateUsers();
+                    },
+            ),
           ),
           PopupMenuButton(
             onSelected: (value) {
@@ -175,6 +262,10 @@ class _UserListPageState extends State<UserListPage> {
         ],
       ),
       body: const ReorderableUserListView(),
+
+      // Future feature
+      // body: RefreshIndicator(
+      //     onRefresh: _updateUsers, child: const ReorderableUserListView()),
     );
   }
 

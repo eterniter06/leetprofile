@@ -4,10 +4,8 @@ import 'dataclass/user_class/userdata.dart';
 import 'recent_submission_card.dart';
 
 class RecentSubmissionList extends StatefulWidget {
-  const RecentSubmissionList(
-      {super.key, required this.submissionList, required this.valueScaler});
+  const RecentSubmissionList({super.key, required this.submissionList});
   final List<RecentSubmission> submissionList;
-  final Function valueScaler;
   @override
   State<RecentSubmissionList> createState() => _RecentSubmissionListState();
 }
@@ -18,12 +16,12 @@ class _RecentSubmissionListState extends State<RecentSubmissionList> {
     return widget.submissionList.isEmpty
         ? Card(
             child: Padding(
-              padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
+              padding: const EdgeInsets.all(8.0),
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
-                child: Padding(
-                  padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
-                  child: const Text(
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
                     'No Recent Submissions',
                   ),
                 ),
@@ -32,7 +30,7 @@ class _RecentSubmissionListState extends State<RecentSubmissionList> {
           )
         : Card(
             child: Padding(
-              padding: EdgeInsets.all(widget.valueScaler(context, 8.0)),
+              padding: const EdgeInsets.all(8.0),
               child: ExpansionTile(
                 shape: const Border(),
                 initiallyExpanded: false,

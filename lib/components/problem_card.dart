@@ -7,10 +7,7 @@ class DifficultyCard extends StatelessWidget {
     required this.problemCategory,
     required this.solved,
     required this.total,
-    required this.valueScaler,
   });
-
-  final Function valueScaler;
 
   final String problemCategory;
   final int solved;
@@ -51,51 +48,49 @@ class DifficultyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      child: AspectRatio(
-        aspectRatio: 1.0,
-        child: Column(
-          children: [
-            SizedBox(height: valueScaler(context, 8)),
-            CircularPercentIndicator(
-              radius: valueScaler(context, 60),
-              animation: true,
-              animationDuration: 700,
-              curve: Curves.decelerate,
-              circularStrokeCap: CircularStrokeCap.round,
-              arcType: ArcType.HALF,
-              footer: Card(
+      child: Column(
+        children: [
+          const SizedBox(height: 8),
+          CircularPercentIndicator(
+            radius: 60,
+            animation: true,
+            animationDuration: 700,
+            curve: Curves.decelerate,
+            circularStrokeCap: CircularStrokeCap.round,
+            arcType: ArcType.HALF,
+            footer: Container(
+              margin: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 2,
+              ),
+              child: Card(
                 elevation: 0,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: valueScaler(context, 8),
-                    vertical: valueScaler(context, 2),
-                  ),
-                  child: Text(
-                    problemCategory,
-                  ),
+                child: Text(
+                  problemCategory,
                 ),
               ),
-              // rotateLinearGradient: true,
-              center: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '$solved',
-                  ),
-                  Divider(
-                    endIndent: valueScaler(context, 32),
-                    indent: valueScaler(context, 32),
-                  ),
-                  Text(
-                    '$total',
-                  ),
-                ],
-              ),
-              percent: calculatePercent(),
             ),
-          ],
-        ),
+            // rotateLinearGradient: true,
+            center: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '$solved',
+                ),
+                const Divider(
+                  endIndent: 32,
+                  indent: 32,
+                ),
+                Text(
+                  '$total',
+                ),
+              ],
+            ),
+            percent: calculatePercent(),
+          ),
+        ],
       ),
     );
   }

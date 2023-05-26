@@ -77,7 +77,7 @@ class UserListModel extends ChangeNotifier {
     userList = tempUserList;
     notifyListeners();
 
-    // refreshListOrder(); // investigate if redundant
+    // refreshListOrder(); //todo investigate if redundant
   }
 
   Future<void> updateUser(UserData user) async {
@@ -101,6 +101,7 @@ class UserListModel extends ChangeNotifier {
     while (jsonQueue.isNotEmpty) {
       var first = jsonQueue.first;
       jsonQueue.removeFirst();
+
       var updatedUser = UserData.fromMap(dataMap: first);
 
       int index = indexOfUsername(updatedUser.username);
@@ -109,6 +110,7 @@ class UserListModel extends ChangeNotifier {
         continue;
       }
 
+      updatedUser.listOrder = index;
       userList[index].update(updatedUser: updatedUser);
     }
 
