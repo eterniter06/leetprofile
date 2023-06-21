@@ -1,3 +1,2 @@
-# ui_elements
-
-A new Flutter project.
+# LeetProfile
+LeetProfile is a flutter application for fetching and storing Leetcode user profiles.
