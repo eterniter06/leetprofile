@@ -34,6 +34,10 @@ class UserData {
 
   DateTime lastFetchTime;
 
+  void updateNickname(String newNickname) {
+    nickname = newNickname;
+  }
+
   void update({required UserData updatedUser}) {
     if (updatedUser.username != username) {
       throw '''Usernames do not match:
@@ -44,7 +48,10 @@ class UserData {
     lastFetchTime = updatedUser.lastFetchTime;
 
     realname = updatedUser.realname;
-    nickname = updatedUser.nickname;
+
+    // Nickname is local data, not fetched from server
+    // Nickanem is only changed via the user
+    // nickname = updatedUser.nickname;
     avatar = updatedUser.avatar;
 
     listOrder = updatedUser.listOrder;

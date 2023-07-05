@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 class NicknameInputDialog extends StatefulWidget {
   const NicknameInputDialog({
     super.key,
-    required this.oldNickname,
+    this.oldNickname,
+    this.username,
+    this.realname,
   });
 
-  final String oldNickname;
+  final String? oldNickname;
+  final String? realname;
+  final String? username;
 
   @override
   State<NicknameInputDialog> createState() => _NicknameInputDialogState();
@@ -30,14 +34,26 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          duration: const Duration(seconds: 2),
           showCloseIcon: true,
-          content: Text(
-              'Nickname changed. ${widget.oldNickname} -> ${_textController.text}'),
+          content: Text(widget.oldNickname == null
+              ? 'Nickname set: ${_textController.text}'
+              : 'Nickname changed. ${widget.oldNickname} -> ${_textController.text}'),
         ),
       );
 
       Navigator.pop(context, _textController.text);
     }
+  }
+
+  String dialogPromptText() {
+    if (widget.oldNickname == null) {
+      return widget.realname == ""
+          ? "Enter a nickname for ${widget.username}"
+          : "Enter a nickname for ${widget.realname}";
+    }
+
+    return "Enter a new nickname for ${widget.oldNickname!}";
   }
 
   @override
@@ -48,7 +64,7 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
         Padding(
           padding: const EdgeInsets.fromLTRB(26.0, 8.0, 26.0, 4.0),
           child: Text(
-            'Enter a new nickname for ${widget.oldNickname}:',
+            dialogPromptText(),
             softWrap: true,
             textWidthBasis: TextWidthBasis.parent,
           ),

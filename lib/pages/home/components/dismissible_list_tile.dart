@@ -21,6 +21,8 @@ class DismissibleListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     bool removed = false;
 
+    // TODO: Adjust sensitivity of drag
+    // TODO: Determine if this is a good location for the removed variable
     return Consumer<UserListModel>(
       builder: (context, userListModel, child) => Dismissible(
         background: const DismissableBackground(

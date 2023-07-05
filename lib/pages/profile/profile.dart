@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:ui_elements/change_notifiers/user_list.dart';
 
 import 'package:ui_elements/database/user_database.dart';
 
 import 'package:ui_elements/dataclass/http_wrapper/data_parser.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/dialog/nickname_input.dart';
 
 import 'components/difficulty_section.dart';
 import 'components/language_section.dart';
@@ -81,6 +84,30 @@ class _UserPageState extends State<UserPage>
                 ? widget.userData.username
                 : widget.userData.realname)),
         actions: [
+          Consumer<UserListModel>(
+            builder: (context, userListModel, child) => IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () async {
+                  String? newNickname = await showDialog(
+                    context: context,
+                    builder: (context) => NicknameInputDialog(
+                      oldNickname: widget.userData.nickname,
+                      realname: widget.userData.realname,
+                      username: widget.userData.username,
+                    ),
+                  );
+
+                  if (newNickname == null) {
+                    return;
+                  }
+
+                  setState(() {
+                    widget.userData.updateNickname(newNickname);
+                  });
+
+                  await UserDatabase.put(widget.userData);
+                }),
+          ),
           RotationTransition(
             turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
             child: IconButton(
