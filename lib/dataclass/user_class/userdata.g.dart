@@ -240,7 +240,12 @@ int _userDataEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
-  bytesCount += 3 + object.nickname.length * 3;
+  {
+    final value = object.nickname;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   {
     final value = object.problemData;
     if (value != null) {
@@ -370,7 +375,7 @@ UserData _userDataDeserialize(
   final object = UserData(
     avatar: reader.readString(offsets[2]),
     lastFetchTime: reader.readDateTime(offsets[8]),
-    nickname: reader.readString(offsets[11]),
+    nickname: reader.readStringOrNull(offsets[11]),
     realname: reader.readString(offsets[13]),
     username: reader.readString(offsets[17]),
   );
@@ -488,7 +493,7 @@ P _userDataDeserializeProp<P>(
     case 10:
       return (reader.readLongOrNull(offset)) as P;
     case 11:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 12:
       return (reader.readObjectOrNull<ProblemData>(
         offset,
@@ -1984,8 +1989,24 @@ extension UserDataQueryFilter
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> nicknameIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'nickname',
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> nicknameIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'nickname',
+      ));
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterFilterCondition> nicknameEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1998,7 +2019,7 @@ extension UserDataQueryFilter
   }
 
   QueryBuilder<UserData, UserData, QAfterFilterCondition> nicknameGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -2013,7 +2034,7 @@ extension UserDataQueryFilter
   }
 
   QueryBuilder<UserData, UserData, QAfterFilterCondition> nicknameLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -2028,8 +2049,8 @@ extension UserDataQueryFilter
   }
 
   QueryBuilder<UserData, UserData, QAfterFilterCondition> nicknameBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -3044,7 +3065,7 @@ extension UserDataQueryProperty
     });
   }
 
-  QueryBuilder<UserData, String, QQueryOperations> nicknameProperty() {
+  QueryBuilder<UserData, String?, QQueryOperations> nicknameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nickname');
     });

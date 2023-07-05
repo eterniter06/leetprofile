@@ -76,7 +76,10 @@ class _UserPageState extends State<UserPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.userData.nickname),
+        title: Text(widget.userData.nickname ??
+            (widget.userData.realname == ""
+                ? widget.userData.username
+                : widget.userData.realname)),
         actions: [
           RotationTransition(
             turns: Tween(begin: 0.0, end: 1.0).animate(_controller),

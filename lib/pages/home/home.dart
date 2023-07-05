@@ -49,62 +49,6 @@ class UserListPage extends StatefulWidget {
   State<UserListPage> createState() => _UserListPageState();
 }
 
-class RefreshIconButton extends StatefulWidget {
-  const RefreshIconButton({super.key, required this.task, this.controller});
-  final Function task;
-  final AnimationController? controller;
-
-  @override
-  State<RefreshIconButton> createState() => _RefreshIconButtonState();
-}
-
-class _RefreshIconButtonState extends State<RefreshIconButton>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = widget.controller == null
-      ? AnimationController(vsync: this, duration: const Duration(seconds: 1))
-      : widget.controller!;
-  late bool isUpdating = _controller.isAnimating;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return RotationTransition(
-      turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
-      child: IconButton(
-        tooltip: "Refresh all users",
-        icon: const Icon(Icons.refresh_rounded),
-        onPressed: isUpdating
-            ? null
-            : () async {
-                _controller.repeat();
-
-                setState(() {
-                  isUpdating = _controller.isAnimating;
-                });
-
-                await widget.task();
-                _controller.stop();
-                await _controller.forward();
-
-                setState(() {
-                  isUpdating = _controller.isAnimating;
-                });
-              },
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-}
-
 class _UserListPageState extends State<UserListPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
@@ -133,6 +77,7 @@ class _UserListPageState extends State<UserListPage>
     }
   }
 
+  // TODO: Figure out a better method for the refresh icon
   Future<void> _updateUsers() async {
     setState(() {
       isRefreshing = true;
@@ -180,6 +125,7 @@ class _UserListPageState extends State<UserListPage>
             builder: (context) => const UserInputDialog(),
           );
 
+          // TODO: Preferably use a class for the following:
           if (usernameInput == null) return;
 
           String username = _processInputtedUsername(usernameInput);

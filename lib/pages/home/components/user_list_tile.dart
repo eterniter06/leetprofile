@@ -13,7 +13,8 @@ class ExperimentalUserCard extends StatelessWidget {
       child: ListTile(
         style: ListTileStyle.list,
         leading: CircularNetworkImage(imageLink: userData.avatar),
-        title: Text(userData.nickname),
+        title: Text(userData.nickname ??
+            (userData.realname == "" ? userData.username : userData.realname)),
         trailing: LastUpdatedText(lastUpdated: userData.lastFetchTime),
         subtitle: Text(userData.username),
       ),

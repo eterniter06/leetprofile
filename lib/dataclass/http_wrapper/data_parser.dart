@@ -74,7 +74,7 @@ class DataParser {
 
       Map dataMap = {};
 
-      dataMap['username'] = dataMap['nickname'] = username;
+      dataMap['username'] = username;
       dataMap['realname'] = json['matchedUser']['profile']['realName'];
       dataMap['avatar'] = json['matchedUser']['profile']['userAvatar'];
 

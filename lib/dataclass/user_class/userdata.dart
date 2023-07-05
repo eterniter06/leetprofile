@@ -8,7 +8,7 @@ class UserData {
   Id get isarId => fastHash(username);
   int? listOrder;
 
-  late String nickname;
+  late String? nickname;
   late String realname;
   late String avatar;
 
@@ -69,7 +69,7 @@ class UserData {
 
   UserData({
     required this.username,
-    required this.nickname,
+    this.nickname,
     required this.avatar,
     required this.realname,
     required this.lastFetchTime,
@@ -98,6 +98,7 @@ class UserData {
         );
 }
 
+// Taken from the isar FAQ
 int fastHash(String username) {
   var hash = 0xcbf29ce484222325;
   int i = 0;
