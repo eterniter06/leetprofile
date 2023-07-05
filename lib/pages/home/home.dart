@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:ui_elements/components/database/settings_database.dart';
-import 'package:ui_elements/components/database/user_database.dart';
-import 'package:ui_elements/components/dialog/user_input.dart';
-import 'package:ui_elements/components/change_notifiers/theme.dart';
-import 'package:ui_elements/pages/settings.dart';
-import 'package:ui_elements/pages/user_details.dart';
-import 'package:ui_elements/components/change_notifiers/user_list.dart';
-import 'about.dart';
-import '../components/reorderable_listview.dart';
+import 'package:ui_elements/database/settings_database.dart';
+import 'package:ui_elements/database/user_database.dart';
+
+import 'package:ui_elements/change_notifiers/theme.dart';
+import 'package:ui_elements/change_notifiers/user_list.dart';
+
+import 'package:ui_elements/pages/about/about.dart';
+import 'package:ui_elements/pages/profile/profile.dart';
+import 'package:ui_elements/pages/settings/settings.dart';
+
+import 'components/input_dialog.dart';
+import 'components/reorderable_listview.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

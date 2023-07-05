@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dataclass/user_class/userdata.dart';
-import '../pages/user_details.dart';
-import 'image/squircle_network.dart';
+import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/image/squircle_network.dart';
+import 'package:ui_elements/pages/profile/profile.dart';
 
 class UserCard extends StatelessWidget {
   final UserData userData;

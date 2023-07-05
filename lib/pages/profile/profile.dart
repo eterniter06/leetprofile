@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:ui_elements/components/database/user_database.dart';
-import 'package:ui_elements/components/recent_submission_list.dart';
 
-import '../components/dataclass/http_wrapper/data_parser.dart';
-import '../components/dataclass/user_class/userdata.dart';
-import '../components/difficulty_section.dart';
-import '../components/language_section.dart';
-import '../components/social_media_button.dart';
+import 'package:ui_elements/database/user_database.dart';
+
+import 'package:ui_elements/dataclass/http_wrapper/data_parser.dart';
+import 'package:ui_elements/dataclass/user_class/userdata.dart';
+
+import 'components/difficulty_section.dart';
+import 'components/language_section.dart';
+import 'components/recent_submission_list.dart';
+import 'components/social_media_button.dart';
 
 class UserPage extends StatefulWidget {
   final UserData userData;

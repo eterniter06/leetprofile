@@ -42,19 +42,9 @@ class _UserInputDialogState extends State<UserInputDialog> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: const Text('Enter username'),
+      semanticLabel: 'Profile input dialog Box',
+      title: const Center(child: Text('Enter username')),
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: SizedBox(
-            height: 64,
-            width: 64,
-            child: Image.asset(
-              'assets/leetcode_logo.png',
-              semanticLabel: 'Leetcode logo',
-            ),
-          ),
-        ),
         const Padding(
           padding: EdgeInsets.fromLTRB(26.0, 8.0, 26.0, 4.0),
           child: Text(
@@ -98,7 +88,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Search'),
+                Text('Search '),
                 Icon(Icons.search),
               ],
             ),

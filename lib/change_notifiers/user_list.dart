@@ -2,9 +2,9 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:ui_elements/dataclass/http_wrapper/data_parser.dart';
+import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import '../database/user_database.dart';
-import '../dataclass/http_wrapper/data_parser.dart';
-import '../dataclass/user_class/userdata.dart';
 
 class UserListModel extends ChangeNotifier {
   List<UserData> userList = [];

@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
-import 'package:ui_elements/components/dialog/setting_option.dart';
-import 'package:ui_elements/components/change_notifiers/theme.dart';
-import 'package:ui_elements/components/change_notifiers/user_list.dart';
 
-import '../components/database/settings_database.dart';
+import 'package:ui_elements/database/settings_database.dart';
+
+import 'components/setting_option.dart';
+
+import 'package:ui_elements/change_notifiers/theme.dart';
+import 'package:ui_elements/change_notifiers/user_list.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});

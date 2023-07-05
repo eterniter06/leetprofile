@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
-import 'dataclass/user_class/userdata.dart';
 import 'recent_submission_card.dart';
 
 class RecentSubmissionList extends StatefulWidget {

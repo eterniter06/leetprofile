@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dataclass/user_class/userdata.dart';
+import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
 class LanguageCard extends StatelessWidget {
   const LanguageCard({

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ui_elements/components/problem_card.dart';
-
-import 'dataclass/user_class/userdata.dart';
+import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/pages/profile/components/problem_card.dart';
 
 class DifficultySection extends StatelessWidget {
   const DifficultySection({

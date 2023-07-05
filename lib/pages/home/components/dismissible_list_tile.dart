@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import 'package:ui_elements/components/change_notifiers/user_list.dart';
-import 'package:ui_elements/components/database/user_database.dart';
-import 'package:ui_elements/components/dataclass/user_class/userdata.dart';
-import 'package:ui_elements/components/dismissible_background.dart';
-import 'package:ui_elements/components/user_list_tile.dart';
+import 'package:ui_elements/change_notifiers/user_list.dart';
+import 'package:ui_elements/database/user_database.dart';
+import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/pages/home/components/dismissible_background.dart';
+
+import 'user_list_tile.dart';
 
 class DismissibleListTile extends StatelessWidget {
   const DismissibleListTile({

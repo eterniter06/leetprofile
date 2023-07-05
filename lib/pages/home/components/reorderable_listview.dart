@@ -2,11 +2,11 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:ui_elements/change_notifiers/user_list.dart';
+import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
-import 'package:ui_elements/pages/user_details.dart';
+import 'package:ui_elements/pages/profile/profile.dart';
 
-import 'change_notifiers/user_list.dart';
-import 'dataclass/user_class/userdata.dart';
 import 'dismissible_list_tile.dart';
 import 'user_list_tile.dart';
 

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vibration/vibration.dart';
-
-import 'dataclass/user_class/userdata.dart';
 
 class RecentSubmissionCard extends StatelessWidget {
   const RecentSubmissionCard({super.key, required this.submission});
