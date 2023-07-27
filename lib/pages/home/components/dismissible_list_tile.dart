@@ -80,7 +80,7 @@ class DismissibleListTile extends StatelessWidget {
           }
         },
         key: UniqueKey(),
-        child: ExperimentalUserCard(userData: userData),
+        child: UserCard(userData: userData),
       ),
     );
   }

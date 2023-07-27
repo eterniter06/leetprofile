@@ -10,6 +10,7 @@ import 'package:ui_elements/change_notifiers/user_list.dart';
 import 'package:ui_elements/pages/about/about.dart';
 import 'package:ui_elements/pages/profile/profile.dart';
 import 'package:ui_elements/pages/settings/settings.dart';
+import 'package:ui_elements/refresh_icon_button.dart';
 
 import 'components/input_dialog.dart';
 import 'components/reorderable_listview.dart';
@@ -29,7 +30,6 @@ class MyApp extends StatelessWidget {
           builder: (context, userListModel, child) =>
               UserListPage(userListModel: userListModel),
         ),
-        // home: const UserListPage(),
       ),
     );
   }
@@ -52,7 +52,8 @@ class UserListPage extends StatefulWidget {
 class _UserListPageState extends State<UserListPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  bool isRefreshing = false;
+  Widget? refreshIcon;
+  bool refreshOnStartup = false;
 
   @override
   initState() {
@@ -61,6 +62,22 @@ class _UserListPageState extends State<UserListPage>
       vsync: this,
       duration: const Duration(seconds: 1),
     );
+
+    refreshIcon = RefreshIconButton(
+      controller: _controller,
+      task: () async {
+        await widget.userListModel.updateUsersFromServer();
+      },
+      postHook: () async {
+        if (!widget.userListModel.isEmpty()) {
+          _informUser(const Text('User profiles have been refreshed'));
+        }
+
+        await widget.userListModel.syncDatabase();
+      },
+      tooltip: 'Refresh all users',
+    );
+
     _loadUsers();
   }
 
@@ -72,33 +89,8 @@ class _UserListPageState extends State<UserListPage>
 
   Future<void> _loadUsers() async {
     await widget.userListModel.loadUsersFromDatabase();
-    if (SettingsDatabase.refreshAllUsersOnStartup()) {
-      _updateUsers();
-    }
-  }
-
-  // TODO: Figure out a better method for the refresh icon
-  Future<void> _updateUsers() async {
-    setState(() {
-      isRefreshing = true;
-    });
-
-    _controller.repeat();
-
-    await widget.userListModel.updateUsersFromServer();
-
-    setState(() {
-      isRefreshing = false;
-    });
-
-    _controller.stop();
-    await _controller.forward();
-
-    if (!widget.userListModel.isEmpty()) {
-      _informUser(const Text('User profiles have been refreshed'));
-    }
-
-    await widget.userListModel.syncDatabase();
+    refreshOnStartup = SettingsDatabase.refreshAllUsersOnStartup();
+    // TODO: Find a way to emulate button press
   }
 
   void _informUser(Widget content, [SnackBarAction? action]) {
@@ -171,17 +163,18 @@ class _UserListPageState extends State<UserListPage>
             icon: Icon(Icons.local_fire_department_rounded),
             onPressed: null,
           ),
-          RotationTransition(
-            turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
-            child: IconButton(
-              tooltip: "Refresh all users",
-              icon: const Icon(Icons.refresh_rounded),
-              onPressed: isRefreshing
-                  ? null
-                  : () async {
-                      await _updateUsers();
-                    },
-            ),
+          RefreshIconButton(
+            task: () async {
+              await widget.userListModel.updateUsersFromServer();
+            },
+            postHook: () async {
+              if (!widget.userListModel.isEmpty()) {
+                _informUser(const Text('User profiles have been refreshed'));
+              }
+
+              await widget.userListModel.syncDatabase();
+            },
+            tooltip: 'Refresh all users',
           ),
           PopupMenuButton(
             onSelected: (value) {
@@ -210,7 +203,9 @@ class _UserListPageState extends State<UserListPage>
           ),
         ],
       ),
-      body: const ReorderableUserListView(),
+      body: ReorderableUserListView(
+        controller: _controller.isAnimating ? _controller : null,
+      ),
 
       // Future feature
       // body: RefreshIndicator(
@@ -220,9 +215,9 @@ class _UserListPageState extends State<UserListPage>
 
   String _processInputtedUsername(String usernameInput) {
     String username = usernameInput.trim();
+    String domainNameWithSlash = 'leetcode.com/';
 
-    if (username.contains('leetcode.com/')) {
-      String domainNameWithSlash = 'leetcode.com/';
+    if (username.contains(domainNameWithSlash)) {
       int usernameStart =
           username.indexOf(domainNameWithSlash) + domainNameWithSlash.length;
       int? usernameEnd = username.indexOf('/', usernameStart);

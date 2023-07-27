@@ -8,8 +8,9 @@ import 'package:ui_elements/database/user_database.dart';
 
 import 'package:ui_elements/dataclass/http_wrapper/data_parser.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
-import 'package:ui_elements/dialog/nickname_input.dart';
+import 'package:ui_elements/refresh_icon_button.dart';
 
+import 'components/nickname_dialog.dart';
 import 'components/difficulty_section.dart';
 import 'components/language_section.dart';
 import 'components/recent_submission_list.dart';
@@ -17,17 +18,14 @@ import 'components/social_media_button.dart';
 
 class UserPage extends StatefulWidget {
   final UserData userData;
-  const UserPage({super.key, required this.userData});
-
+  const UserPage({super.key, required this.userData, this.controller});
+  final AnimationController? controller;
   @override
   State<UserPage> createState() => _UserPageState();
 }
 
-class _UserPageState extends State<UserPage>
-    with SingleTickerProviderStateMixin {
+class _UserPageState extends State<UserPage> {
   bool isRefreshing = false;
-  late final AnimationController _controller =
-      AnimationController(vsync: this, duration: const Duration(seconds: 1));
 
   num getSolvedCount(ProblemData? problemData) {
     return problemData == null
@@ -35,23 +33,6 @@ class _UserPageState extends State<UserPage>
         : problemData.easySolved +
             problemData.mediumSolved +
             problemData.hardSolved;
-  }
-
-  Future<void> refreshUser() async {
-    setState(() {
-      isRefreshing = true;
-    });
-
-    _controller.repeat();
-
-    await _refreshUserImpl();
-
-    setState(() {
-      isRefreshing = false;
-    });
-
-    _controller.stop();
-    await _controller.forward();
   }
 
   Future<void> _refreshUserImpl() async {
@@ -108,18 +89,12 @@ class _UserPageState extends State<UserPage>
                   await UserDatabase.put(widget.userData);
                 }),
           ),
-          RotationTransition(
-            turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
-            child: IconButton(
+          RefreshIconButton(
+              controller: widget.controller,
               tooltip: 'Refresh user',
-              icon: const Icon(Icons.refresh_rounded),
-              onPressed: isRefreshing
-                  ? null
-                  : () async {
-                      await refreshUser();
-                    },
-            ),
-          ),
+              task: () async {
+                await _refreshUserImpl();
+              }),
           IconButton(
             tooltip: 'Share leetcode profile',
             icon: const Icon(Icons.share),

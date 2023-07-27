@@ -8,18 +8,19 @@ import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/pages/profile/profile.dart';
 
 import 'dismissible_list_tile.dart';
-import 'user_list_tile.dart';
 
 class ReorderableUserListView extends StatelessWidget {
+  final AnimationController? controller;
   const ReorderableUserListView({
     super.key,
+    this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<UserListModel>(
       builder: (context, userListModel, child) => ReorderableListView(
-        proxyDecorator: (child, index, animation) => ExperimentalUserCard(
+        proxyDecorator: (child, index, animation) => DismissibleListTile(
           userData: userListModel.userAtIndex(index),
         ),
         onReorderStart: (index) => HapticFeedback.lightImpact(),
@@ -44,6 +45,7 @@ class ReorderableUserListView extends StatelessWidget {
             OpenContainer(
               key: UniqueKey(),
               openBuilder: (context, action) => UserPage(
+                controller: controller,
                 userData: userListModel.userAtIndex(index),
               ),
               closedBuilder: (context, action) => DismissibleListTile(
