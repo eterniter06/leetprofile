@@ -49,22 +49,18 @@ class UserListPage extends StatefulWidget {
   State<UserListPage> createState() => _UserListPageState();
 }
 
-class _UserListPageState extends State<UserListPage>
-    with SingleTickerProviderStateMixin {
+class _UserListPageState extends State<UserListPage> {
   late AnimationController _controller;
-  Widget? refreshIcon;
+  late Widget refreshIcon;
+  final refreshKey = GlobalKey<RefreshIconButtonState>();
   bool refreshOnStartup = false;
 
   @override
   initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    );
 
     refreshIcon = RefreshIconButton(
-      controller: _controller,
+      key: refreshKey,
       task: () async {
         await widget.userListModel.updateUsersFromServer();
       },
@@ -90,6 +86,7 @@ class _UserListPageState extends State<UserListPage>
   Future<void> _loadUsers() async {
     await widget.userListModel.loadUsersFromDatabase();
     refreshOnStartup = SettingsDatabase.refreshAllUsersOnStartup();
+    refreshKey.currentState!.onPress();
     // TODO: Find a way to emulate button press
   }
 
@@ -163,19 +160,7 @@ class _UserListPageState extends State<UserListPage>
             icon: Icon(Icons.local_fire_department_rounded),
             onPressed: null,
           ),
-          RefreshIconButton(
-            task: () async {
-              await widget.userListModel.updateUsersFromServer();
-            },
-            postHook: () async {
-              if (!widget.userListModel.isEmpty()) {
-                _informUser(const Text('User profiles have been refreshed'));
-              }
-
-              await widget.userListModel.syncDatabase();
-            },
-            tooltip: 'Refresh all users',
-          ),
+          refreshIcon,
           PopupMenuButton(
             onSelected: (value) {
               Widget? page;
@@ -204,7 +189,7 @@ class _UserListPageState extends State<UserListPage>
         ],
       ),
       body: ReorderableUserListView(
-        controller: _controller.isAnimating ? _controller : null,
+        refreshIconKey: refreshKey,
       ),
 
       // Future feature

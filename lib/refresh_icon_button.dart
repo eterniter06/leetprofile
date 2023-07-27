@@ -6,44 +6,76 @@ class RefreshIconButton extends StatefulWidget {
       required this.task,
       this.controller,
       this.postHook,
-      this.tooltip = 'Refresh'});
+      this.tooltip = 'Refresh',
+      this.globalKey});
 
+  final GlobalKey<RefreshIconButtonState>? globalKey;
   final Function task;
   final Function? postHook;
   final AnimationController? controller;
   final String? tooltip;
 
   @override
-  State<RefreshIconButton> createState() => _RefreshIconButtonState();
+  State<RefreshIconButton> createState() => RefreshIconButtonState();
 }
 
-class _RefreshIconButtonState extends State<RefreshIconButton>
+class RefreshIconButtonState extends State<RefreshIconButton>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = widget.controller == null
+  late final AnimationController _controller = widget.controller == null ||
+          !widget.controller!.isAnimating
       ? AnimationController(vsync: this, duration: const Duration(seconds: 1))
       : widget.controller!;
 
   late bool isRefreshing = _controller.isAnimating;
+  late Function? task = widget.task;
+  late Function? postHook;
+  bool globalSync = false;
 
-  void onPress() async {
+  Future<void> onPress() async {
     _controller.repeat();
 
     setState(() {
       isRefreshing = _controller.isAnimating;
     });
 
-    await widget.task();
+    await task?.call();
+
     _controller.stop();
     await _controller.forward();
 
     setState(() {
       isRefreshing = _controller.isAnimating;
     });
-    await widget.postHook?.call();
+
+    if (postHook == null) {
+      print('unexpected');
+    }
+
+    await postHook?.call();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if ((widget.globalKey?.currentState?._controller.isAnimating ?? false)) {
+      task = null;
+      postHook =
+          (widget.globalKey?.currentWidget as RefreshIconButton).postHook;
+      widget.globalKey?.currentState?.postHook = null;
+
+      onPress();
+    }
+
+    task = widget.task;
+    postHook = widget.postHook;
   }
 
   @override
   Widget build(BuildContext context) {
+    postHook = widget.postHook;
+    print("built");
+
     return RotationTransition(
       turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
       child: IconButton(

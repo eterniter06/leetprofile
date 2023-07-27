@@ -18,8 +18,8 @@ import 'components/social_media_button.dart';
 
 class UserPage extends StatefulWidget {
   final UserData userData;
-  const UserPage({super.key, required this.userData, this.controller});
-  final AnimationController? controller;
+  const UserPage({super.key, required this.userData, this.refreshIconKey});
+  final GlobalKey<RefreshIconButtonState>? refreshIconKey;
   @override
   State<UserPage> createState() => _UserPageState();
 }
@@ -41,18 +41,6 @@ class _UserPageState extends State<UserPage> {
 
     setState(() {
       widget.userData.update(updatedUser: UserData.fromMap(dataMap: dataMap!));
-    });
-
-    await UserDatabase.put(widget.userData);
-
-    setState(() {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          showCloseIcon: true,
-          content: Text('User profile has been refreshed.'),
-        ),
-      );
     });
   }
 
@@ -90,11 +78,24 @@ class _UserPageState extends State<UserPage> {
                 }),
           ),
           RefreshIconButton(
-              controller: widget.controller,
-              tooltip: 'Refresh user',
-              task: () async {
-                await _refreshUserImpl();
-              }),
+            globalKey: widget.refreshIconKey,
+            tooltip: 'Refresh user',
+            task: () async {
+              await _refreshUserImpl();
+            },
+            postHook: () async {
+              await UserDatabase.put(widget.userData);
+              setState(() {
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    showCloseIcon: true,
+                    content: Text('User profile has been refreshed.'),
+                  ),
+                );
+              });
+            },
+          ),
           IconButton(
             tooltip: 'Share leetcode profile',
             icon: const Icon(Icons.share),

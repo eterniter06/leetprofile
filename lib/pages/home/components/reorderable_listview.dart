@@ -6,14 +6,15 @@ import 'package:ui_elements/change_notifiers/user_list.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
 import 'package:ui_elements/pages/profile/profile.dart';
+import 'package:ui_elements/refresh_icon_button.dart';
 
 import 'dismissible_list_tile.dart';
 
 class ReorderableUserListView extends StatelessWidget {
-  final AnimationController? controller;
+  final GlobalKey<RefreshIconButtonState>? refreshIconKey;
   const ReorderableUserListView({
     super.key,
-    this.controller,
+    this.refreshIconKey,
   });
 
   @override
@@ -45,7 +46,7 @@ class ReorderableUserListView extends StatelessWidget {
             OpenContainer(
               key: UniqueKey(),
               openBuilder: (context, action) => UserPage(
-                controller: controller,
+                refreshIconKey: refreshIconKey,
                 userData: userListModel.userAtIndex(index),
               ),
               closedBuilder: (context, action) => DismissibleListTile(
