@@ -47,10 +47,6 @@ class RefreshIconButtonState extends State<RefreshIconButton>
       isRefreshing = _controller.isAnimating;
     });
 
-    if (postHook == null) {
-      print('unexpected');
-    }
-
     await postHook?.call();
   }
 
@@ -74,7 +70,6 @@ class RefreshIconButtonState extends State<RefreshIconButton>
   @override
   Widget build(BuildContext context) {
     postHook = widget.postHook;
-    print("built");
 
     return RotationTransition(
       turns: Tween(begin: 0.0, end: 1.0).animate(_controller),

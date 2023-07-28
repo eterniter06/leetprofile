@@ -56,6 +56,7 @@ class _UserPageState extends State<UserPage> {
           Consumer<UserListModel>(
             builder: (context, userListModel, child) => IconButton(
                 icon: const Icon(Icons.edit),
+                tooltip: 'Edit nickname',
                 onPressed: () async {
                   String? newNickname = await showDialog(
                     context: context,
@@ -85,7 +86,7 @@ class _UserPageState extends State<UserPage> {
             },
             postHook: () async {
               await UserDatabase.put(widget.userData);
-              setState(() {
+              if (mounted) {
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -93,7 +94,7 @@ class _UserPageState extends State<UserPage> {
                     content: Text('User profile has been refreshed.'),
                   ),
                 );
-              });
+              }
             },
           ),
           IconButton(
