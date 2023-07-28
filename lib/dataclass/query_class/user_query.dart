@@ -19,6 +19,10 @@ class AllQuery {
       profile{
         realName
         userAvatar
+        ranking
+        reputation
+        solutionCount
+        postViewCount
       }
       badges{icon}
       languageProblemCount{

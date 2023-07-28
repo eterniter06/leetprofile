@@ -82,37 +82,57 @@ const UserDataSchema = CollectionSchema(
       name: r'nickname',
       type: IsarType.string,
     ),
-    r'problemData': PropertySchema(
+    r'postViewCount': PropertySchema(
       id: 12,
+      name: r'postViewCount',
+      type: IsarType.string,
+    ),
+    r'problemData': PropertySchema(
+      id: 13,
       name: r'problemData',
       type: IsarType.object,
       target: r'ProblemData',
     ),
+    r'ranking': PropertySchema(
+      id: 14,
+      name: r'ranking',
+      type: IsarType.string,
+    ),
     r'realname': PropertySchema(
-      id: 13,
+      id: 15,
       name: r'realname',
       type: IsarType.string,
     ),
     r'recentAcSubmissionList': PropertySchema(
-      id: 14,
+      id: 16,
       name: r'recentAcSubmissionList',
       type: IsarType.objectList,
       target: r'RecentSubmission',
     ),
+    r'reputation': PropertySchema(
+      id: 17,
+      name: r'reputation',
+      type: IsarType.string,
+    ),
+    r'solutionCount': PropertySchema(
+      id: 18,
+      name: r'solutionCount',
+      type: IsarType.string,
+    ),
     r'userContestRanking': PropertySchema(
-      id: 15,
+      id: 19,
       name: r'userContestRanking',
       type: IsarType.object,
       target: r'ContestRanking',
     ),
     r'userContestRankingHistory': PropertySchema(
-      id: 16,
+      id: 20,
       name: r'userContestRankingHistory',
       type: IsarType.objectList,
       target: r'ContestSummary',
     ),
     r'username': PropertySchema(
-      id: 17,
+      id: 21,
       name: r'username',
       type: IsarType.string,
     )
@@ -246,6 +266,7 @@ int _userDataEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.postViewCount.length * 3;
   {
     final value = object.problemData;
     if (value != null) {
@@ -254,6 +275,7 @@ int _userDataEstimateSize(
               value, allOffsets[ProblemData]!, allOffsets);
     }
   }
+  bytesCount += 3 + object.ranking.length * 3;
   bytesCount += 3 + object.realname.length * 3;
   {
     final list = object.recentAcSubmissionList;
@@ -269,6 +291,8 @@ int _userDataEstimateSize(
       }
     }
   }
+  bytesCount += 3 + object.reputation.length * 3;
+  bytesCount += 3 + object.solutionCount.length * 3;
   {
     final value = object.userContestRanking;
     if (value != null) {
@@ -338,32 +362,36 @@ void _userDataSerialize(
   writer.writeString(offsets[9], object.linkedinUrl);
   writer.writeLong(offsets[10], object.listOrder);
   writer.writeString(offsets[11], object.nickname);
+  writer.writeString(offsets[12], object.postViewCount);
   writer.writeObject<ProblemData>(
-    offsets[12],
+    offsets[13],
     allOffsets,
     ProblemDataSchema.serialize,
     object.problemData,
   );
-  writer.writeString(offsets[13], object.realname);
+  writer.writeString(offsets[14], object.ranking);
+  writer.writeString(offsets[15], object.realname);
   writer.writeObjectList<RecentSubmission>(
-    offsets[14],
+    offsets[16],
     allOffsets,
     RecentSubmissionSchema.serialize,
     object.recentAcSubmissionList,
   );
+  writer.writeString(offsets[17], object.reputation);
+  writer.writeString(offsets[18], object.solutionCount);
   writer.writeObject<ContestRanking>(
-    offsets[15],
+    offsets[19],
     allOffsets,
     ContestRankingSchema.serialize,
     object.userContestRanking,
   );
   writer.writeObjectList<ContestSummary>(
-    offsets[16],
+    offsets[20],
     allOffsets,
     ContestSummarySchema.serialize,
     object.userContestRankingHistory,
   );
-  writer.writeString(offsets[17], object.username);
+  writer.writeString(offsets[21], object.username);
 }
 
 UserData _userDataDeserialize(
@@ -376,8 +404,8 @@ UserData _userDataDeserialize(
     avatar: reader.readString(offsets[2]),
     lastFetchTime: reader.readDateTime(offsets[8]),
     nickname: reader.readStringOrNull(offsets[11]),
-    realname: reader.readString(offsets[13]),
-    username: reader.readString(offsets[17]),
+    realname: reader.readString(offsets[15]),
+    username: reader.readString(offsets[21]),
   );
   object.advancedTags = reader.readObjectList<TagsSolved>(
     offsets[0],
@@ -413,24 +441,28 @@ UserData _userDataDeserialize(
   );
   object.linkedinUrl = reader.readStringOrNull(offsets[9]);
   object.listOrder = reader.readLongOrNull(offsets[10]);
+  object.postViewCount = reader.readString(offsets[12]);
   object.problemData = reader.readObjectOrNull<ProblemData>(
-    offsets[12],
+    offsets[13],
     ProblemDataSchema.deserialize,
     allOffsets,
   );
+  object.ranking = reader.readString(offsets[14]);
   object.recentAcSubmissionList = reader.readObjectList<RecentSubmission>(
-    offsets[14],
+    offsets[16],
     RecentSubmissionSchema.deserialize,
     allOffsets,
     RecentSubmission(),
   );
+  object.reputation = reader.readString(offsets[17]);
+  object.solutionCount = reader.readString(offsets[18]);
   object.userContestRanking = reader.readObjectOrNull<ContestRanking>(
-    offsets[15],
+    offsets[19],
     ContestRankingSchema.deserialize,
     allOffsets,
   );
   object.userContestRankingHistory = reader.readObjectList<ContestSummary>(
-    offsets[16],
+    offsets[20],
     ContestSummarySchema.deserialize,
     allOffsets,
     ContestSummary(),
@@ -495,34 +527,42 @@ P _userDataDeserializeProp<P>(
     case 11:
       return (reader.readStringOrNull(offset)) as P;
     case 12:
+      return (reader.readString(offset)) as P;
+    case 13:
       return (reader.readObjectOrNull<ProblemData>(
         offset,
         ProblemDataSchema.deserialize,
         allOffsets,
       )) as P;
-    case 13:
-      return (reader.readString(offset)) as P;
     case 14:
+      return (reader.readString(offset)) as P;
+    case 15:
+      return (reader.readString(offset)) as P;
+    case 16:
       return (reader.readObjectList<RecentSubmission>(
         offset,
         RecentSubmissionSchema.deserialize,
         allOffsets,
         RecentSubmission(),
       )) as P;
-    case 15:
+    case 17:
+      return (reader.readString(offset)) as P;
+    case 18:
+      return (reader.readString(offset)) as P;
+    case 19:
       return (reader.readObjectOrNull<ContestRanking>(
         offset,
         ContestRankingSchema.deserialize,
         allOffsets,
       )) as P;
-    case 16:
+    case 20:
       return (reader.readObjectList<ContestSummary>(
         offset,
         ContestSummarySchema.deserialize,
         allOffsets,
         ContestSummary(),
       )) as P;
-    case 17:
+    case 21:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2135,6 +2175,140 @@ extension UserDataQueryFilter
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> postViewCountEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'postViewCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      postViewCountGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'postViewCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> postViewCountLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'postViewCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> postViewCountBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'postViewCount',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      postViewCountStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'postViewCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> postViewCountEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'postViewCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> postViewCountContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'postViewCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> postViewCountMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'postViewCount',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      postViewCountIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'postViewCount',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      postViewCountIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'postViewCount',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterFilterCondition> problemDataIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -2148,6 +2322,136 @@ extension UserDataQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'problemData',
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> rankingEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'ranking',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> rankingGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'ranking',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> rankingLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'ranking',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> rankingBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'ranking',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> rankingStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'ranking',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> rankingEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'ranking',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> rankingContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'ranking',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> rankingMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'ranking',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> rankingIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'ranking',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> rankingIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'ranking',
+        value: '',
       ));
     });
   }
@@ -2386,6 +2690,271 @@ extension UserDataQueryFilter
         upper,
         includeUpper,
       );
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> reputationEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'reputation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> reputationGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'reputation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> reputationLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'reputation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> reputationBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'reputation',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> reputationStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'reputation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> reputationEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'reputation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> reputationContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'reputation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> reputationMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'reputation',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> reputationIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'reputation',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      reputationIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'reputation',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> solutionCountEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'solutionCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      solutionCountGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'solutionCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> solutionCountLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'solutionCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> solutionCountBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'solutionCount',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      solutionCountStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'solutionCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> solutionCountEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'solutionCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> solutionCountContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'solutionCount',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition> solutionCountMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'solutionCount',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      solutionCountIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'solutionCount',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      solutionCountIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'solutionCount',
+        value: '',
+      ));
     });
   }
 
@@ -2787,6 +3356,30 @@ extension UserDataQuerySortBy on QueryBuilder<UserData, UserData, QSortBy> {
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByPostViewCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'postViewCount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByPostViewCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'postViewCount', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByRanking() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ranking', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByRankingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ranking', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterSortBy> sortByRealname() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'realname', Sort.asc);
@@ -2796,6 +3389,30 @@ extension UserDataQuerySortBy on QueryBuilder<UserData, UserData, QSortBy> {
   QueryBuilder<UserData, UserData, QAfterSortBy> sortByRealnameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'realname', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByReputation() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'reputation', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByReputationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'reputation', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortBySolutionCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'solutionCount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortBySolutionCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'solutionCount', Sort.desc);
     });
   }
 
@@ -2898,6 +3515,30 @@ extension UserDataQuerySortThenBy
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByPostViewCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'postViewCount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByPostViewCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'postViewCount', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByRanking() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ranking', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByRankingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ranking', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterSortBy> thenByRealname() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'realname', Sort.asc);
@@ -2907,6 +3548,30 @@ extension UserDataQuerySortThenBy
   QueryBuilder<UserData, UserData, QAfterSortBy> thenByRealnameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'realname', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByReputation() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'reputation', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByReputationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'reputation', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenBySolutionCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'solutionCount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenBySolutionCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'solutionCount', Sort.desc);
     });
   }
 
@@ -2971,10 +3636,40 @@ extension UserDataQueryWhereDistinct
     });
   }
 
+  QueryBuilder<UserData, UserData, QDistinct> distinctByPostViewCount(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'postViewCount',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QDistinct> distinctByRanking(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'ranking', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<UserData, UserData, QDistinct> distinctByRealname(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'realname', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QDistinct> distinctByReputation(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'reputation', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QDistinct> distinctBySolutionCount(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'solutionCount',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -3071,9 +3766,21 @@ extension UserDataQueryProperty
     });
   }
 
+  QueryBuilder<UserData, String, QQueryOperations> postViewCountProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'postViewCount');
+    });
+  }
+
   QueryBuilder<UserData, ProblemData?, QQueryOperations> problemDataProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'problemData');
+    });
+  }
+
+  QueryBuilder<UserData, String, QQueryOperations> rankingProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'ranking');
     });
   }
 
@@ -3087,6 +3794,18 @@ extension UserDataQueryProperty
       recentAcSubmissionListProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'recentAcSubmissionList');
+    });
+  }
+
+  QueryBuilder<UserData, String, QQueryOperations> reputationProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'reputation');
+    });
+  }
+
+  QueryBuilder<UserData, String, QQueryOperations> solutionCountProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'solutionCount');
     });
   }
 

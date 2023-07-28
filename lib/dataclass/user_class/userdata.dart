@@ -11,6 +11,10 @@ class UserData {
   late String? nickname;
   late String realname;
   late String avatar;
+  late String ranking;
+  late String reputation;
+  late String solutionCount;
+  late String postViewCount;
 
   String? linkedinUrl;
   String? githubUrl;
@@ -47,12 +51,15 @@ class UserData {
 
     lastFetchTime = updatedUser.lastFetchTime;
 
-    realname = updatedUser.realname;
-
     // Nickname is local data, not fetched from server
-    // Nickanem is only changed via the user
-    // nickname = updatedUser.nickname;
+    // Nickname is only changed via the user
+
+    realname = updatedUser.realname;
     avatar = updatedUser.avatar;
+    ranking = updatedUser.ranking;
+    reputation = updatedUser.reputation;
+    solutionCount = updatedUser.solutionCount;
+    postViewCount = updatedUser.postViewCount;
 
     listOrder = updatedUser.listOrder;
 
@@ -84,11 +91,15 @@ class UserData {
 
   UserData.fromMap({required Map dataMap})
       : username = dataMap['username'],
-        lastFetchTime = dataMap['lastFetchTime'],
         nickname = dataMap['nickname'],
+        lastFetchTime = dataMap['lastFetchTime'],
         realname = dataMap['realname'],
-        recentAcSubmissionList = dataMap['recentAcSubmissionList'],
         avatar = dataMap['avatar'],
+        ranking = dataMap['ranking'],
+        reputation = dataMap['reputation'],
+        solutionCount = dataMap['solutionCount'],
+        postViewCount = dataMap['postViewCount'],
+        recentAcSubmissionList = dataMap['recentAcSubmissionList'],
         badges = dataMap['badges'],
         languageProblemCount = dataMap['languageProblemCount'],
         fundamentalTags = dataMap['fundamentalTagsSolved'],

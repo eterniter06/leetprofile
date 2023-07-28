@@ -2,8 +2,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-import '../query_class/query_all.dart';
-import '../query_class/user_independent_query.dart';
+import '../query_class/user_query.dart';
+import '../query_class/daily_question_query.dart';
 import '../user_class/userdata.dart';
 
 class DataParser {
@@ -75,8 +75,16 @@ class DataParser {
       Map dataMap = {};
 
       dataMap['username'] = username;
+
       dataMap['realname'] = json['matchedUser']['profile']['realName'];
       dataMap['avatar'] = json['matchedUser']['profile']['userAvatar'];
+      dataMap['ranking'] = json['matchedUser']['profile']['ranking'].toString();
+      dataMap['reputation'] =
+          json['matchedUser']['profile']['reputation'].toString();
+      dataMap['solutionCount'] =
+          json['matchedUser']['profile']['solutionCount'].toString();
+      dataMap['postViewCount'] =
+          json['matchedUser']['profile']['postViewCount'].toString();
 
       dataMap['lastFetchTime'] = _HTTPDateToISO8601(response.headers['date']!);
 
@@ -219,45 +227,19 @@ class DataParser {
   }
 
   static Future<DailyQuestion> getDailyQuestion() async {
+    http.Response response = await http.get(DailyQuestionQuery.getAll());
+
+    dynamic header =
+        jsonDecode(response.body)['data']['activeDailyCodingChallengeQuestion'];
+
+    final String difficulty = header['question']['difficulty'];
+    final String title = header['question']['title'];
+    final String link = header['link'];
+
     return DailyQuestion(
-      difficulty: await getDailyQuestionDifficulty(),
-      link: await getDailyQuestionLink(),
-      title: await getDailyQuestionTitle(),
-    );
-  }
-
-  static Future<String> getDailyQuestionTitle() {
-    return http.get(DailyQuestionQuery.getDailyQuestionTitle()).then(
-        (response) => jsonDecode(response.body)['data']
-                ['activeDailyCodingChallengeQuestion']['question']['title']
-            .toString());
-  }
-
-  static Future<String> getDailyQuestionLink() {
-    return http.get(DailyQuestionQuery.getDailyQuestionLink()).then(
-        (response) => jsonDecode(response.body)['data']
-                ['activeDailyCodingChallengeQuestion']['link']
-            .toString());
-  }
-
-  static Future<String> getDailyQuestionDifficulty() {
-    return http.get(DailyQuestionQuery.getDailyQuestionDifficulty()).then(
-        (response) => jsonDecode(response.body)['data']
-                ['activeDailyCodingChallengeQuestion']['question']['difficulty']
-            .toString());
-  }
-
-  static Future<Map> getTotalQuestionCount() {
-    return http.get(AllQuestionCountQuery.getTotalQuestionCount()).then(
-      (response) {
-        dynamic json = jsonDecode(response.body)['data']['allQuestionsCount'];
-        Map problemMap = {};
-        for (var map in json) {
-          problemMap[map['difficulty'].toString().toLowerCase()] = map['count'];
-        }
-
-        return problemMap;
-      },
+      difficulty: difficulty,
+      title: title,
+      link: link,
     );
   }
 }
