@@ -24,7 +24,11 @@ class AllQuery {
         solutionCount
         postViewCount
       }
-      badges{icon}
+      badges{
+        icon
+        creationDate
+        displayName
+      }
       languageProblemCount{
         languageName
         problemsSolved
