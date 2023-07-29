@@ -59,7 +59,7 @@ class DataParser {
   }
 
   Future<Map?> getAllAsJson() {
-    return http.get(AllQuery(username: username).getAll()).then((response) {
+    return http.get(AllQuery.getAll(username)).then((response) {
       if (response.statusCode != 200) {
         return null;
       }
@@ -217,12 +217,25 @@ class DataParser {
 
   void _extractBadges(
       Map<dynamic, dynamic> dataMap, Map<dynamic, dynamic> json) {
-    dataMap['badges'] = <String>[];
+    dataMap['badges'] = <UserBadge>[];
+
     for (var badge in json['matchedUser']['badges']) {
       if (badge['icon'][0] == '/') {
         badge['icon'] = 'https://leetcode.com${badge['icon']}';
       }
-      dataMap['badges'].add(badge['icon']);
+
+      String icon = badge['icon'];
+      String displayName = badge['displayName'];
+      String creationDate = badge['creationDate'];
+
+      DateTime creationDateAsDateTime = DateTime.parse(creationDate);
+
+      UserBadge obtainedBadge = UserBadge(
+          iconLink: icon,
+          displayName: displayName,
+          creationDate: creationDateAsDateTime);
+
+      dataMap['badges'].add(obtainedBadge);
     }
   }
 

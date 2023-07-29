@@ -1,11 +1,9 @@
 class AllQuery {
-  final String username;
-  final String _queryEnder = '}';
-  final String _queryStarter = 'https://leetcode.com/graphql?query=query{';
+  static const String _queryEnder = '}';
+  static const String _queryStarter =
+      'https://leetcode.com/graphql?query=query{';
 
-  AllQuery({required this.username});
-
-  Uri getAll() {
+  static Uri getAll(String username) {
     final String queryHttp = '''$_queryStarter
     recentAcSubmissionList(username: "$username") {title titleSlug id timestamp}
     matchedUser(username: "$username"){

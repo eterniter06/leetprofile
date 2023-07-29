@@ -23,7 +23,7 @@ class UserData {
 
   List<RecentSubmission>? recentAcSubmissionList;
 
-  List<String>? badges;
+  List<UserBadge>? badges;
 
   List<LanguageSubmission>? languageProblemCount;
 
@@ -130,6 +130,19 @@ int fastHash(String username) {
   }
 
   return hash;
+}
+
+@embedded
+class UserBadge {
+  String? iconLink;
+  String? displayName;
+  DateTime? creationDate;
+
+  UserBadge({
+    this.iconLink,
+    this.displayName,
+    this.creationDate,
+  });
 }
 
 @embedded
