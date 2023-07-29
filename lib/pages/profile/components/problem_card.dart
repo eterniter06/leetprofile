@@ -40,11 +40,8 @@ class DifficultyCard extends StatelessWidget {
                   horizontal: 8,
                   vertical: 2,
                 ),
-                child: Card(
-                  elevation: 0,
-                  child: Text(
-                    problemCategory,
-                  ),
+                child: Text(
+                  problemCategory,
                 ),
               ),
               // rotateLinearGradient: true,

@@ -6,23 +6,15 @@ class TagList extends StatelessWidget {
   const TagList({
     super.key,
     required this.skills,
-    required this.tagHeader,
   });
 
   final List<TagsSolved> skills;
-  final String tagHeader;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Chip(
-          label: Text(tagHeader),
-        ),
-        const SizedBox(
-          width: 20,
-        ),
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,

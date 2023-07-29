@@ -11,6 +11,7 @@ class LanguageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 2,
       child: AspectRatio(
         aspectRatio: 1.3,
         child: Padding(
