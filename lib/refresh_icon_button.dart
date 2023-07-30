@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'change_notifiers/user_list.dart';
 
 class RefreshIconButton extends StatefulWidget {
   const RefreshIconButton(
       {super.key,
-      required this.task,
+      this.task,
       this.controller,
       this.postHook,
       this.tooltip = 'Refresh',
       this.globalKey});
 
   final GlobalKey<RefreshIconButtonState>? globalKey;
-  final Function task;
+  final Function? task;
   final Function? postHook;
   final AnimationController? controller;
   final String? tooltip;
@@ -71,12 +74,16 @@ class RefreshIconButtonState extends State<RefreshIconButton>
   Widget build(BuildContext context) {
     postHook = widget.postHook;
 
-    return RotationTransition(
-      turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
-      child: IconButton(
-        tooltip: widget.tooltip,
-        icon: const Icon(Icons.refresh_rounded),
-        onPressed: isRefreshing ? null : onPress,
+    return Consumer<UserListModel>(
+      builder: (context, userListModel, child) => RotationTransition(
+        turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
+        child: IconButton(
+          tooltip: widget.tooltip,
+          icon: const Icon(Icons.refresh_rounded),
+          onPressed: isRefreshing || task == null || userListModel.isEmpty()
+              ? null
+              : onPress,
+        ),
       ),
     );
   }

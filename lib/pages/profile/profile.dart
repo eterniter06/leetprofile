@@ -7,7 +7,6 @@ import 'package:ui_elements/database/user_database.dart';
 
 import 'package:ui_elements/dataclass/http_wrapper/data_parser.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
-import 'package:ui_elements/pages/profile/components/language_card.dart';
 import 'package:ui_elements/pages/profile/components/language_section.dart';
 import 'package:ui_elements/refresh_icon_button.dart';
 

@@ -19,6 +19,10 @@ class UserListModel extends ChangeNotifier {
     return userList.isEmpty;
   }
 
+  bool isNotEmpty() {
+    return !isEmpty();
+  }
+
   int indexOfUsername(String username) {
     return userList.indexWhere((userInList) {
       return userInList.username == username;

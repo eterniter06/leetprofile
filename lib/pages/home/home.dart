@@ -86,8 +86,11 @@ class _UserListPageState extends State<UserListPage> {
   Future<void> _loadUsers() async {
     await widget.userListModel.loadUsersFromDatabase();
     refreshOnStartup = SettingsDatabase.refreshAllUsersOnStartup();
-    refreshKey.currentState!.onPress();
-    // TODO: Find a way to emulate button press
+
+    // TODO: figure out a less uglier way
+    if (refreshOnStartup && widget.userListModel.isNotEmpty()) {
+      refreshKey.currentState!.onPress();
+    }
   }
 
   void _informUser(Widget content, [SnackBarAction? action]) {
