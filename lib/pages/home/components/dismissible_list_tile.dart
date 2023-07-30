@@ -57,9 +57,9 @@ class DismissibleListTile extends StatelessWidget {
                     text: 'User ',
                     children: [
                       TextSpan(
-                        text: userData.nickname,
+                        text: userData.nickname ?? userData.username,
                       ),
-                      const TextSpan(text: ' removed'),
+                      const TextSpan(text: ' removed from list'),
                     ],
                   ),
                 ),
