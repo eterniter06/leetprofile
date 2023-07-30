@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
@@ -191,9 +192,28 @@ class _UserListPageState extends State<UserListPage> {
           ),
         ],
       ),
-      body: ReorderableUserListView(
-        refreshIconKey: refreshKey,
-      ),
+      body: widget.userListModel.isEmpty()
+          ? LayoutBuilder(
+              builder: (context, constraints) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                // mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height:
+                        (constraints.maxHeight - constraints.minHeight) * 0.2,
+                  ),
+                  SvgPicture.asset(
+                    'assets/undraw_add_notes_re_ln36.svg',
+                    height: 200,
+                  ),
+                  const Center(child: Text('No users yet')),
+                  const Center(child: Text('Click on + to add profiles'))
+                ],
+              ),
+            )
+          : ReorderableUserListView(
+              refreshIconKey: refreshKey,
+            ),
 
       // Future feature
       // body: RefreshIndicator(
