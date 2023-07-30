@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
-import 'package:ui_elements/image/circular_network.dart';
+import 'package:ui_elements/common_components/circular_network.dart';
 import 'social_media_button.dart';
 
 class BasicUserInfo extends StatelessWidget {

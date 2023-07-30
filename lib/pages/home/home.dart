@@ -11,7 +11,7 @@ import 'package:ui_elements/change_notifiers/user_list.dart';
 import 'package:ui_elements/pages/about/about.dart';
 import 'package:ui_elements/pages/profile/profile.dart';
 import 'package:ui_elements/pages/settings/settings.dart';
-import 'package:ui_elements/refresh_icon_button.dart';
+import 'package:ui_elements/common_components/refresh_icon_button.dart';
 
 import 'components/input_dialog.dart';
 import 'components/reorderable_listview.dart';

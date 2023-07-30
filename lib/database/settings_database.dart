@@ -43,4 +43,21 @@ class SettingsDatabase {
 
     return preference;
   }
+
+  static Future<void> changeNumberOfShownUserSubmissions(
+      int submissionCount) async {
+    await _prefs!.setInt('submissionsToShow', submissionCount);
+  }
+
+  static int numberOfShownUserSubmissions() {
+    int? count = _prefs!.getInt('submissionsToShow');
+
+    if (count == null) {
+      int defaultSubmissionCount = 3;
+      changeNumberOfShownUserSubmissions(defaultSubmissionCount);
+      return defaultSubmissionCount;
+    }
+
+    return count;
+  }
 }

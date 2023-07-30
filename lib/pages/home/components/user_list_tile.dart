@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
-import 'package:ui_elements/image/circular_network.dart';
+import 'package:ui_elements/common_components/circular_network.dart';
 import 'package:ui_elements/pages/home/components/last_updated_text.dart';
 
 class UserCard extends StatelessWidget {

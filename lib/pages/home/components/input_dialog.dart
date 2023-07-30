@@ -43,7 +43,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
   Widget build(BuildContext context) {
     return SimpleDialog(
       semanticLabel: 'Profile input dialog Box',
-      title: const Center(child: Text('Enter username')),
+      title: const Text('Enter username'),
       children: [
         const Padding(
           padding: EdgeInsets.fromLTRB(26.0, 8.0, 26.0, 4.0),
