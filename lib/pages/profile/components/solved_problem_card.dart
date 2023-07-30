@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
-import 'package:ui_elements/pages/profile/components/difficulty_section.dart';
+
+import 'difficulty_card.dart';
 
 class SolvedProblemsCard extends StatelessWidget {
   const SolvedProblemsCard({
@@ -33,8 +34,36 @@ class SolvedProblemsCard extends StatelessWidget {
                 'Solved Problems',
               ),
             ),
-            DifficultySection(
-              problemData: problemData,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ProblemCard(
+                      problemCategory: 'Easy',
+                      solved: problemData?.easySolved ?? 0,
+                      total: problemData?.easyTotal ?? 0,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ProblemCard(
+                      problemCategory: 'Medium',
+                      solved: problemData?.mediumSolved ?? 0,
+                      total: problemData?.mediumTotal ?? 0,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ProblemCard(
+                      problemCategory: 'Hard',
+                      solved: problemData?.hardSolved ?? 0,
+                      total: problemData?.hardTotal ?? 0,
+                    ),
+                  ),
+                  // ProblemCard(),
+                ],
+              ),
             ),
             const SizedBox(
               height: 16,

@@ -13,39 +13,26 @@ class LanguageCard extends StatelessWidget {
     return Card(
       elevation: 2,
       child: AspectRatio(
-        aspectRatio: 1.3,
+        aspectRatio: 1.1,
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Expanded(
                 flex: 2,
                 child: Center(
                   child: Text(
-                    languageDetails.languageName!,
+                    languageDetails.problemsSolved.toString(),
                   ),
                 ),
               ),
               Expanded(
-                child: Container(
-                  width: 48,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(
-                      16,
-                    ),
-                  ),
-                  child: Center(
-                    heightFactor: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Text(
-                        languageDetails.problemsSolved.toString(),
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
+                child: Center(
+                  heightFactor: 1,
+                  child: Text(
+                    languageDetails.languageName!,
                   ),
                 ),
               ),

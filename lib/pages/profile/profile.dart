@@ -7,6 +7,8 @@ import 'package:ui_elements/database/user_database.dart';
 
 import 'package:ui_elements/dataclass/http_wrapper/data_parser.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/pages/profile/components/language_card.dart';
+import 'package:ui_elements/pages/profile/components/language_section.dart';
 import 'package:ui_elements/refresh_icon_button.dart';
 
 import 'components/badge_card.dart';
@@ -40,6 +42,16 @@ class _UserPageState extends State<UserPage> {
     return (widget.userData.fundamentalTags?.isNotEmpty)! ||
         (widget.userData.intermediateTags?.isNotEmpty)! ||
         (widget.userData.advancedTags?.isNotEmpty)!;
+  }
+
+  bool hasSolvedProblems() {
+    var problems = widget.userData.languageProblemCount;
+
+    if (problems == null || problems.isEmpty) {
+      return false;
+    }
+
+    return true;
   }
 
   @override
@@ -116,6 +128,9 @@ class _UserPageState extends State<UserPage> {
                 intermediateSkills: widget.userData.intermediateTags,
                 advancedSkills: widget.userData.advancedTags,
               ),
+            if (hasSolvedProblems())
+              LanguageSection(
+                  languageProblemList: widget.userData.languageProblemCount!),
             if (widget.userData.badges != null &&
                 (widget.userData.badges!.isNotEmpty))
               BadgeCard(badges: widget.userData.badges!),
