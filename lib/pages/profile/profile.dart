@@ -12,6 +12,7 @@ import 'package:ui_elements/common_components/refresh_icon_button.dart';
 
 import 'components/badge_card.dart';
 import 'components/basic_user_info_card.dart';
+import 'components/contests_card.dart';
 import 'components/nickname_dialog.dart';
 import 'components/recent_submission_card.dart';
 import 'components/skills_card.dart';
@@ -120,7 +121,11 @@ class _UserPageState extends State<UserPage> {
             BasicUserInfo(userData: widget.userData),
             SolvedProblemsCard(problemData: widget.userData.problemData),
             // SubmissionHeatMap(),
-            // ContestsCard(),
+            if (widget.userData.userContestRanking != null)
+              ContestCard(
+                contests: widget.userData.userContestRankingHistory!,
+                overallContestData: widget.userData.userContestRanking!,
+              ),
             if (hasSkills())
               SkillsCard(
                 fundamentalSkills: widget.userData.fundamentalTags,
