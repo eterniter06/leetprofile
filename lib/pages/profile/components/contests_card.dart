@@ -149,7 +149,8 @@ class _ContestCardState extends State<ContestCard> {
                         ),
                         Column(
                           children: [
-                            Text(widget.overallContestData.rating.toString()),
+                            Text(widget.overallContestData.rating
+                                .toStringAsFixed(2)),
                             const Text('Contest'),
                             const Text('rating'),
                           ],
@@ -164,7 +165,7 @@ class _ContestCardState extends State<ContestCard> {
                         ),
                         Column(children: [
                           Text(widget.overallContestData.topPercentage
-                              .toString()),
+                              .toStringAsFixed(2)),
                           const Text('Top %'),
                         ]),
                       ],
@@ -184,8 +185,8 @@ class _ContestCardState extends State<ContestCard> {
                         ),
                         Column(
                           children: [
-                            Text(widget.contests[indexTouched!].rating
-                                .toString()),
+                            Text(widget.contests[indexTouched!].rating!
+                                .toStringAsFixed(2)),
                             const Text('Rating'),
                           ],
                         ),
