@@ -28,7 +28,7 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   bool isRefreshing = false;
-
+  late List<Widget> profileComponentList;
   Future<void> _refreshUserImpl() async {
     var dataMap =
         await DataParser(username: widget.userData.username).getAllAsJson();
@@ -36,6 +36,39 @@ class _UserPageState extends State<UserPage> {
     setState(() {
       widget.userData.update(updatedUser: UserData.fromMap(dataMap: dataMap!));
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    profileComponentList = [
+      BasicUserInfo(userData: widget.userData, key: UniqueKey()),
+      SolvedProblemsCard(
+          problemData: widget.userData.problemData, key: UniqueKey()),
+      // SubmissionHeatMap(),
+      if (widget.userData.userContestRanking != null)
+        ContestCard(
+            contests: widget.userData.userContestRankingHistory!,
+            overallContestData: widget.userData.userContestRanking!,
+            key: UniqueKey()),
+      if (hasSkills())
+        SkillsCard(
+          key: UniqueKey(),
+          fundamentalSkills: widget.userData.fundamentalTags,
+          intermediateSkills: widget.userData.intermediateTags,
+          advancedSkills: widget.userData.advancedTags,
+        ),
+      if (hasSolvedProblems())
+        LanguageSection(
+            key: UniqueKey(),
+            languageProblemList: widget.userData.languageProblemCount!),
+      if (widget.userData.badges != null &&
+          (widget.userData.badges!.isNotEmpty))
+        BadgeCard(key: UniqueKey(), badges: widget.userData.badges!),
+      RecentSubmissionCard(
+          key: UniqueKey(),
+          submissionList: widget.userData.recentAcSubmissionList ?? []),
+    ];
   }
 
   bool hasSkills() {
@@ -116,31 +149,20 @@ class _UserPageState extends State<UserPage> {
         ],
       ),
       body: SafeArea(
-        child: ListView(
-          children: [
-            BasicUserInfo(userData: widget.userData),
-            SolvedProblemsCard(problemData: widget.userData.problemData),
-            // SubmissionHeatMap(),
-            if (widget.userData.userContestRanking != null)
-              ContestCard(
-                contests: widget.userData.userContestRankingHistory!,
-                overallContestData: widget.userData.userContestRanking!,
-              ),
-            if (hasSkills())
-              SkillsCard(
-                fundamentalSkills: widget.userData.fundamentalTags,
-                intermediateSkills: widget.userData.intermediateTags,
-                advancedSkills: widget.userData.advancedTags,
-              ),
-            if (hasSolvedProblems())
-              LanguageSection(
-                  languageProblemList: widget.userData.languageProblemCount!),
-            if (widget.userData.badges != null &&
-                (widget.userData.badges!.isNotEmpty))
-              BadgeCard(badges: widget.userData.badges!),
-            RecentSubmissionCard(
-                submissionList: widget.userData.recentAcSubmissionList ?? []),
-          ],
+        child: ReorderableListView.builder(
+          onReorder: (oldIndex, newIndex) {
+            if (newIndex > profileComponentList.length) {
+              newIndex = profileComponentList.length;
+            }
+            if (oldIndex < newIndex) newIndex--;
+
+            setState(() {
+              Widget component = profileComponentList.removeAt(oldIndex);
+              profileComponentList.insert(newIndex, component);
+            });
+          },
+          itemBuilder: (context, index) => profileComponentList[index],
+          itemCount: profileComponentList.length,
         ),
       ),
     );
