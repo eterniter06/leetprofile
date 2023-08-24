@@ -414,7 +414,13 @@ class _SubmissionCountDialogBoxState extends State<SubmissionCountDialogBox> {
               onTapOutside: (event) => FocusScope.of(context).unfocus(),
               validator: (String? count) {
                 if (count == null || count.isEmpty) {
-                  return 'Submission to show cannot be empty. If you do not want any submission to be shown by default, enter 0';
+                  return "Submissions to show cannot be empty. If you don't want any submissions to be shown unexpanded, enter 0";
+                }
+                if (int.tryParse(count) != null && int.parse(count) < 0) {
+                  return "Count cannot be negative";
+                }
+                if (int.tryParse(count) == null) {
+                  return "Please enter a valid integer";
                 }
                 return null;
               },
@@ -426,7 +432,7 @@ class _SubmissionCountDialogBoxState extends State<SubmissionCountDialogBox> {
                 label: Text('Submission count'),
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.only(left: 8),
-                errorMaxLines: 2,
+                errorMaxLines: 3,
               ),
               enableSuggestions: true,
             ),
