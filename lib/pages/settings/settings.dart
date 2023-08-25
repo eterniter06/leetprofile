@@ -8,6 +8,7 @@ import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
+import 'package:ui_elements/pages/profile/profile.dart';
 
 import 'components/setting_option.dart';
 
@@ -100,6 +101,19 @@ class _SettingsState extends State<Settings> {
                 });
               }
             },
+          ),
+          SettingTile(
+            title: const Text('Change profile layout'),
+            description:
+                const Text('Change the way profile details are ordered'),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => Consumer<UserListModel>(
+                  builder: (context, userList, child) =>
+                      UserPage(userData: userList.userList[0]),
+                ),
+              ),
+            ),
           ),
           const Divider(
             height: 0,
