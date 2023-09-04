@@ -17,6 +17,7 @@ import 'components/nickname_dialog.dart';
 import 'components/recent_submission_card.dart';
 import 'components/skills_card.dart';
 import 'components/solved_problem_card.dart';
+import 'components/submission_heatmap_card.dart';
 
 class UserPage extends StatefulWidget {
   final UserData userData;
@@ -120,7 +121,10 @@ class _UserPageState extends State<UserPage> {
           children: [
             BasicUserInfo(userData: widget.userData),
             SolvedProblemsCard(problemData: widget.userData.problemData),
-            // SubmissionHeatMap(),
+            if (widget.userData.submissionActivity != null &&
+                widget.userData.submissionActivity!.isNotEmpty)
+              SubmissionHeatMap(
+                  submissionList: widget.userData.submissionActivity!),
             if (widget.userData.userContestRanking != null)
               ContestCard(
                 contests: widget.userData.userContestRankingHistory!,

@@ -14,6 +14,10 @@ class AllQuery {
           submissions
         }
       }
+      userCalendar{
+        totalActiveDays
+        submissionCalendar
+      }
       profile{
         realName
         userAvatar

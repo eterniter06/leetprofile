@@ -120,20 +120,31 @@ const UserDataSchema = CollectionSchema(
       name: r'solutionCount',
       type: IsarType.string,
     ),
-    r'userContestRanking': PropertySchema(
+    r'submissionActivity': PropertySchema(
       id: 19,
+      name: r'submissionActivity',
+      type: IsarType.objectList,
+      target: r'SubmissionCalendarDate',
+    ),
+    r'totalActiveDays': PropertySchema(
+      id: 20,
+      name: r'totalActiveDays',
+      type: IsarType.long,
+    ),
+    r'userContestRanking': PropertySchema(
+      id: 21,
       name: r'userContestRanking',
       type: IsarType.object,
       target: r'ContestRanking',
     ),
     r'userContestRankingHistory': PropertySchema(
-      id: 20,
+      id: 22,
       name: r'userContestRankingHistory',
       type: IsarType.objectList,
       target: r'ContestSummary',
     ),
     r'username': PropertySchema(
-      id: 21,
+      id: 23,
       name: r'username',
       type: IsarType.string,
     )
@@ -146,6 +157,7 @@ const UserDataSchema = CollectionSchema(
   indexes: {},
   links: {},
   embeddedSchemas: {
+    r'SubmissionCalendarDate': SubmissionCalendarDateSchema,
     r'ProblemData': ProblemDataSchema,
     r'RecentSubmission': RecentSubmissionSchema,
     r'UserBadge': UserBadgeSchema,
@@ -298,6 +310,20 @@ int _userDataEstimateSize(
   bytesCount += 3 + object.reputation.length * 3;
   bytesCount += 3 + object.solutionCount.length * 3;
   {
+    final list = object.submissionActivity;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[SubmissionCalendarDate]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += SubmissionCalendarDateSchema.estimateSize(
+              value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  {
     final value = object.userContestRanking;
     if (value != null) {
       bytesCount += 3 +
@@ -388,19 +414,26 @@ void _userDataSerialize(
   );
   writer.writeString(offsets[17], object.reputation);
   writer.writeString(offsets[18], object.solutionCount);
-  writer.writeObject<ContestRanking>(
+  writer.writeObjectList<SubmissionCalendarDate>(
     offsets[19],
+    allOffsets,
+    SubmissionCalendarDateSchema.serialize,
+    object.submissionActivity,
+  );
+  writer.writeLong(offsets[20], object.totalActiveDays);
+  writer.writeObject<ContestRanking>(
+    offsets[21],
     allOffsets,
     ContestRankingSchema.serialize,
     object.userContestRanking,
   );
   writer.writeObjectList<ContestSummary>(
-    offsets[20],
+    offsets[22],
     allOffsets,
     ContestSummarySchema.serialize,
     object.userContestRankingHistory,
   );
-  writer.writeString(offsets[21], object.username);
+  writer.writeString(offsets[23], object.username);
 }
 
 UserData _userDataDeserialize(
@@ -414,7 +447,8 @@ UserData _userDataDeserialize(
     lastFetchTime: reader.readDateTime(offsets[8]),
     nickname: reader.readStringOrNull(offsets[11]),
     realname: reader.readString(offsets[15]),
-    username: reader.readString(offsets[21]),
+    totalActiveDays: reader.readLongOrNull(offsets[20]) ?? 0,
+    username: reader.readString(offsets[23]),
   );
   object.advancedTags = reader.readObjectList<TagsSolved>(
     offsets[0],
@@ -470,13 +504,19 @@ UserData _userDataDeserialize(
   );
   object.reputation = reader.readString(offsets[17]);
   object.solutionCount = reader.readString(offsets[18]);
-  object.userContestRanking = reader.readObjectOrNull<ContestRanking>(
+  object.submissionActivity = reader.readObjectList<SubmissionCalendarDate>(
     offsets[19],
+    SubmissionCalendarDateSchema.deserialize,
+    allOffsets,
+    SubmissionCalendarDate(),
+  );
+  object.userContestRanking = reader.readObjectOrNull<ContestRanking>(
+    offsets[21],
     ContestRankingSchema.deserialize,
     allOffsets,
   );
   object.userContestRankingHistory = reader.readObjectList<ContestSummary>(
-    offsets[20],
+    offsets[22],
     ContestSummarySchema.deserialize,
     allOffsets,
     ContestSummary(),
@@ -569,19 +609,28 @@ P _userDataDeserializeProp<P>(
     case 18:
       return (reader.readString(offset)) as P;
     case 19:
+      return (reader.readObjectList<SubmissionCalendarDate>(
+        offset,
+        SubmissionCalendarDateSchema.deserialize,
+        allOffsets,
+        SubmissionCalendarDate(),
+      )) as P;
+    case 20:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 21:
       return (reader.readObjectOrNull<ContestRanking>(
         offset,
         ContestRankingSchema.deserialize,
         allOffsets,
       )) as P;
-    case 20:
+    case 22:
       return (reader.readObjectList<ContestSummary>(
         offset,
         ContestSummarySchema.deserialize,
         allOffsets,
         ContestSummary(),
       )) as P;
-    case 21:
+    case 23:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2844,6 +2893,169 @@ extension UserDataQueryFilter
   }
 
   QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      submissionActivityIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'submissionActivity',
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      submissionActivityIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'submissionActivity',
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      submissionActivityLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'submissionActivity',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      submissionActivityIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'submissionActivity',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      submissionActivityIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'submissionActivity',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      submissionActivityLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'submissionActivity',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      submissionActivityLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'submissionActivity',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      submissionActivityLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'submissionActivity',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      totalActiveDaysEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'totalActiveDays',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      totalActiveDaysGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'totalActiveDays',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      totalActiveDaysLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'totalActiveDays',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      totalActiveDaysBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'totalActiveDays',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
       userContestRankingIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3157,6 +3369,13 @@ extension UserDataQueryObject
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterFilterCondition>
+      submissionActivityElement(FilterQuery<SubmissionCalendarDate> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'submissionActivity');
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterFilterCondition> userContestRanking(
       FilterQuery<ContestRanking> q) {
     return QueryBuilder.apply(this, (query) {
@@ -3305,6 +3524,18 @@ extension UserDataQuerySortBy on QueryBuilder<UserData, UserData, QSortBy> {
   QueryBuilder<UserData, UserData, QAfterSortBy> sortBySolutionCountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'solutionCount', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByTotalActiveDays() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalActiveDays', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> sortByTotalActiveDaysDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalActiveDays', Sort.desc);
     });
   }
 
@@ -3467,6 +3698,18 @@ extension UserDataQuerySortThenBy
     });
   }
 
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByTotalActiveDays() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalActiveDays', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QAfterSortBy> thenByTotalActiveDaysDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalActiveDays', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserData, UserData, QAfterSortBy> thenByUsername() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'username', Sort.asc);
@@ -3556,6 +3799,12 @@ extension UserDataQueryWhereDistinct
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'solutionCount',
           caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<UserData, UserData, QDistinct> distinctByTotalActiveDays() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'totalActiveDays');
     });
   }
 
@@ -3692,6 +3941,19 @@ extension UserDataQueryProperty
   QueryBuilder<UserData, String, QQueryOperations> solutionCountProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'solutionCount');
+    });
+  }
+
+  QueryBuilder<UserData, List<SubmissionCalendarDate>?, QQueryOperations>
+      submissionActivityProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'submissionActivity');
+    });
+  }
+
+  QueryBuilder<UserData, int, QQueryOperations> totalActiveDaysProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'totalActiveDays');
     });
   }
 
@@ -7771,3 +8033,229 @@ extension ContestSummaryQueryFilter
 
 extension ContestSummaryQueryObject
     on QueryBuilder<ContestSummary, ContestSummary, QFilterCondition> {}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const SubmissionCalendarDateSchema = Schema(
+  name: r'SubmissionCalendarDate',
+  id: 6838790401759101293,
+  properties: {
+    r'date': PropertySchema(
+      id: 0,
+      name: r'date',
+      type: IsarType.dateTime,
+    ),
+    r'submissions': PropertySchema(
+      id: 1,
+      name: r'submissions',
+      type: IsarType.long,
+    )
+  },
+  estimateSize: _submissionCalendarDateEstimateSize,
+  serialize: _submissionCalendarDateSerialize,
+  deserialize: _submissionCalendarDateDeserialize,
+  deserializeProp: _submissionCalendarDateDeserializeProp,
+);
+
+int _submissionCalendarDateEstimateSize(
+  SubmissionCalendarDate object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  return bytesCount;
+}
+
+void _submissionCalendarDateSerialize(
+  SubmissionCalendarDate object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeDateTime(offsets[0], object.date);
+  writer.writeLong(offsets[1], object.submissions);
+}
+
+SubmissionCalendarDate _submissionCalendarDateDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = SubmissionCalendarDate(
+    date: reader.readDateTimeOrNull(offsets[0]),
+    submissions: reader.readLongOrNull(offsets[1]),
+  );
+  return object;
+}
+
+P _submissionCalendarDateDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 1:
+      return (reader.readLongOrNull(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension SubmissionCalendarDateQueryFilter on QueryBuilder<
+    SubmissionCalendarDate, SubmissionCalendarDate, QFilterCondition> {
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> dateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'date',
+      ));
+    });
+  }
+
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> dateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'date',
+      ));
+    });
+  }
+
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> dateEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'date',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> dateGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'date',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> dateLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'date',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> dateBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'date',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> submissionsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'submissions',
+      ));
+    });
+  }
+
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> submissionsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'submissions',
+      ));
+    });
+  }
+
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> submissionsEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'submissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> submissionsGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'submissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> submissionsLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'submissions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SubmissionCalendarDate, SubmissionCalendarDate,
+      QAfterFilterCondition> submissionsBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'submissions',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension SubmissionCalendarDateQueryObject on QueryBuilder<
+    SubmissionCalendarDate, SubmissionCalendarDate, QFilterCondition> {}
