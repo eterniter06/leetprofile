@@ -45,8 +45,7 @@ class SubmissionHeatMap extends StatelessWidget {
             30: Color(0xff011b01),
           },
           onClick: (value) {
-            DateTime upperBound =
-                DateTime.now().copyWith(day: DateTime.now().day + 1);
+            DateTime upperBound = DateTime.now();
 
             if (value.isBefore(upperBound)) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
