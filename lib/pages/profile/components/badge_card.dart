@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
@@ -36,8 +37,9 @@ class BadgeCard extends StatelessWidget {
                             SizedBox(
                               width: min(
                                   MediaQuery.of(context).size.width / 4, 160),
-                              child: Image.network(
-                                badges[index].iconLink!,
+                              child: CachedNetworkImage(
+                                imageUrl: badges[index].iconLink!,
+                                // placeholder: (context, url) => AssetImage(asset: 'asset/'),
                               ),
                             ),
                             SizedBox(
