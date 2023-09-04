@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
 import 'recent_submission_tile.dart';
 
@@ -57,117 +58,97 @@ class _RecentSubmissionCardState extends State<RecentSubmissionCard>
 
   @override
   Widget build(BuildContext context) {
-    return widget.submissionList.isEmpty
-        ? Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'No Recent Submissions',
-                  ),
-                ),
-              ),
-            ),
-          )
-        : Card(
-            child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Recent Submissions'),
-                ),
-                for (int index = 0;
-                    index < recentSubmissionsShownUnexpanded;
-                    ++index)
-                  RecentSubmissionTile(
-                      submission: widget.submissionList[index]),
-                if (moreEntries) ...{
-                  SizeTransition(
-                    sizeFactor: _animation,
-                    child: Column(
-                      children: [
-                        for (int index = recentSubmissionsShownUnexpanded;
-                            index < widget.submissionList.length;
-                            ++index)
-                          RecentSubmissionTile(
-                            submission: widget.submissionList[index],
-                          )
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () => expandOrCollapse(),
-                    child: ListTile(
-                      trailing: RotationTransition(
-                        turns: Tween(begin: 0.0, end: 1.5).animate(_animation),
-                        child: IconButton(
-                          icon: const Icon(Icons.expand_more),
-                          onPressed: () => expandOrCollapse(),
-                        ),
-                      ),
-                      title: Center(
-                        child: expanded == false
-                            ? recentSubmissionsShownUnexpanded == 0
-                                ? const Text('Expand submissions')
-                                : const Text('Show more submissions')
-                            : const Text('Collapse list'),
-                      ),
-                    ),
-                  )
-                }
-              ],
-            ),
-          )
+    return ProfileCard(
+      profileHeader: widget.submissionList.isEmpty
+          ? 'No Recent Submissions'
+          : 'Recent Submissions',
 
-            // Card(
-            //     child: ExpansionTile(
-            //       onExpansionChanged: (value) {
-            //         if (expanded != value) {
-            //           setState(() {
-            //             expanded = value;
-            //           });
-            //         }
-            //       },
-            //       tilePadding: const EdgeInsets.only(left: 4, right: 20),
-            //       childrenPadding: const EdgeInsets.symmetric(horizontal: 4),
-            //       shape: const Border(),
-            //       initiallyExpanded: false,
-            //       title: Column(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         children: [
-            //           const Padding(
-            //             padding:
-            //                 EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-            //             child: Text(
-            //               'Recent Submissions',
-            //             ),
-            //           ),
-            //           RecentSubmissionTile(submission: widget.submissionList[0]),
-            //           if (expanded)
-            //             const Divider(
-            //               height: 0,
-            //             ),
-            //         ],
-            //       ),
-            //       children: [
-            //         ListView.separated(
-            //           physics: const NeverScrollableScrollPhysics(),
-            //           shrinkWrap: true,
-            //           itemCount: widget.submissionList.length - 1,
-            //           itemBuilder: (context, index) => RecentSubmissionTile(
-            //               submission: widget.submissionList[index + 1]),
-            //           separatorBuilder: (context, index) => const Divider(
-            //             height: 0,
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            );
+      children: widget.submissionList.isEmpty
+          ? null
+          : [
+              for (int index = 0;
+                  index < recentSubmissionsShownUnexpanded;
+                  ++index)
+                RecentSubmissionTile(submission: widget.submissionList[index]),
+              if (moreEntries) ...{
+                SizeTransition(
+                  sizeFactor: _animation,
+                  child: Column(
+                    children: [
+                      for (int index = recentSubmissionsShownUnexpanded;
+                          index < widget.submissionList.length;
+                          ++index)
+                        RecentSubmissionTile(
+                          submission: widget.submissionList[index],
+                        )
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () => expandOrCollapse(),
+                  child: ListTile(
+                    trailing: RotationTransition(
+                      turns: Tween(begin: 0.0, end: 1.5).animate(_animation),
+                      child: IconButton(
+                        icon: const Icon(Icons.expand_more),
+                        onPressed: () => expandOrCollapse(),
+                      ),
+                    ),
+                    title: Center(
+                      child: expanded == false
+                          ? recentSubmissionsShownUnexpanded == 0
+                              ? const Text('Expand submissions')
+                              : const Text('Show more submissions')
+                          : const Text('Collapse list'),
+                    ),
+                  ),
+                )
+              }
+            ],
+
+      // Card(
+      //     child: ExpansionTile(
+      //       onExpansionChanged: (value) {
+      //         if (expanded != value) {
+      //           setState(() {
+      //             expanded = value;
+      //           });
+      //         }
+      //       },
+      //       tilePadding: const EdgeInsets.only(left: 4, right: 20),
+      //       childrenPadding: const EdgeInsets.symmetric(horizontal: 4),
+      //       shape: const Border(),
+      //       initiallyExpanded: false,
+      //       title: Column(
+      //         crossAxisAlignment: CrossAxisAlignment.start,
+      //         children: [
+      //           const Padding(
+      //             padding:
+      //                 EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+      //             child: Text(
+      //               'Recent Submissions',
+      //             ),
+      //           ),
+      //           RecentSubmissionTile(submission: widget.submissionList[0]),
+      //           if (expanded)
+      //             const Divider(
+      //               height: 0,
+      //             ),
+      //         ],
+      //       ),
+      //       children: [
+      //         ListView.separated(
+      //           physics: const NeverScrollableScrollPhysics(),
+      //           shrinkWrap: true,
+      //           itemCount: widget.submissionList.length - 1,
+      //           itemBuilder: (context, index) => RecentSubmissionTile(
+      //               submission: widget.submissionList[index + 1]),
+      //           separatorBuilder: (context, index) => const Divider(
+      //             height: 0,
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+    );
   }
 }

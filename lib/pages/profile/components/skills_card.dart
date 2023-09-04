@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
 import 'taglist.dart';
 
@@ -16,34 +17,25 @@ class SkillsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.only(top: 8.0, left: 8.0),
-                child: const Text('Skills')),
-            if (fundamentalSkills!.isNotEmpty)
-              TagCard(
-                fundamentalSkills: fundamentalSkills,
-                tagHeader: 'Fundamental',
-              ),
-            if (intermediateSkills!.isNotEmpty)
-              TagCard(
-                fundamentalSkills: intermediateSkills,
-                tagHeader: 'Intermediate',
-              ),
-            if (advancedSkills!.isNotEmpty)
-              TagCard(
-                fundamentalSkills: advancedSkills,
-                tagHeader: 'Advanced',
-              ),
-          ],
-        ),
-      ),
+    return ProfileCard(
+      profileHeader: 'Skills',
+      children: [
+        if (fundamentalSkills!.isNotEmpty)
+          TagCard(
+            fundamentalSkills: fundamentalSkills,
+            tagHeader: 'Fundamental',
+          ),
+        if (intermediateSkills!.isNotEmpty)
+          TagCard(
+            fundamentalSkills: intermediateSkills,
+            tagHeader: 'Intermediate',
+          ),
+        if (advancedSkills!.isNotEmpty)
+          TagCard(
+            fundamentalSkills: advancedSkills,
+            tagHeader: 'Advanced',
+          ),
+      ],
     );
   }
 }
