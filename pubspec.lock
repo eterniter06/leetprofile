@@ -324,7 +324,7 @@ packages:
       path: "../flutter_heatmap_calendar"
       relative: true
     source: path
-    version: "1.0.5"
+    version: "1.0.7"
   flutter_lints:
     dependency: "direct dev"
     description:

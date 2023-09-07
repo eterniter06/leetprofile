@@ -16,49 +16,57 @@ class SubmissionHeatMap extends StatelessWidget {
         stripHourLevelAndBelowDetails(submission.date!): submission.submissions!
     };
 
-    return ProfileCard(profileHeader: 'Submission Heatmap', children: [
-      Center(
-        child: HeatMapCalendar(
-          colorTipHelper: const [
-            Padding(
+    return ProfileCard(
+      profileHeader: 'Submission Heatmap',
+      children: [
+        Center(
+          child: HeatMapCalendar(
+            leadingColorTipHelper: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: Text('Less'),
             ),
-            Padding(
+            trailingColorTipHelper: const Padding(
               padding: EdgeInsets.only(left: 8.0),
               child: Text('More'),
-            )
-          ],
-          calendarEndDate: DateTime.now(),
-          calendarBeginDate:
-              DateTime.now().copyWith(year: DateTime.now().year - 1),
-          datasets: submissionMap,
-          colorMode: ColorMode.color,
-          defaultColor: Colors.grey,
-          colorsets: const {
-            1: Color(0xffd8ffd8),
-            3: Color(0xffbeffbe),
-            6: Color(0xffa4ffa4),
-            10: Color(0xff47bc47),
-            15: Color(0xff5aa85a),
-            20: Color(0xff023602),
-            30: Color(0xff011b01),
-          },
-          onClick: (value) {
-            DateTime upperBound = DateTime.now();
+            ),
+            calendarEndDate: DateTime.now(),
+            calendarBeginDate:
+                DateTime.now().copyWith(year: DateTime.now().year - 1),
+            datasets: submissionMap,
+            colorMode: ColorMode.color,
+            defaultColor: Colors.grey,
+            colorsets: const {
+              1: Color(0xffd8ffd8),
+              3: Color(0xffbeffbe),
+              6: Color(0xffa4ffa4),
+              10: Color(0xff47bc47),
+              15: Color(0xff5aa85a),
+              20: Color(0xff023602),
+              30: Color(0xff011b01),
+            },
+            onClick: (value) {
+              DateTime now = DateTime.now();
 
-            if (value.isBefore(upperBound)) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                      'Date: ${value.year}-${value.month}-${value.day}\nSubmissions: ${submissionMap[value]}')));
-            }
-          },
+              DateTime upperBound =
+                  stripHourLevelAndBelowDetails(now).copyWith(day: now.day + 1);
+
+              DateTime lowerBound = stripHourLevelAndBelowDetails(now)
+                  .copyWith(year: now.year - 1)
+                  .add(const Duration(days: -1));
+
+              if (value.isBefore(upperBound) && value.isAfter(lowerBound)) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        'Date: ${value.year}-${value.month}-${value.day}\nSubmissions: ${submissionMap[value]}')));
+              }
+            },
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
-  stripHourLevelAndBelowDetails(DateTime dateTime) {
+  DateTime stripHourLevelAndBelowDetails(DateTime dateTime) {
     DateTime strippedDate = DateTime(
       dateTime.year,
       dateTime.month,
