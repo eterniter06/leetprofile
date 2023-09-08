@@ -44,7 +44,7 @@ class SubmissionHeatMap extends StatelessWidget {
               20: Color(0xff023602),
               30: Color(0xff011b01),
             },
-            onClick: (value) {
+            onTapDown: (date, tapDetails) {
               DateTime now = DateTime.now();
 
               DateTime upperBound =
@@ -54,11 +54,17 @@ class SubmissionHeatMap extends StatelessWidget {
                   .copyWith(year: now.year - 1)
                   .add(const Duration(days: -1));
 
-              if (value.isBefore(upperBound) && value.isAfter(lowerBound)) {
+              if (date.isBefore(upperBound) && date.isAfter(lowerBound)) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    duration: const Duration(days: 1),
                     content: Text(
-                        'Date: ${value.year}-${value.month}-${value.day}\nSubmissions: ${submissionMap[value]}')));
+                        'Date: ${date.year}-${date.month}-${date.day}\nSubmissions: ${submissionMap[date]}')));
               }
+            },
+            onTapUp: (date, tapDetails) {
+              Future.delayed(const Duration(milliseconds: 700)).then(
+                (value) => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+              );
             },
           ),
         ),
