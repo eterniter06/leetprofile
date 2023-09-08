@@ -112,6 +112,13 @@ class _ContestCardState extends State<ContestCard> {
                 ),
                 lineBarsData: [
                   LineChartBarData(
+                    dotData: FlDotData(
+                      getDotPainter: (p0, p1, p2, p3) => FlDotCirclePainter(
+                          radius: 2.5,
+                          // invert colors according to dark/white mode
+                          color: Colors.white,
+                          strokeColor: Colors.black),
+                    ),
                     spots: List.generate(
                       widget.contests.length,
                       (index) => FlSpot(
