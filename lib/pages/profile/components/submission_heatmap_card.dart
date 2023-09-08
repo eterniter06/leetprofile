@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+import 'package:intl/intl.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
 import '../../../dataclass/user_class/userdata.dart';
@@ -54,16 +55,18 @@ class SubmissionHeatMap extends StatelessWidget {
                   .copyWith(year: now.year - 1)
                   .add(const Duration(days: -1));
 
+              DateFormat format = DateFormat("d MMM, yyyy");
+
               if (date.isBefore(upperBound) && date.isAfter(lowerBound)) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     duration: const Duration(days: 1),
                     content: Text(
-                        'Date: ${date.year}-${date.month}-${date.day}\nSubmissions: ${submissionMap[date]}')));
+                        'Submissions: ${submissionMap[date]}\nDate: ${format.format(date)}')));
               }
             },
             onTapUp: (date, tapDetails) {
               Future.delayed(const Duration(milliseconds: 700)).then(
-                (value) => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+                (value) => ScaffoldMessenger.of(context).clearSnackBars(),
               );
             },
           ),
