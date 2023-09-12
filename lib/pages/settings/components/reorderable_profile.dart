@@ -1,61 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:ui_elements/database/settings_database.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+
 import 'package:ui_elements/pages/profile/components/badge_card.dart';
 import 'package:ui_elements/pages/profile/components/basic_user_info_card.dart';
-import 'package:ui_elements/common_components/refresh_icon_button.dart';
 import 'package:ui_elements/pages/profile/components/contests_card.dart';
 import 'package:ui_elements/pages/profile/components/language_section.dart';
 import 'package:ui_elements/pages/profile/components/recent_submission_card.dart';
 import 'package:ui_elements/pages/profile/components/skills_card.dart';
 import 'package:ui_elements/pages/profile/components/solved_problem_card.dart';
+import 'package:ui_elements/pages/profile/components/submission_heatmap_card.dart';
 
 class ReorderableUserPage extends StatefulWidget {
   final UserData userData;
-  const ReorderableUserPage(
-      {super.key, required this.userData, this.refreshIconKey});
-  final GlobalKey<RefreshIconButtonState>? refreshIconKey;
+  const ReorderableUserPage({super.key, required this.userData});
   @override
   State<ReorderableUserPage> createState() => _ReorderableUserPageState();
+
+  final List<String> _defaultOrdering = const [
+    'BasicUserInfo',
+    'SolvedProblemsCard',
+    'SubmissionHeatMap',
+    'ContestCard',
+    'SkillsCard',
+    'LanguageSection',
+    'BadgeCard',
+    'RecentSubmissionCard'
+  ];
 }
 
-List<String> profileComponentListAsString = [];
-
 class _ReorderableUserPageState extends State<ReorderableUserPage> {
+  List<String> profileComponentListAsString = [];
   bool isRefreshing = false;
-  late List<Widget> profileComponentList;
+  late List<Widget> profileComponentList = [];
+  Map<String, Widget?> componentMapper = {};
 
   @override
   void initState() {
     super.initState();
 
-    profileComponentList = [
-      BasicUserInfo(userData: widget.userData, key: UniqueKey()),
-      SolvedProblemsCard(
-          problemData: widget.userData.problemData, key: UniqueKey()),
-      // SubmissionHeatMap(),
-      ContestCard(
-          contests: widget.userData.userContestRankingHistory!,
-          overallContestData: widget.userData.userContestRanking!,
-          key: UniqueKey()),
-      SkillsCard(
-        key: UniqueKey(),
-        fundamentalSkills: widget.userData.fundamentalTags,
-        intermediateSkills: widget.userData.intermediateTags,
-        advancedSkills: widget.userData.advancedTags,
-      ),
-      LanguageSection(
-          key: UniqueKey(),
-          languageProblemList: widget.userData.languageProblemCount!),
-      BadgeCard(key: UniqueKey(), badges: widget.userData.badges!),
-      RecentSubmissionCard(
-          key: UniqueKey(),
-          submissionList: widget.userData.recentAcSubmissionList ?? []),
-    ];
+    profileComponentListAsString =
+        SettingsDatabase.profileComponentOrder() ?? widget._defaultOrdering;
 
-    profileComponentList.forEach((element) {
-      profileComponentListAsString.add(element.toString());
-    });
+    initMapper();
+
+    for (String componentName in profileComponentListAsString) {
+      Widget? widget = componentMapper[componentName];
+
+      if (widget == null) {
+        continue;
+      }
+
+      profileComponentList.add(widget);
+    }
+  }
+
+  void initMapper() {
+    componentMapper['BasicUserInfo'] = BasicUserInfo(
+      userData: widget.userData,
+      key: UniqueKey(),
+    );
+
+    componentMapper['SolvedProblemsCard'] = SolvedProblemsCard(
+      problemData: widget.userData.problemData,
+      key: UniqueKey(),
+    );
+
+    componentMapper['SubmissionHeatMap'] =
+        widget.userData.submissionActivity != null &&
+                widget.userData.submissionActivity!.isNotEmpty
+            ? SubmissionHeatMap(
+                submissionList: widget.userData.submissionActivity!,
+                key: UniqueKey(),
+              )
+            : null;
+
+    componentMapper['ContestCard'] = widget.userData.userContestRanking != null
+        ? ContestCard(
+            contests: widget.userData.userContestRankingHistory!,
+            overallContestData: widget.userData.userContestRanking!,
+            key: UniqueKey(),
+          )
+        : null;
+
+    componentMapper['SkillsCard'] = hasSkills()
+        ? SkillsCard(
+            fundamentalSkills: widget.userData.fundamentalTags,
+            intermediateSkills: widget.userData.intermediateTags,
+            advancedSkills: widget.userData.advancedTags,
+            key: UniqueKey(),
+          )
+        : null;
+
+    componentMapper['LanguageSection'] = hasSolvedProblems()
+        ? LanguageSection(
+            languageProblemList: widget.userData.languageProblemCount!,
+            key: UniqueKey(),
+          )
+        : null;
+
+    componentMapper['BadgeCard'] =
+        widget.userData.badges != null && widget.userData.badges!.isNotEmpty
+            ? BadgeCard(
+                badges: widget.userData.badges!,
+                key: UniqueKey(),
+              )
+            : null;
+
+    componentMapper['RecentSubmissionCard'] = RecentSubmissionCard(
+      submissionList: widget.userData.recentAcSubmissionList ?? [],
+      key: UniqueKey(),
+    );
   }
 
   bool hasSkills() {
@@ -82,19 +138,12 @@ class _ReorderableUserPageState extends State<ReorderableUserPage> {
             (widget.userData.realname == ""
                 ? widget.userData.username
                 : widget.userData.realname)),
-        // actions: [
-        //   IconButton(
-        //     tooltip: 'Save layout',
-        //     icon: const Icon(Icons.check),
-        //     onPressed: () =>
-        //         Share.share('https://leetcode.com/${widget.userData.username}'),
-        //   ),
-        // ],
       ),
       floatingActionButton: FloatingActionButton(
+        tooltip: 'Save layout',
         onPressed: () =>
             Navigator.of(context).pop(profileComponentListAsString),
-        child: const Icon(Icons.check),
+        child: const Icon(Icons.save),
       ),
       body: SafeArea(
         child: ReorderableListView.builder(
@@ -106,7 +155,11 @@ class _ReorderableUserPageState extends State<ReorderableUserPage> {
 
             setState(() {
               Widget component = profileComponentList.removeAt(oldIndex);
+              String componentAsString =
+                  profileComponentListAsString.removeAt(oldIndex);
+
               profileComponentList.insert(newIndex, component);
+              profileComponentListAsString.insert(newIndex, componentAsString);
             });
           },
           itemBuilder: (context, index) => profileComponentList[index],

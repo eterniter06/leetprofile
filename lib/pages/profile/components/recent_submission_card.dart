@@ -5,13 +5,19 @@ import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
+import '../../../interfaces.dart';
 import 'recent_submission_tile.dart';
 
-class RecentSubmissionCard extends StatefulWidget {
+class RecentSubmissionCard extends StatefulWidget implements ClassName {
   const RecentSubmissionCard({super.key, required this.submissionList});
   final List<RecentSubmission> submissionList;
   @override
   State<RecentSubmissionCard> createState() => _RecentSubmissionCardState();
+
+  @override
+  String className() {
+    return 'RecentSubmissionCard';
+  }
 }
 
 class _RecentSubmissionCardState extends State<RecentSubmissionCard>

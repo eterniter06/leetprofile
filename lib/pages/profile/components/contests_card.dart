@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/interfaces.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
-class ContestCard extends StatefulWidget {
+class ContestCard extends StatefulWidget implements ClassName {
   const ContestCard({
     super.key,
     required this.contests,
@@ -16,6 +17,11 @@ class ContestCard extends StatefulWidget {
 
   @override
   State<ContestCard> createState() => _ContestCardState();
+
+  @override
+  String className() {
+    return 'ContestCard';
+  }
 }
 
 class _ContestCardState extends State<ContestCard> {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:ui_elements/change_notifiers/user_list.dart';
+import 'package:ui_elements/database/settings_database.dart';
 
 import 'package:ui_elements/database/user_database.dart';
 
@@ -25,11 +26,103 @@ class UserPage extends StatefulWidget {
   final GlobalKey<RefreshIconButtonState>? refreshIconKey;
   @override
   State<UserPage> createState() => _UserPageState();
+
+  final List<String> _defaultOrdering = const [
+    'BasicUserInfo',
+    'SolvedProblemsCard',
+    'SubmissionHeatMap',
+    'ContestCard',
+    'SkillsCard',
+    'LanguageSection',
+    'BadgeCard',
+    'RecentSubmissionCard'
+  ];
 }
 
 class _UserPageState extends State<UserPage> {
+  List<String> profileComponentListAsString = [];
   bool isRefreshing = false;
-  late List<Widget> profileComponentList;
+  late List<Widget> profileComponentList = [];
+  Map<String, Widget?> componentMapper = {};
+
+  @override
+  void initState() {
+    super.initState();
+
+    profileComponentListAsString =
+        SettingsDatabase.profileComponentOrder() ?? widget._defaultOrdering;
+
+    initMapper();
+
+    for (String componentName in profileComponentListAsString) {
+      Widget? widget = componentMapper[componentName];
+
+      if (widget == null) {
+        continue;
+      }
+
+      profileComponentList.add(widget);
+    }
+  }
+
+  void initMapper() {
+    componentMapper['BasicUserInfo'] = BasicUserInfo(
+      userData: widget.userData,
+      key: UniqueKey(),
+    );
+
+    componentMapper['SolvedProblemsCard'] = SolvedProblemsCard(
+      problemData: widget.userData.problemData,
+      key: UniqueKey(),
+    );
+
+    componentMapper['SubmissionHeatMap'] =
+        widget.userData.submissionActivity != null &&
+                widget.userData.submissionActivity!.isNotEmpty
+            ? SubmissionHeatMap(
+                submissionList: widget.userData.submissionActivity!,
+                key: UniqueKey(),
+              )
+            : null;
+
+    componentMapper['ContestCard'] = widget.userData.userContestRanking != null
+        ? ContestCard(
+            contests: widget.userData.userContestRankingHistory!,
+            overallContestData: widget.userData.userContestRanking!,
+            key: UniqueKey(),
+          )
+        : null;
+
+    componentMapper['SkillsCard'] = hasSkills()
+        ? SkillsCard(
+            fundamentalSkills: widget.userData.fundamentalTags,
+            intermediateSkills: widget.userData.intermediateTags,
+            advancedSkills: widget.userData.advancedTags,
+            key: UniqueKey(),
+          )
+        : null;
+
+    componentMapper['LanguageSection'] = hasSolvedProblems()
+        ? LanguageSection(
+            languageProblemList: widget.userData.languageProblemCount!,
+            key: UniqueKey(),
+          )
+        : null;
+
+    componentMapper['BadgeCard'] =
+        widget.userData.badges != null && widget.userData.badges!.isNotEmpty
+            ? BadgeCard(
+                badges: widget.userData.badges!,
+                key: UniqueKey(),
+              )
+            : null;
+
+    componentMapper['RecentSubmissionCard'] = RecentSubmissionCard(
+      submissionList: widget.userData.recentAcSubmissionList ?? [],
+      key: UniqueKey(),
+    );
+  }
+
   Future<void> _refreshUserImpl() async {
     var dataMap =
         await DataParser(username: widget.userData.username).getAllAsJson();
@@ -37,38 +130,6 @@ class _UserPageState extends State<UserPage> {
     setState(() {
       widget.userData.update(updatedUser: UserData.fromMap(dataMap: dataMap!));
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    profileComponentList = [
-      BasicUserInfo(userData: widget.userData),
-      SolvedProblemsCard(problemData: widget.userData.problemData),
-      if (widget.userData.submissionActivity != null &&
-          widget.userData.submissionActivity!.isNotEmpty)
-        SubmissionHeatMap(submissionList: widget.userData.submissionActivity!),
-      if (widget.userData.userContestRanking != null)
-        ContestCard(
-          contests: widget.userData.userContestRankingHistory!,
-          overallContestData: widget.userData.userContestRanking!,
-        ),
-      if (hasSkills())
-        SkillsCard(
-          fundamentalSkills: widget.userData.fundamentalTags,
-          intermediateSkills: widget.userData.intermediateTags,
-          advancedSkills: widget.userData.advancedTags,
-        ),
-      if (hasSolvedProblems())
-        LanguageSection(
-            languageProblemList: widget.userData.languageProblemCount!),
-      if (widget.userData.badges != null &&
-          (widget.userData.badges!.isNotEmpty))
-        BadgeCard(badges: widget.userData.badges!),
-      RecentSubmissionCard(
-          submissionList: widget.userData.recentAcSubmissionList ?? []),
-    ];
   }
 
   bool hasSkills() {

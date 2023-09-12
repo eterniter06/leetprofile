@@ -3,9 +3,10 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/interfaces.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
-class BadgeCard extends StatelessWidget {
+class BadgeCard extends StatelessWidget implements ClassName {
   const BadgeCard({super.key, required this.badges});
   final List<UserBadge> badges;
 
@@ -59,5 +60,10 @@ class BadgeCard extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  @override
+  String className() {
+    return 'BadgeCard';
   }
 }

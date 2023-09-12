@@ -60,8 +60,8 @@ class SettingsDatabase {
     return count;
   }
 
-  static List<String> profileComponentOrder() {
-    return _prefs!.getStringList('profileComponentOrder') ?? [];
+  static List<String>? profileComponentOrder() {
+    return _prefs!.getStringList('profileComponentOrder');
   }
 
   static Future<void> saveProfileComponentsOrder(List<String> order) async {

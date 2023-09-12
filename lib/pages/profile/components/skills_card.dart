@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/interfaces.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
 import 'taglist.dart';
 
-class SkillsCard extends StatelessWidget {
+class SkillsCard extends StatelessWidget implements ClassName {
   const SkillsCard({
     super.key,
     this.fundamentalSkills,
@@ -37,6 +38,11 @@ class SkillsCard extends StatelessWidget {
           ),
       ],
     );
+  }
+
+  @override
+  String className() {
+    return 'SkillsCard';
   }
 }
 

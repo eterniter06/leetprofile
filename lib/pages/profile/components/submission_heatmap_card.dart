@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/interfaces.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
-import '../../../dataclass/user_class/userdata.dart';
-
-class SubmissionHeatMap extends StatelessWidget {
+class SubmissionHeatMap extends StatelessWidget implements ClassName {
   const SubmissionHeatMap({super.key, required this.submissionList});
 
   final List<SubmissionCalendarDate> submissionList;
@@ -83,5 +83,10 @@ class SubmissionHeatMap extends StatelessWidget {
     );
 
     return strippedDate;
+  }
+
+  @override
+  String className() {
+    return 'SubmissionHeatMap';
   }
 }

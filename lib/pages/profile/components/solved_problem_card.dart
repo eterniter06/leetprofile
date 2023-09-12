@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/interfaces.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
 import 'difficulty_card.dart';
 
-class SolvedProblemsCard extends StatelessWidget {
+class SolvedProblemsCard extends StatelessWidget implements ClassName {
   const SolvedProblemsCard({
     super.key,
     required this.problemData,
@@ -69,5 +70,10 @@ class SolvedProblemsCard extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  @override
+  String className() {
+    return 'SolvedProblemsCard';
   }
 }
