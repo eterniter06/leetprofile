@@ -71,7 +71,6 @@ class DataParser {
       }
 
       Map json = responseBody['data'];
-
       Map dataMap = {};
 
       dataMap['username'] = username;
@@ -91,13 +90,14 @@ class DataParser {
       dataMap['linkedinUrl'] = json['matchedUser']['linkedinUrl'];
       dataMap['githubUrl'] = json['matchedUser']['githubUrl'];
 
-      _extractBadges(dataMap, json);
-      _extractSubmissionStats(dataMap, json);
+      _extractContestRankingHistory(json, dataMap);
       _extractLanguageSubmissions(json, dataMap);
       _extractRecentSubmissions(json, dataMap);
-      _extractAllQuestionCount(dataMap, json);
+      _extractAllQuestionCount(json, dataMap);
+      _extractSubmissionStats(json, dataMap);
       _extractContestRanking(json, dataMap);
-      _extractContestRankingHistory(dataMap, json);
+      _extractUserCalendar(json, dataMap);
+      _extractBadges(json, dataMap);
 
       var tagHead = json['matchedUser']['tagProblemCounts'];
       dataMap['fundamentalTagsSolved'] = _extractTags(tagHead['fundamental']);
@@ -109,7 +109,7 @@ class DataParser {
   }
 
   void _extractContestRankingHistory(
-      Map<dynamic, dynamic> dataMap, Map<dynamic, dynamic> json) {
+      Map<dynamic, dynamic> json, Map<dynamic, dynamic> dataMap) {
     dataMap['userContestRankingHistory'] = <ContestSummary>[];
     for (var contest in json['userContestRankingHistory']) {
       if (contest['attended'] == false) continue;
@@ -148,7 +148,7 @@ class DataParser {
   }
 
   void _extractAllQuestionCount(
-      Map<dynamic, dynamic> dataMap, Map<dynamic, dynamic> json) {
+      Map<dynamic, dynamic> json, Map<dynamic, dynamic> dataMap) {
     dataMap['allQuestionDifficultyCount'] = <AllQuestions>[];
     for (var category in json['allQuestionsCount']) {
       var difficulty = category['difficulty'].toString().toLowerCase();
@@ -202,7 +202,7 @@ class DataParser {
   }
 
   void _extractSubmissionStats(
-      Map<dynamic, dynamic> dataMap, Map<dynamic, dynamic> json) {
+      Map<dynamic, dynamic> json, Map<dynamic, dynamic> dataMap) {
     dataMap['submissionStats'] = {};
     for (var category in json['matchedUser']['usernamesubmitStats']
         ['acSubmissionNum']) {
@@ -216,7 +216,7 @@ class DataParser {
   }
 
   void _extractBadges(
-      Map<dynamic, dynamic> dataMap, Map<dynamic, dynamic> json) {
+      Map<dynamic, dynamic> json, Map<dynamic, dynamic> dataMap) {
     dataMap['badges'] = <UserBadge>[];
 
     for (var badge in json['matchedUser']['badges']) {
@@ -237,6 +237,29 @@ class DataParser {
 
       dataMap['badges'].add(obtainedBadge);
     }
+  }
+
+  void _extractUserCalendar(
+      Map<dynamic, dynamic> json, Map<dynamic, dynamic> dataMap) {
+    var calendar = json['matchedUser']['userCalendar'];
+
+    Map<String, dynamic> submissions =
+        jsonDecode(calendar['submissionCalendar']);
+
+    List<SubmissionCalendarDate> submissionList = [];
+
+    for (String epoch in submissions.keys) {
+      int count = submissions[epoch];
+      DateTime date =
+          DateTime.fromMillisecondsSinceEpoch(int.parse(epoch) * 1000);
+
+      SubmissionCalendarDate sub =
+          SubmissionCalendarDate(date: date, submissions: count);
+
+      submissionList.add(sub);
+    }
+    dataMap['totalActiveDays'] = calendar['totalActiveDays'];
+    dataMap['submissionCalendar'] = submissionList;
   }
 
   static Future<DailyQuestion> getDailyQuestion() async {

@@ -16,6 +16,9 @@ class UserData {
   late String solutionCount;
   late String postViewCount;
 
+  List<SubmissionCalendarDate>? submissionActivity;
+  int totalActiveDays;
+
   String? linkedinUrl;
   String? githubUrl;
 
@@ -79,6 +82,9 @@ class UserData {
     allQuestionsCount = updatedUser.allQuestionsCount;
     userContestRanking = updatedUser.userContestRanking;
     userContestRankingHistory = updatedUser.userContestRankingHistory;
+
+    submissionActivity = updatedUser.submissionActivity;
+    totalActiveDays = updatedUser.totalActiveDays;
   }
 
   UserData({
@@ -87,6 +93,7 @@ class UserData {
     required this.avatar,
     required this.realname,
     required this.lastFetchTime,
+    this.totalActiveDays = 0,
   });
 
   UserData.fromMap({required Map dataMap})
@@ -113,7 +120,9 @@ class UserData {
         problemData = ProblemData.fromMap(
           solvedCount: dataMap['submissionStats'],
           allCount: dataMap['allQuestionDifficultyCount'],
-        );
+        ),
+        totalActiveDays = dataMap['totalActiveDays'],
+        submissionActivity = dataMap['submissionCalendar'];
 }
 
 // Taken from the isar FAQ
@@ -276,4 +285,12 @@ class ContestSummary {
     this.title,
     this.startTime,
   });
+}
+
+@embedded
+class SubmissionCalendarDate {
+  DateTime? date;
+  int? submissions;
+
+  SubmissionCalendarDate({this.date, this.submissions});
 }

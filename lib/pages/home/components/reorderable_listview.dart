@@ -10,7 +10,7 @@ import 'package:ui_elements/common_components/refresh_icon_button.dart';
 
 import 'dismissible_list_tile.dart';
 
-class ReorderableUserListView extends StatelessWidget {
+class ReorderableUserListView extends StatefulWidget {
   final GlobalKey<RefreshIconButtonState>? refreshIconKey;
   const ReorderableUserListView({
     super.key,
@@ -18,11 +18,43 @@ class ReorderableUserListView extends StatelessWidget {
   });
 
   @override
+  State<ReorderableUserListView> createState() =>
+      _ReorderableUserListViewState();
+}
+
+class _ReorderableUserListViewState extends State<ReorderableUserListView>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      upperBound: 1.025,
+      lowerBound: 1,
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<UserListModel>(
       builder: (context, userListModel, child) => ReorderableListView(
-        proxyDecorator: (child, index, animation) => DismissibleListTile(
-          userData: userListModel.userAtIndex(index),
+        proxyDecorator: (child, index, animation) => ScaleTransition(
+          scale: Tween<double>(begin: 1, end: 1.025).animate(CurvedAnimation(
+            parent: _controller,
+            curve: Curves.linear,
+          )),
+          child: DismissibleListTile(
+            userData: userListModel.userAtIndex(index),
+          ),
         ),
         onReorderStart: (index) => HapticFeedback.lightImpact(),
         onReorder: (oldIndex, newIndex) async {
@@ -46,7 +78,7 @@ class ReorderableUserListView extends StatelessWidget {
             OpenContainer(
               key: UniqueKey(),
               openBuilder: (context, action) => UserPage(
-                refreshIconKey: refreshIconKey,
+                refreshIconKey: widget.refreshIconKey,
                 userData: userListModel.userAtIndex(index),
               ),
               closedBuilder: (context, action) => DismissibleListTile(

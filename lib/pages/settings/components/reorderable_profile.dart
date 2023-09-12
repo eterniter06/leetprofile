@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ui_elements/database/settings_database.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/pages/profile/components/badge_card.dart';

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CircularNetworkImage extends StatelessWidget {
@@ -9,10 +10,17 @@ class CircularNetworkImage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use below to implement Hero animation for profile picture
     //https: //docs.flutter.dev/ui/animations/hero-animations
-    return CircleAvatar(
-      radius: radius,
-      foregroundImage: NetworkImage(
-        imageLink,
+    return CachedNetworkImage(
+      imageUrl: imageLink,
+      placeholder: (context, url) => CircleAvatar(
+        radius: radius,
+        foregroundImage: const AssetImage(
+          'assets/default_avatar.png',
+        ),
+      ),
+      imageBuilder: (context, imageProvider) => CircleAvatar(
+        radius: radius,
+        foregroundImage: imageProvider,
       ),
     );
   }

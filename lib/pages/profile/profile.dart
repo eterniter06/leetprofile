@@ -17,6 +17,7 @@ import 'components/nickname_dialog.dart';
 import 'components/recent_submission_card.dart';
 import 'components/skills_card.dart';
 import 'components/solved_problem_card.dart';
+import 'components/submission_heatmap_card.dart';
 
 class UserPage extends StatefulWidget {
   final UserData userData;
@@ -41,32 +42,31 @@ class _UserPageState extends State<UserPage> {
   @override
   void initState() {
     super.initState();
+
     profileComponentList = [
-      BasicUserInfo(userData: widget.userData, key: UniqueKey()),
-      SolvedProblemsCard(
-          problemData: widget.userData.problemData, key: UniqueKey()),
-      // SubmissionHeatMap(),
+      BasicUserInfo(userData: widget.userData),
+      SolvedProblemsCard(problemData: widget.userData.problemData),
+      if (widget.userData.submissionActivity != null &&
+          widget.userData.submissionActivity!.isNotEmpty)
+        SubmissionHeatMap(submissionList: widget.userData.submissionActivity!),
       if (widget.userData.userContestRanking != null)
         ContestCard(
-            contests: widget.userData.userContestRankingHistory!,
-            overallContestData: widget.userData.userContestRanking!,
-            key: UniqueKey()),
+          contests: widget.userData.userContestRankingHistory!,
+          overallContestData: widget.userData.userContestRanking!,
+        ),
       if (hasSkills())
         SkillsCard(
-          key: UniqueKey(),
           fundamentalSkills: widget.userData.fundamentalTags,
           intermediateSkills: widget.userData.intermediateTags,
           advancedSkills: widget.userData.advancedTags,
         ),
       if (hasSolvedProblems())
         LanguageSection(
-            key: UniqueKey(),
             languageProblemList: widget.userData.languageProblemCount!),
       if (widget.userData.badges != null &&
           (widget.userData.badges!.isNotEmpty))
-        BadgeCard(key: UniqueKey(), badges: widget.userData.badges!),
+        BadgeCard(badges: widget.userData.badges!),
       RecentSubmissionCard(
-          key: UniqueKey(),
           submissionList: widget.userData.recentAcSubmissionList ?? []),
     ];
   }
