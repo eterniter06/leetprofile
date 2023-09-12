@@ -57,7 +57,14 @@ class SettingsDatabase {
       changeNumberOfShownUserSubmissions(defaultSubmissionCount);
       return defaultSubmissionCount;
     }
-
     return count;
+  }
+
+  static List<String> profileComponentOrder() {
+    return _prefs!.getStringList('profileComponentOrder') ?? [];
+  }
+
+  static Future<void> saveProfileComponentsOrder(List<String> order) async {
+    await _prefs!.setStringList('profileComponentOrder', order);
   }
 }

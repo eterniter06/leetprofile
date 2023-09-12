@@ -149,18 +149,7 @@ class _UserPageState extends State<UserPage> {
         ],
       ),
       body: SafeArea(
-        child: ReorderableListView.builder(
-          onReorder: (oldIndex, newIndex) {
-            if (newIndex > profileComponentList.length) {
-              newIndex = profileComponentList.length;
-            }
-            if (oldIndex < newIndex) newIndex--;
-
-            setState(() {
-              Widget component = profileComponentList.removeAt(oldIndex);
-              profileComponentList.insert(newIndex, component);
-            });
-          },
+        child: ListView.builder(
           itemBuilder: (context, index) => profileComponentList[index],
           itemCount: profileComponentList.length,
         ),
