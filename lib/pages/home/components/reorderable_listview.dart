@@ -9,6 +9,7 @@ import 'package:ui_elements/pages/profile/profile.dart';
 import 'package:ui_elements/common_components/refresh_icon_button.dart';
 
 import 'dismissible_list_tile.dart';
+import 'user_list_tile.dart';
 
 class ReorderableUserListView extends StatefulWidget {
   final GlobalKey<RefreshIconButtonState>? refreshIconKey;
@@ -48,11 +49,13 @@ class _ReorderableUserListViewState extends State<ReorderableUserListView>
     return Consumer<UserListModel>(
       builder: (context, userListModel, child) => ReorderableListView(
         proxyDecorator: (child, index, animation) => ScaleTransition(
-          scale: Tween<double>(begin: 1, end: 1.025).animate(CurvedAnimation(
-            parent: _controller,
-            curve: Curves.linear,
-          )),
-          child: DismissibleListTile(
+          scale: Tween<double>(begin: 1, end: 1.025).animate(
+            CurvedAnimation(
+              parent: _controller,
+              curve: Curves.linear,
+            ),
+          ),
+          child: UserCard(
             userData: userListModel.userAtIndex(index),
           ),
         ),

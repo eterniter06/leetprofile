@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ui_elements/change_notifiers/theme.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/interfaces.dart';
@@ -33,7 +34,15 @@ class SolvedProblemsCard extends StatelessWidget implements ClassName {
             children: [
               Expanded(
                 child: ProblemCard(
-                  problemCategory: 'Easy',
+                  problemCategory: Text(
+                    'Easy',
+                    style: TextStyle(
+                      color: Colors.green.shade800,
+                    ),
+                  ),
+                  containerColor: Colors.lightGreen.shade50,
+                  progressColor: Colors.green.shade800,
+                  backgroundArcColor: Colors.green.shade200,
                   solved: problemData?.easySolved ?? 0,
                   total: problemData?.easyTotal ?? 0,
                 ),
@@ -41,7 +50,15 @@ class SolvedProblemsCard extends StatelessWidget implements ClassName {
               const SizedBox(width: 10),
               Expanded(
                 child: ProblemCard(
-                  problemCategory: 'Medium',
+                  problemCategory: const Text(
+                    'Medium',
+                    style: TextStyle(
+                      color: Color.fromRGBO(98, 92, 18, 1),
+                    ),
+                  ),
+                  containerColor: Colors.yellow.shade50,
+                  progressColor: const Color.fromRGBO(98, 92, 18, 1),
+                  backgroundArcColor: Colors.yellow.shade600,
                   solved: problemData?.mediumSolved ?? 0,
                   total: problemData?.mediumTotal ?? 0,
                 ),
@@ -49,7 +66,15 @@ class SolvedProblemsCard extends StatelessWidget implements ClassName {
               const SizedBox(width: 10),
               Expanded(
                 child: ProblemCard(
-                  problemCategory: 'Hard',
+                  problemCategory: Text(
+                    'Hard',
+                    style: TextStyle(
+                      color: Colors.red.shade800,
+                    ),
+                  ),
+                  containerColor: Colors.red.shade50,
+                  progressColor: Colors.red.shade800,
+                  backgroundArcColor: Colors.red.shade200,
                   solved: problemData?.hardSolved ?? 0,
                   total: problemData?.hardTotal ?? 0,
                 ),
@@ -62,12 +87,26 @@ class SolvedProblemsCard extends StatelessWidget implements ClassName {
           height: 16,
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          margin: const EdgeInsets.only(bottom: 8),
-          child: Text(
-            'Total problems solved: ${getSolvedCount(problemData)}',
-          ),
-        ),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            margin: const EdgeInsets.only(bottom: 8),
+            child: RichText(
+              text: TextSpan(
+                  text: 'Total problems solved: ',
+                  style: DefaultTextStyle.of(context).style,
+                  children: [
+                    TextSpan(
+                      text: getSolvedCount(problemData).toString(),
+                      style: const TextStyle(
+                        inherit: true,
+                        color: ThemeModeModel.lightSecondaryInverse,
+                      ),
+                    ),
+                  ]),
+            )
+            // Text(
+            //   'Total problems solved: ${getSolvedCount(problemData)}',
+            // ),
+            ),
       ],
     );
   }

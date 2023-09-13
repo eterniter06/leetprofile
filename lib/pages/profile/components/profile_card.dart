@@ -17,7 +17,13 @@ class ProfileCard extends StatelessWidget {
             if (profileHeader != null)
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(profileHeader!),
+                child: Text(
+                  profileHeader!,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Color(0xff6F480C),
+                  ),
+                ),
               ),
             if (children != null) ...children!,
           ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:ui_elements/change_notifiers/theme.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/interfaces.dart';
@@ -71,7 +72,7 @@ class _ContestCardState extends State<ContestCard> {
                     ).toList();
                   },
                   touchTooltipData: LineTouchTooltipData(
-                    tooltipBgColor: Colors.blue,
+                    tooltipBgColor: ThemeModeModel.lightSecondary,
                     tooltipRoundedRadius: 20.0,
                     fitInsideVertically: true,
                     showOnTopOfTheChartBoxArea: true,
@@ -80,18 +81,15 @@ class _ContestCardState extends State<ContestCard> {
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map(
                         (LineBarSpot touchedSpot) {
-                          const textStyle = TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          );
-
                           ContestSummary contest =
                               widget.contests[touchedSpot.spotIndex];
 
                           return LineTooltipItem(
                             "${contest.title!}\n${contest.rating}",
-                            textStyle,
+                            const TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                            ),
                           );
                         },
                       ).toList();
@@ -118,10 +116,11 @@ class _ContestCardState extends State<ContestCard> {
                 ),
                 lineBarsData: [
                   LineChartBarData(
+                    color: ThemeModeModel.lightPrimary,
                     dotData: FlDotData(
                       getDotPainter: (p0, p1, p2, p3) => FlDotCirclePainter(
                           radius: 2.5,
-                          // invert colors according to dark/white mode
+                          // Todo: invert colors according to dark/white mode
                           color: Colors.white,
                           strokeColor: Colors.black),
                     ),

@@ -191,7 +191,12 @@ class UserListModel extends ChangeNotifier {
   void importUsersFromList(List userList) {
     bool userAdded = false;
 
-    for (UserData user in userList) {
+    for (UserData? user in userList) {
+      if (user == null) {
+        // ToDo: tell user username no longer exists
+        continue;
+      }
+
       if (contains(user.username)) {
         continue;
       }

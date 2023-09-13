@@ -72,8 +72,6 @@ class _UserInputDialogState extends State<UserInputDialog> {
               textInputAction: TextInputAction.done,
               decoration: const InputDecoration(
                 label: Text('Leetcode Username'),
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.only(left: 8),
               ),
               enableSuggestions: true,
             ),

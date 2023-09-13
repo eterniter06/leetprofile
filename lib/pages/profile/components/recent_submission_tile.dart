@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:ui_elements/change_notifiers/theme.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vibration/vibration.dart';
@@ -112,7 +113,14 @@ class RecentSubmissionTile extends StatelessWidget {
             submission.title!,
           ),
           trailing: Text(timeOfDay()),
-          subtitle: Text(getDay()),
+          subtitle: Text(
+            getDay(),
+            style: const TextStyle(
+              fontSize: 12,
+              inherit: true,
+              color: ThemeModeModel.lightSecondaryInverse,
+            ),
+          ),
         ),
       ),
     );

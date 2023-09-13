@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ui_elements/change_notifiers/theme.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
@@ -34,7 +35,12 @@ class BasicUserInfo extends StatelessWidget implements ClassName {
                 const SizedBox(
                   height: 12,
                 ),
-                Text(userData.username),
+                Text(
+                  userData.username,
+                  style: const TextStyle(
+                    color: ThemeModeModel.lightSecondaryInverse,
+                  ),
+                ),
               ],
             ),
             Column(
@@ -44,6 +50,7 @@ class BasicUserInfo extends StatelessWidget implements ClassName {
                 Text(
                   userData.realname,
                   overflow: TextOverflow.fade,
+                  style: const TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 16),
                 Text('Ranking: ${userData.ranking}'),

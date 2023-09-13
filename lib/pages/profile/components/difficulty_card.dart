@@ -7,12 +7,19 @@ class ProblemCard extends StatelessWidget {
     required this.problemCategory,
     required this.solved,
     required this.total,
+    this.radius = 56,
+    this.progressColor,
+    this.backgroundArcColor,
+    this.containerColor,
   });
 
-  final String problemCategory;
+  final Widget problemCategory;
   final int solved;
   final int total;
-
+  final double radius;
+  final Color? progressColor;
+  final Color? backgroundArcColor;
+  final Color? containerColor;
   double calculatePercent() {
     if (total == 0) return 0;
     return solved.toDouble() / total;
@@ -21,8 +28,12 @@ class ProblemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      foregroundDecoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: containerColor,
+      ),
+      foregroundDecoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
           border: Border(
             bottom: BorderSide(),
             top: BorderSide(),
@@ -32,41 +43,48 @@ class ProblemCard extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 8),
-          CircularPercentIndicator(
-            radius: 60,
-            animation: true,
-            animationDuration: 700,
-            curve: Curves.decelerate,
-            circularStrokeCap: CircularStrokeCap.round,
-            arcType: ArcType.HALF,
-            footer: Container(
-              margin: const EdgeInsets.only(bottom: 4),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 2,
-              ),
-              child: Text(
-                problemCategory,
-              ),
+          AspectRatio(
+            aspectRatio: 1,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return CircularPercentIndicator(
+                  radius: constraints.maxWidth * 1 / 3,
+                  animation: true,
+                  animationDuration: 700,
+                  curve: Curves.decelerate,
+                  circularStrokeCap: CircularStrokeCap.round,
+                  progressColor: progressColor,
+                  arcBackgroundColor: backgroundArcColor,
+                  arcType: ArcType.HALF,
+                  footer: Container(
+                    margin: const EdgeInsets.only(bottom: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    child: problemCategory,
+                  ),
+                  // rotateLinearGradient: true,
+                  center: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '$solved',
+                      ),
+                      Divider(
+                        endIndent: constraints.maxWidth * 1 / 3 * 60 / 100,
+                        indent: constraints.maxWidth * 1 / 3 * 60 / 100,
+                      ),
+                      Text(
+                        '$total',
+                      ),
+                    ],
+                  ),
+                  percent: calculatePercent(),
+                );
+              },
             ),
-            // rotateLinearGradient: true,
-            center: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$solved',
-                ),
-                const Divider(
-                  endIndent: 32,
-                  indent: 32,
-                ),
-                Text(
-                  '$total',
-                ),
-              ],
-            ),
-            percent: calculatePercent(),
           ),
         ],
       ),
