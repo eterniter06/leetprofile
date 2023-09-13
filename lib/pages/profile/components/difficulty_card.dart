@@ -11,6 +11,7 @@ class ProblemCard extends StatelessWidget {
     this.progressColor,
     this.backgroundArcColor,
     this.containerColor,
+    this.borderColor = Colors.black,
   });
 
   final Widget problemCategory;
@@ -20,6 +21,7 @@ class ProblemCard extends StatelessWidget {
   final Color? progressColor;
   final Color? backgroundArcColor;
   final Color? containerColor;
+  final Color borderColor;
   double calculatePercent() {
     if (total == 0) return 0;
     return solved.toDouble() / total;
@@ -33,13 +35,9 @@ class ProblemCard extends StatelessWidget {
         color: containerColor,
       ),
       foregroundDecoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          border: Border(
-            bottom: BorderSide(),
-            top: BorderSide(),
-            left: BorderSide(),
-            right: BorderSide(),
-          )),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: borderColor),
+      ),
       child: Column(
         children: [
           const SizedBox(height: 8),

@@ -5,6 +5,7 @@ import 'package:ui_elements/change_notifiers/theme.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/interfaces.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
+import 'package:ui_elements/time.dart';
 
 class ContestCard extends StatefulWidget implements ClassName {
   const ContestCard({
@@ -22,6 +23,20 @@ class ContestCard extends StatefulWidget implements ClassName {
   @override
   String className() {
     return 'ContestCard';
+  }
+}
+
+class ContestHeaderText extends StatelessWidget {
+  const ContestHeaderText(this.text, {super.key});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(text,
+        style: TextStyle(
+          color: Colors.grey.shade600,
+          fontSize: 12,
+        ));
   }
 }
 
@@ -141,80 +156,105 @@ class _ContestCardState extends State<ContestCard> {
           height: 16,
         ),
         indexTouched == null
-            ? ListTile(
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Expanded(
+                    child: Column(
                       children: [
                         Text(widget.overallContestData.attendedContestsCount
                             .toString()),
-                        const Text('Contests'),
-                        const Text('attended'),
+                        const ContestHeaderText('Contests'),
+                        const ContestHeaderText('attended'),
                       ],
                     ),
-                    Column(
+                  ),
+                  Expanded(
+                    child: Column(
                       children: [
                         Text(widget.overallContestData.rating
                             .toStringAsFixed(2)),
-                        const Text('Contest'),
-                        const Text('rating'),
+                        const ContestHeaderText('Contest'),
+                        const ContestHeaderText('rating'),
                       ],
                     ),
-                    Column(
+                  ),
+                  Expanded(
+                    child: Column(
                       children: [
                         Text(
                             widget.overallContestData.globalRanking.toString()),
-                        const Text('Global'),
-                        const Text('ranking'),
+                        const ContestHeaderText('Global'),
+                        const ContestHeaderText('ranking'),
                       ],
                     ),
-                    Column(children: [
-                      Text(widget.overallContestData.topPercentage
-                          .toStringAsFixed(2)),
-                      const Text('Top %'),
-                    ]),
-                  ],
-                ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text(widget.overallContestData.topPercentage
+                            .toStringAsFixed(2)),
+                        const ContestHeaderText('Top %'),
+                      ],
+                    ),
+                  ),
+                ],
               )
-            : ListTile(
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Expanded(
+                    child: Column(
                       children: [
                         Text(
                             "${widget.contests[indexTouched!].problemsSolved}/${widget.contests[indexTouched!].totalProblems}"),
-                        const Text('Problems'),
-                        const Text('solved'),
+                        const ContestHeaderText('Problems'),
+                        const ContestHeaderText('solved'),
                       ],
                     ),
-                    Column(
+                  ),
+                  Expanded(
+                    child: Column(
                       children: [
                         Text(widget.contests[indexTouched!].rating!
                             .toStringAsFixed(2)),
-                        const Text('Rating'),
+                        const ContestHeaderText('Rating'),
                       ],
                     ),
-                    Column(
+                  ),
+                  Expanded(
+                    child: Column(
                       children: [
                         Text(widget.contests[indexTouched!].ranking.toString()),
-                        const Text('Ranking'),
+                        const ContestHeaderText('Ranking'),
                       ],
                     ),
-                    Column(
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
-                          DateTime.fromMillisecondsSinceEpoch(
-                                  widget.contests[indexTouched!].startTime! *
-                                      1000)
-                              .toIso8601String()
-                              .substring(0, 10),
-                        )
+                        Text(Time.dateShort(widget
+                                    .contests[indexTouched!].startTime!
+                                    .toString())
+                                .replaceFirst(' ', '*')
+                                .replaceFirst(' ', '\n')
+                                .replaceFirst('*', ' ')
+                            // DateTime.fromMillisecondsSinceEpoch(
+                            //         widget.contests[indexTouched!].startTime! *
+                            //             1000)
+                            //     .toIso8601String()
+                            //     .substring(0, 10),
+                            )
                       ],
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
       ],
     );

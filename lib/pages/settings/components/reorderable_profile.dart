@@ -5,6 +5,7 @@ import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
 import 'package:ui_elements/pages/profile/components/badge_card.dart';
 import 'package:ui_elements/pages/profile/components/basic_user_info_card.dart';
+import 'package:ui_elements/pages/profile/components/basic_user_info_card2.dart';
 import 'package:ui_elements/pages/profile/components/contests_card.dart';
 import 'package:ui_elements/pages/profile/components/language_section.dart';
 import 'package:ui_elements/pages/profile/components/recent_submission_card.dart';
@@ -57,7 +58,7 @@ class _ReorderableUserPageState extends State<ReorderableUserPage> {
   }
 
   void initMapper() {
-    componentMapper['BasicUserInfo'] = BasicUserInfo(
+    componentMapper['BasicUserInfo'] = BasicInfoExp(
       userData: widget.userData,
       key: UniqueKey(),
     );

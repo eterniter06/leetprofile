@@ -32,7 +32,7 @@ class SocialMediaButton extends StatelessWidget {
         icon,
         semanticLabel: "$socialMedia profile",
         color: color,
-        size: 40,
+        size: 36,
       ),
     );
   }

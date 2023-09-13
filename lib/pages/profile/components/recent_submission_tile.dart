@@ -1,56 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
+import 'package:ui_elements/time.dart';
+
 import 'package:ui_elements/change_notifiers/theme.dart';
+
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vibration/vibration.dart';
 
 class RecentSubmissionTile extends StatelessWidget {
   const RecentSubmissionTile({super.key, required this.submission});
   final RecentSubmission submission;
-
-  String orindal(DateTime submissionTime) {
-    final day = int.parse(DateFormat('dd').format(submissionTime));
-    if (day >= 10 && day <= 20) return "th";
-
-    return day % 10 == 1
-        ? "st"
-        : day % 10 == 2
-            ? "nd"
-            : day % 10 == 3
-                ? "rd"
-                : "th";
-  }
-
-  String timeFromEpochsInSeconds() {
-    final submissionTime = DateTime.fromMillisecondsSinceEpoch(
-            int.parse(submission.timestamp!) * Duration.millisecondsPerSecond)
-        .toLocal();
-
-    final ordinal = orindal(submissionTime);
-    final dateTimeFormatter = DateFormat("dd'$ordinal' MMMM yyyy HH:mm:ss");
-
-    return dateTimeFormatter.format(submissionTime);
-  }
-
-  String timeOfDay() {
-    final submissionTime = DateTime.fromMillisecondsSinceEpoch(
-            int.parse(submission.timestamp!) * Duration.millisecondsPerSecond)
-        .toLocal();
-
-    return DateFormat("HH:mm:ss").format(submissionTime);
-  }
-
-  String getDay() {
-    final submissionTime = DateTime.fromMillisecondsSinceEpoch(
-            int.parse(submission.timestamp!) * Duration.millisecondsPerSecond)
-        .toLocal();
-
-    final sumbissionOrdinal = orindal(submissionTime);
-    final dateTimeFormatter = DateFormat("dd'$sumbissionOrdinal' MMMM yyyy");
-
-    return dateTimeFormatter.format(submissionTime);
-  }
 
   Future<void> _launchQuestionUrl() async {
     Uri questionLink =
@@ -112,9 +73,9 @@ class RecentSubmissionTile extends StatelessWidget {
           title: Text(
             submission.title!,
           ),
-          trailing: Text(timeOfDay()),
+          trailing: Text(Time.timeOfDay(submission.timestamp!)),
           subtitle: Text(
-            getDay(),
+            Time.dateLong(submission.timestamp!),
             style: const TextStyle(
               fontSize: 12,
               inherit: true,

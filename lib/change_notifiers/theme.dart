@@ -4,7 +4,7 @@ class ThemeModeModel extends ChangeNotifier {
   ThemeModeModel({required ThemeMode themeMode}) : _themeMode = themeMode;
 
   ThemeMode _themeMode;
-  get themeMode => _themeMode;
+  ThemeMode get themeMode => _themeMode;
 
   void changeThemeMode(ThemeMode mode) {
     _themeMode = mode;

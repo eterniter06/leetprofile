@@ -8,6 +8,7 @@ import 'package:ui_elements/database/user_database.dart';
 
 import 'package:ui_elements/dataclass/http_wrapper/data_parser.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/pages/profile/components/basic_user_info_card2.dart';
 import 'package:ui_elements/pages/profile/components/language_section.dart';
 import 'package:ui_elements/common_components/refresh_icon_button.dart';
 
@@ -66,7 +67,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   void initMapper() {
-    componentMapper['BasicUserInfo'] = BasicUserInfo(
+    componentMapper['BasicUserInfo'] = BasicInfoExp(
       userData: widget.userData,
       key: UniqueKey(),
     );
