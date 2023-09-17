@@ -20,8 +20,9 @@ class BasicInfoExp extends StatelessWidget implements ClassName {
   final EdgeInsets widgetPadding = const EdgeInsets.symmetric(horizontal: 28);
 
   String displayName() {
-    return userData.nickname ??
-        (userData.realname == "" ? userData.username : userData.realname);
+    return userData.realname.isNotEmpty
+        ? userData.realname
+        : userData.nickname ?? userData.username;
   }
 
   @override

@@ -25,17 +25,27 @@ class SkillsCard extends StatelessWidget implements ClassName {
           TagCard(
             fundamentalSkills: fundamentalSkills,
             tagHeader: 'Fundamental',
+            backgroundColor: const Color.fromARGB(255, 247, 251, 255),
+            borderColor: const Color.fromARGB(255, 219, 237, 253),
           ),
-        if (intermediateSkills!.isNotEmpty)
+        if (intermediateSkills!.isNotEmpty) ...{
+          const SizedBox(height: 10),
           TagCard(
             fundamentalSkills: intermediateSkills,
             tagHeader: 'Intermediate',
+            backgroundColor: const Color.fromARGB(255, 238, 248, 255),
+            borderColor: const Color.fromARGB(255, 201, 231, 255),
           ),
-        if (advancedSkills!.isNotEmpty)
+        },
+        if (advancedSkills!.isNotEmpty) ...{
+          const SizedBox(height: 10),
           TagCard(
             fundamentalSkills: advancedSkills,
             tagHeader: 'Advanced',
+            backgroundColor: const Color.fromARGB(255, 223, 241, 255),
+            borderColor: Colors.blue.shade200,
           ),
+        }
       ],
     );
   }
@@ -51,30 +61,35 @@ class TagCard extends StatelessWidget {
     super.key,
     required this.fundamentalSkills,
     required this.tagHeader,
+    this.backgroundColor,
+    this.borderColor,
   });
 
   final List<TagsSolved>? fundamentalSkills;
   final String tagHeader;
+  final Color? backgroundColor;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.only(
-          left: 8.0,
-          bottom: 4.0,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: Text(tagHeader),
-            ),
-            TagList(skills: fundamentalSkills!),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 8.0,
+        bottom: 4.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Text(tagHeader),
+          ),
+          TagList(
+            skills: fundamentalSkills!,
+            backgroundColor: backgroundColor,
+            borderColor: borderColor,
+          ),
+        ],
       ),
     );
   }

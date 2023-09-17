@@ -20,7 +20,7 @@ class ProfileCard extends StatelessWidget {
                 child: Text(
                   profileHeader!,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     color: Color(0xff6F480C),
                   ),
                 ),
