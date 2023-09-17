@@ -171,6 +171,9 @@ class DataParser {
         tagSlug: tag['tagSlug'],
       ));
     }
+
+    tagList.sort((TagsSolved lhs, TagsSolved rhs) =>
+        rhs.problemsSolved!.compareTo(lhs.problemsSolved!));
     return tagList;
   }
 
