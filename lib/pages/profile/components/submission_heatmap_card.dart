@@ -45,6 +45,7 @@ class SubmissionHeatMap extends StatelessWidget implements ClassName {
               20: Color(0xff023602),
               30: Color(0xff011b01),
             },
+            contrastingTextColor: true,
             onTapDown: (date, tapDetails) {
               DateTime now = DateTime.now();
 
