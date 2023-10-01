@@ -86,7 +86,7 @@ class _ExtensibleAnimatedWrapState extends State<ExtensibleAnimatedWrap> {
       children: [
         ...list,
         if (widget.children.length > defaultItemCount)
-          ElevatedButton(
+          OutlinedButton(
             child: AnimatedCrossFade(
               duration: animationDuration,
               crossFadeState: CrossFadeState.showFirst,
