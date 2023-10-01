@@ -13,6 +13,7 @@ class LanguageCard extends StatelessWidget {
     'bash': 'bash.svg',
     'c': 'c.svg',
     'c++': 'cplusplus.svg',
+    'c#': 'csharp.svg',
     'java': 'java.svg',
     'javascript': 'javascript.svg',
     'ms sql server': 'mssql.svg',
@@ -20,9 +21,8 @@ class LanguageCard extends StatelessWidget {
     'python': 'pythonYellow.svg',
     'python3': 'python.svg',
     'typescript': 'typescript.svg',
-    // Languages below haven't been tested as may not be rendered
+    // Languages below haven't been tested and may not be rendered
     //due to a possible difference in how the language name is stored
-    'c#': 'cshap.svg',
     'dart': 'dart.svg',
     'elixir': 'elixir.svg',
     'erlang': 'erlang.svg',

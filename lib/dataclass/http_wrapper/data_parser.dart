@@ -201,6 +201,9 @@ class DataParser {
         problemsSolved: languageSub['problemsSolved'],
       ));
     }
+    languageSubmissions.sort((LanguageSubmission lhs, LanguageSubmission rhs) =>
+        rhs.problemsSolved.compareTo(lhs.problemsSolved));
+
     dataMap['languageProblemCount'] = languageSubmissions;
   }
 
