@@ -31,6 +31,7 @@ dependencies:
     cached_network_image: ^3.2.3
     flutter_heatmap_calendar:
         path: ../flutter_heatmap_calendar
+    flutter_animate: ^4.2.0+1
     # git:
     # url: https://github.com/eterniter06/flutter_heatmap_calendar
 

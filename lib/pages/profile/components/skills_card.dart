@@ -4,9 +4,9 @@ import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/interfaces.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
-import 'taglist.dart';
+import 'extensible_animated_wrap.dart';
 
-class SkillsCard extends StatelessWidget implements ClassName {
+class SkillsCard extends StatefulWidget implements ClassName {
   const SkillsCard({
     super.key,
     this.fundamentalSkills,
@@ -17,38 +17,7 @@ class SkillsCard extends StatelessWidget implements ClassName {
   final List<TagsSolved>? fundamentalSkills, intermediateSkills, advancedSkills;
 
   @override
-  Widget build(BuildContext context) {
-    return ProfileCard(
-      profileHeader: 'Skills',
-      children: [
-        if (fundamentalSkills!.isNotEmpty)
-          TagCard(
-            fundamentalSkills: fundamentalSkills,
-            tagHeader: 'Fundamental',
-            backgroundColor: const Color.fromARGB(255, 247, 251, 255),
-            borderColor: const Color.fromARGB(255, 219, 237, 253),
-          ),
-        if (intermediateSkills!.isNotEmpty) ...{
-          const SizedBox(height: 10),
-          TagCard(
-            fundamentalSkills: intermediateSkills,
-            tagHeader: 'Intermediate',
-            backgroundColor: const Color.fromARGB(255, 238, 248, 255),
-            borderColor: const Color.fromARGB(255, 201, 231, 255),
-          ),
-        },
-        if (advancedSkills!.isNotEmpty) ...{
-          const SizedBox(height: 10),
-          TagCard(
-            fundamentalSkills: advancedSkills,
-            tagHeader: 'Advanced',
-            backgroundColor: const Color.fromARGB(255, 223, 241, 255),
-            borderColor: Colors.blue.shade200,
-          ),
-        }
-      ],
-    );
-  }
+  State<SkillsCard> createState() => _SkillsCardState();
 
   @override
   String className() {
@@ -56,41 +25,97 @@ class SkillsCard extends StatelessWidget implements ClassName {
   }
 }
 
-class TagCard extends StatelessWidget {
-  const TagCard({
-    super.key,
-    required this.fundamentalSkills,
-    required this.tagHeader,
-    this.backgroundColor,
-    this.borderColor,
-  });
+class _SkillsCardState extends State<SkillsCard> {
+  int minTags = 4;
+  List<Widget> intermediateWidgets = [];
+  List<Widget> fundamentalWidgets = [];
+  List<Widget> advancedWidgets = [];
 
-  final List<TagsSolved>? fundamentalSkills;
-  final String tagHeader;
-  final Color? backgroundColor;
-  final Color? borderColor;
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.fundamentalSkills!.isNotEmpty) {
+      for (TagsSolved skill in widget.fundamentalSkills!) {
+        Chip fundamentalSkillChip = Chip(
+          side: const BorderSide(
+            color: Color.fromARGB(255, 219, 237, 253),
+          ),
+          label: Text("${skill.tagName!} x${skill.problemsSolved}"),
+          backgroundColor: const Color.fromARGB(255, 247, 251, 255),
+        );
+        fundamentalWidgets.add(fundamentalSkillChip);
+      }
+    }
+
+    if (widget.intermediateSkills!.isNotEmpty) {
+      for (TagsSolved skill in widget.intermediateSkills!) {
+        Chip intermediateSkillChip = Chip(
+          side: const BorderSide(
+            color: Color.fromARGB(255, 201, 231, 255),
+          ),
+          label: Text("${skill.tagName!} x${skill.problemsSolved}"),
+          backgroundColor: const Color.fromARGB(255, 238, 248, 255),
+        );
+        intermediateWidgets.add(intermediateSkillChip);
+      }
+    }
+
+    if (widget.advancedSkills!.isNotEmpty) {
+      for (TagsSolved skill in widget.advancedSkills!) {
+        Chip advancedSkillChip = Chip(
+          side: BorderSide(
+            color: Colors.blue.shade200,
+          ),
+          label: Text("${skill.tagName!} x${skill.problemsSolved}"),
+          backgroundColor: const Color.fromARGB(255, 223, 241, 255),
+        );
+        advancedWidgets.add(advancedSkillChip);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 8.0,
-        bottom: 4.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 4.0),
-            child: Text(tagHeader),
+    return ProfileCard(
+      profileHeader: 'Skills',
+      children: [
+        if (fundamentalWidgets.isNotEmpty) ...{
+          const Padding(
+            padding: EdgeInsets.only(left: 8.0),
+            child: Text('Fundamental'),
           ),
-          TagList(
-            skills: fundamentalSkills!,
-            backgroundColor: backgroundColor,
-            borderColor: borderColor,
+          ExtensibleAnimatedWrap(
+            defaultItemCount: minTags,
+            spacing: 8,
+            children: fundamentalWidgets,
           ),
-        ],
-      ),
+        },
+        if (intermediateWidgets.isNotEmpty) ...{
+          const SizedBox(height: 40),
+          const Padding(
+            padding: EdgeInsets.only(left: 8.0),
+            child: Text('Intermediate'),
+          ),
+          ExtensibleAnimatedWrap(
+            defaultItemCount: minTags,
+            spacing: 8,
+            children: intermediateWidgets,
+          ),
+        },
+        if (advancedWidgets.isNotEmpty) ...{
+          const SizedBox(height: 40),
+          const Padding(
+            padding: EdgeInsets.only(left: 8.0),
+            child: Text('Advanced'),
+          ),
+          ExtensibleAnimatedWrap(
+            spacing: 8,
+            defaultItemCount: minTags,
+            children: advancedWidgets,
+          ),
+        },
+      ],
     );
   }
 }

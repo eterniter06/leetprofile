@@ -151,6 +151,24 @@ class ThemeModeModel extends ChangeNotifier {
         }),
       ),
     ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        side: const MaterialStatePropertyAll(
+            BorderSide(color: Color.fromARGB(255, 209, 164, 96))),
+        backgroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return lightPrimary;
+          }
+          return lightSecondary;
+        }),
+        foregroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return lightPrimaryInverse;
+          }
+          return lightSecondaryInverse;
+        }),
+      ),
+    ),
   );
 
   static ThemeMode themeModeFromString(String? modeAsString) {

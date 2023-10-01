@@ -16,32 +16,22 @@ class TagList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Wrap(
       children: [
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                for (int index = 0; index < skills.length; ++index) ...{
-                  Chip(
-                    side: BorderSide(
-                      color: borderColor ?? Colors.black,
-                    ),
-                    label: Text(
-                        "${skills[index].tagName!} x${skills[index].problemsSolved}"),
-                    backgroundColor: backgroundColor,
-                  ),
-                  if (index != skills.length)
-                    const SizedBox(
-                      width: 10,
-                    )
-                }
-              ],
+        for (int index = 0; index < skills.length; ++index) ...{
+          Chip(
+            side: BorderSide(
+              color: borderColor ?? Colors.black,
             ),
+            label: Text(
+                "${skills[index].tagName!} x${skills[index].problemsSolved}"),
+            backgroundColor: backgroundColor,
           ),
-        ),
+          if (index != skills.length)
+            const SizedBox(
+              width: 10,
+            )
+        }
       ],
     );
   }
