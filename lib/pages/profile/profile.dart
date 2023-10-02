@@ -12,7 +12,6 @@ import 'package:ui_elements/common_components/refresh_icon_button.dart';
 
 import 'components/language_section.dart';
 import 'components/basic_user_info_card.dart';
-import 'components/basic_user_info_card2.dart';
 import 'components/badge_card.dart';
 import 'components/contests_card.dart';
 import 'components/nickname_dialog.dart';
