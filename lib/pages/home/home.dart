@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +14,7 @@ import 'package:ui_elements/pages/about/about.dart';
 import 'package:ui_elements/pages/profile/profile.dart';
 import 'package:ui_elements/pages/settings/settings.dart';
 import 'package:ui_elements/common_components/refresh_icon_button.dart';
+import 'package:uni_links/uni_links.dart';
 
 import 'components/input_dialog.dart';
 import 'components/reorderable_listview.dart';
@@ -50,11 +53,15 @@ class UserListPage extends StatefulWidget {
   State<UserListPage> createState() => _UserListPageState();
 }
 
+bool _initialUriIsHandled = false;
+
 class _UserListPageState extends State<UserListPage> {
   late AnimationController _controller;
   late Widget refreshIcon;
   final refreshKey = GlobalKey<RefreshIconButtonState>();
   bool refreshOnStartup = false;
+
+  StreamSubscription? _sub;
 
   @override
   initState() {
@@ -76,12 +83,51 @@ class _UserListPageState extends State<UserListPage> {
     );
 
     _loadUsers();
+    _handleIncomingLinks();
+    _handleInitialUri();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _sub?.cancel();
     super.dispose();
+  }
+
+  void _handleIncomingLinks() {
+    // It will handle app links while the app is already started - be it in
+    // the foreground or in the background.
+    _sub = uriLinkStream.listen((Uri? uri) {
+      if (!mounted) return;
+      addUser(userLink: uri.toString());
+    }, onError: (Object err) {
+      if (!mounted) return;
+    });
+  }
+
+  /// Handle the initial Uri - the one the app was started with
+  ///
+  /// **ATTENTION**: `getInitialLink`/`getInitialUri` should be handled
+  /// ONLY ONCE in your app's lifetime, since it is not meant to change
+  /// throughout your app's life.
+  ///
+  /// We handle all exceptions, since it is called from initState.
+  Future<void> _handleInitialUri() async {
+    // In this example app this is an almost useless guard, but it is here to
+    // show we are not going to call getInitialUri multiple times, even if this
+    // was a weidget that will be disposed of (ex. a navigation route change).
+    if (!_initialUriIsHandled) {
+      _initialUriIsHandled = true;
+      try {
+        final link = await getInitialLink();
+        if (link != null) {
+          addUser(userLink: link);
+        }
+        if (!mounted) return;
+      } on FormatException catch (_) {
+        if (!mounted) return;
+      }
+    }
   }
 
   Future<void> _loadUsers() async {
@@ -107,53 +153,63 @@ class _UserListPageState extends State<UserListPage> {
     });
   }
 
+  Future<void> addUser({String? userLink}) async {
+    String? usernameInput = userLink ??
+        await showDialog(
+          context: context,
+          builder: (context) => const UserInputDialog(),
+        );
+
+    // TODO: Preferably use a class for the following:
+    if (usernameInput == null) return;
+
+    String username = _processInputtedUsername(usernameInput);
+
+    if (!widget.userListModel.contains(username)) {
+      var user =
+          await UserListModel.createUserFromUsername(username.toLowerCase());
+
+      if (user == null) {
+        _informUser(
+          Text(
+              'Username $username does not exist. Are you sure you typed in the correct username?'),
+        );
+      } else {
+        user.listOrder = widget.userListModel.length();
+        UserDatabase.put(user);
+        setState(() {
+          widget.userListModel.addUser(user);
+        });
+      }
+    } else if (mounted) {
+      if (userLink != null) {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => UserPage(
+                userData:
+                    widget.userListModel.findUserFromUsername(username)!)));
+      } else {
+        _informUser(
+          Text('$username is already in list'),
+          SnackBarAction(
+            label: 'Visit?',
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => UserPage(
+                      userData: widget.userListModel
+                          .findUserFromUsername(username)!)));
+            },
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new User',
-        onPressed: () async {
-          String? usernameInput = await showDialog(
-            context: context,
-            builder: (context) => const UserInputDialog(),
-          );
-
-          // TODO: Preferably use a class for the following:
-          if (usernameInput == null) return;
-
-          String username = _processInputtedUsername(usernameInput);
-
-          if (!widget.userListModel.contains(username)) {
-            var user = await UserListModel.createUserFromUsername(
-                username.toLowerCase());
-
-            if (user == null) {
-              _informUser(
-                Text(
-                    'Username $username does not exist. Are you sure you typed in the correct username?'),
-              );
-            } else {
-              user.listOrder = widget.userListModel.length();
-              UserDatabase.put(user);
-              setState(() {
-                widget.userListModel.addUser(user);
-              });
-            }
-          } else if (mounted) {
-            _informUser(
-              Text('$username is already in list'),
-              SnackBarAction(
-                label: 'Visit?',
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => UserPage(
-                          userData: widget.userListModel
-                              .findUserFromUsername(username)!)));
-                },
-              ),
-            );
-          }
-        },
+        onPressed: () => addUser(),
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(

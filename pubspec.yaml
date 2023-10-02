@@ -32,6 +32,7 @@ dependencies:
     flutter_heatmap_calendar:
         path: ../flutter_heatmap_calendar
     flutter_animate: ^4.2.0+1
+    uni_links: ^0.5.1
     # git:
     # url: https://github.com/eterniter06/flutter_heatmap_calendar
 
