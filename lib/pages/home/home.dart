@@ -56,10 +56,9 @@ class UserListPage extends StatefulWidget {
 bool _initialUriIsHandled = false;
 
 class _UserListPageState extends State<UserListPage> {
-  late AnimationController _controller;
-  late Widget refreshIcon;
+  late final AnimationController _controller;
+  late final Widget refreshIcon;
   final refreshKey = GlobalKey<RefreshIconButtonState>();
-  bool refreshOnStartup = false;
 
   StreamSubscription? _sub;
 
@@ -110,12 +109,7 @@ class _UserListPageState extends State<UserListPage> {
   /// **ATTENTION**: `getInitialLink`/`getInitialUri` should be handled
   /// ONLY ONCE in your app's lifetime, since it is not meant to change
   /// throughout your app's life.
-  ///
-  /// We handle all exceptions, since it is called from initState.
   Future<void> _handleInitialUri() async {
-    // In this example app this is an almost useless guard, but it is here to
-    // show we are not going to call getInitialUri multiple times, even if this
-    // was a weidget that will be disposed of (ex. a navigation route change).
     if (!_initialUriIsHandled) {
       _initialUriIsHandled = true;
       try {
@@ -132,7 +126,7 @@ class _UserListPageState extends State<UserListPage> {
 
   Future<void> _loadUsers() async {
     await widget.userListModel.loadUsersFromDatabase();
-    refreshOnStartup = SettingsDatabase.refreshAllUsersOnStartup();
+    final bool refreshOnStartup = SettingsDatabase.refreshAllUsersOnStartup();
 
     // TODO: figure out a less uglier way
     if (refreshOnStartup && widget.userListModel.isNotEmpty()) {
@@ -177,9 +171,7 @@ class _UserListPageState extends State<UserListPage> {
       } else {
         user.listOrder = widget.userListModel.length();
         UserDatabase.put(user);
-        setState(() {
-          widget.userListModel.addUser(user);
-        });
+        widget.userListModel.addUser(user);
       }
     } else if (mounted) {
       if (userLink != null) {

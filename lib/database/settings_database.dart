@@ -32,6 +32,8 @@ class SettingsDatabase {
   }
 
   /// initSharedPrefs() must have been called at least once before calling.
+  ///
+  /// Defaults to [true] if the user has not set their preference yet
   static bool refreshAllUsersOnStartup() {
     assert(_prefs != null);
     bool? preference = _prefs!.getBool('refreshAllUsersOnStartup');
