@@ -89,10 +89,10 @@ class UserData {
 
   UserData({
     required this.username,
-    this.nickname,
     required this.avatar,
     required this.realname,
     required this.lastFetchTime,
+    this.nickname,
     this.totalActiveDays = 0,
   });
 

@@ -1,4 +1,6 @@
 class DailyQuestionQuery {
+  DailyQuestionQuery._();
+
   static const String _queryEnder = '}';
   static const String _queryStarter =
       'https://leetcode.com/graphql?query=query{';
