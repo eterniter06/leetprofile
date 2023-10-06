@@ -107,8 +107,10 @@ class _SettingsState extends State<Settings> {
               ),
               SettingTile(
                 title: const Text('Change profile layout'),
-                description:
-                    const Text('Change the way profile details are ordered'),
+                description: const Text(
+                    //TODO: Let the user hold anywhere on the tile instead of just the section header
+                    //TODO: Use a dummy profile, not the first profile in the list
+                    'Change the way profile details are ordered. Hold section name and then drag and drop to set your own layout.'),
                 onTap: () async {
                   List<String>? order = await Navigator.of(context).push(
                     // Todo: Look into PageRouteBuilder for animiation
@@ -120,7 +122,6 @@ class _SettingsState extends State<Settings> {
                     ),
                   );
                   if (order != null) {
-                    print(order);
                     SettingsDatabase.saveProfileComponentsOrder(order);
                   }
                 },
