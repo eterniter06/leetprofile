@@ -32,9 +32,8 @@ class ReorderableUserPage extends StatefulWidget {
 
 class _ReorderableUserPageState extends State<ReorderableUserPage> {
   List<String> profileComponentListAsString = [];
-  bool isRefreshing = false;
-  late List<Widget> profileComponentList = [];
   Map<String, Widget?> componentMapper = {};
+  late List<Widget> profileComponentList = [];
 
   @override
   void initState() {
