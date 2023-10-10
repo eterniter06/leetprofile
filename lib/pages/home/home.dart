@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:ui_elements/pages/profile/user_view.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/database/user_database.dart';
@@ -11,7 +12,6 @@ import 'package:ui_elements/change_notifiers/theme.dart';
 import 'package:ui_elements/change_notifiers/user_list.dart';
 
 import 'package:ui_elements/pages/about/about.dart';
-import 'package:ui_elements/pages/profile/profile.dart';
 import 'package:ui_elements/pages/settings/settings.dart';
 import 'package:ui_elements/common_components/refresh_icon_button.dart';
 import 'package:uni_links/uni_links.dart';
@@ -176,7 +176,7 @@ class _UserListPageState extends State<UserListPage> {
     } else if (mounted) {
       if (userLink != null) {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => UserPage(
+            builder: (context) => UserView(
                 userData:
                     widget.userListModel.findUserFromUsername(username)!)));
       } else {
@@ -186,7 +186,7 @@ class _UserListPageState extends State<UserListPage> {
             label: 'Visit?',
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => UserPage(
+                  builder: (context) => UserView(
                       userData: widget.userListModel
                           .findUserFromUsername(username)!)));
             },

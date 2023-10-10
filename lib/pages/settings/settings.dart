@@ -6,10 +6,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
+import 'package:ui_elements/pages/profile/user_view.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
 
-import 'components/reorderable_profile.dart';
 import 'components/section.dart';
 import 'components/setting_option.dart';
 
@@ -117,7 +117,8 @@ class _SettingsState extends State<Settings> {
                     MaterialPageRoute(
                       builder: (context) => Consumer<UserListModel>(
                         builder: (context, userList, child) =>
-                            ReorderableUserPage(userData: userList.userList[0]),
+                            UserView.reorderable(
+                                userData: userList.userList[0]),
                       ),
                     ),
                   );

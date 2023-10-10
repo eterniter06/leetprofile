@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_elements/change_notifiers/user_list.dart';
+import 'package:ui_elements/pages/profile/user_view.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
-import 'package:ui_elements/pages/profile/profile.dart';
 import 'package:ui_elements/common_components/refresh_icon_button.dart';
 
 import 'dismissible_list_tile.dart';
@@ -80,7 +80,7 @@ class _ReorderableUserListViewState extends State<ReorderableUserListView>
           for (int index = 0; index < userListModel.length(); ++index)
             OpenContainer(
               key: UniqueKey(),
-              openBuilder: (context, action) => UserPage(
+              openBuilder: (context, action) => UserView(
                 refreshIconKey: widget.refreshIconKey,
                 userData: userListModel.userAtIndex(index),
               ),
