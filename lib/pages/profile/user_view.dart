@@ -6,7 +6,6 @@ import 'package:ui_elements/change_notifiers/user_list.dart';
 import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/database/user_database.dart';
 
-import 'package:ui_elements/dataclass/http_wrapper/data_parser.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
 import 'package:ui_elements/common_components/refresh_icon_button.dart';
@@ -59,6 +58,7 @@ class _UserViewState extends State<UserView> {
   bool isRefreshing = false;
   List<Widget> profileComponentList = [];
   Map<String, Widget?> componentMapper = {};
+  late UserData userData = widget.userData;
 
   @override
   void initState() {
@@ -67,7 +67,12 @@ class _UserViewState extends State<UserView> {
     profileComponentListAsString =
         SettingsDatabase.profileComponentOrder() ?? widget._defaultOrdering;
 
-    initMapper();
+    componentMapper = initMap();
+    profileComponentList = initWidgetList();
+  }
+
+  List<Widget> initWidgetList() {
+    List<Widget> list = [];
 
     for (String componentName in profileComponentListAsString) {
       Widget? widget = componentMapper[componentName];
@@ -76,85 +81,95 @@ class _UserViewState extends State<UserView> {
         continue;
       }
 
-      profileComponentList.add(widget);
+      list.add(widget);
     }
+    return list;
   }
 
-  void initMapper() {
-    componentMapper['BasicUserInfo'] = BasicInfoExp(
-      userData: widget.userData,
+  Map<String, Widget?> initMap() {
+    Map<String, Widget?> map = {};
+
+    map['BasicUserInfo'] = BasicInfoExp(
+      userData: userData,
       key: UniqueKey(),
     );
 
-    componentMapper['SolvedProblemsCard'] = SolvedProblemsCard(
-      problemData: widget.userData.problemData,
+    map['SolvedProblemsCard'] = SolvedProblemsCard(
+      problemData: userData.problemData,
       key: UniqueKey(),
     );
 
-    componentMapper['SubmissionHeatMap'] =
-        widget.userData.submissionActivity != null &&
-                widget.userData.submissionActivity!.isNotEmpty
-            ? SubmissionHeatMap(
-                submissionList: widget.userData.submissionActivity!,
-                key: UniqueKey(),
-              )
-            : null;
+    map['SubmissionHeatMap'] = userData.submissionActivity != null &&
+            userData.submissionActivity!.isNotEmpty
+        ? SubmissionHeatMap(
+            submissionList: userData.submissionActivity!,
+            key: UniqueKey(),
+          )
+        : null;
 
-    componentMapper['ContestCard'] = widget.userData.userContestRanking != null
+    map['ContestCard'] = userData.userContestRanking != null
         ? ContestCard(
-            contests: widget.userData.userContestRankingHistory!,
-            overallContestData: widget.userData.userContestRanking!,
+            contests: userData.userContestRankingHistory!,
+            overallContestData: userData.userContestRanking!,
             key: UniqueKey(),
           )
         : null;
 
-    componentMapper['SkillsCard'] = hasSkills()
+    map['SkillsCard'] = hasSkills()
         ? SkillsCard(
-            fundamentalSkills: widget.userData.fundamentalTags,
-            intermediateSkills: widget.userData.intermediateTags,
-            advancedSkills: widget.userData.advancedTags,
+            fundamentalSkills: userData.fundamentalTags,
+            intermediateSkills: userData.intermediateTags,
+            advancedSkills: userData.advancedTags,
             key: UniqueKey(),
           )
         : null;
 
-    componentMapper['LanguageSection'] = hasSolvedProblems()
+    map['LanguageSection'] = hasSolvedProblems()
         ? LanguageSection(
-            languageProblemList: widget.userData.languageProblemCount!,
+            languageProblemList: userData.languageProblemCount!,
             key: UniqueKey(),
           )
         : null;
 
-    componentMapper['BadgeCard'] =
-        widget.userData.badges != null && widget.userData.badges!.isNotEmpty
-            ? BadgeCard(
-                badges: widget.userData.badges!,
-                key: UniqueKey(),
-              )
-            : null;
+    map['BadgeCard'] = userData.badges != null && userData.badges!.isNotEmpty
+        ? BadgeCard(
+            badges: userData.badges!,
+            key: UniqueKey(),
+          )
+        : null;
 
-    componentMapper['RecentSubmissionCard'] = RecentSubmissionCard(
-      submissionList: widget.userData.recentAcSubmissionList ?? [],
+    map['RecentSubmissionCard'] = RecentSubmissionCard(
+      submissionList: userData.recentAcSubmissionList ?? [],
       key: UniqueKey(),
     );
+
+    return map;
   }
 
   Future<void> _refreshUserImpl() async {
-    var dataMap =
-        await DataParser(username: widget.userData.username).getAllAsJson();
-
+    if (mounted) {
+      await Provider.of<UserListModel>(context, listen: false)
+          .updateUser(userData);
+    }
     setState(() {
-      widget.userData.update(updatedUser: UserData.fromMap(dataMap: dataMap!));
+      userData = Provider.of<UserListModel>(context, listen: false)
+              .findUserFromUsername(userData.username) ??
+          userData;
+      componentMapper = initMap();
+      profileComponentList = initWidgetList();
     });
+
+    // print(Time.dateLong(userData.lastFetchTime.toString()));
   }
 
   bool hasSkills() {
-    return (widget.userData.fundamentalTags?.isNotEmpty)! ||
-        (widget.userData.intermediateTags?.isNotEmpty)! ||
-        (widget.userData.advancedTags?.isNotEmpty)!;
+    return (userData.fundamentalTags?.isNotEmpty)! ||
+        (userData.intermediateTags?.isNotEmpty)! ||
+        (userData.advancedTags?.isNotEmpty)!;
   }
 
   bool hasSolvedProblems() {
-    var problems = widget.userData.languageProblemCount;
+    var problems = userData.languageProblemCount;
 
     if (problems == null || problems.isEmpty) {
       return false;
@@ -167,10 +182,8 @@ class _UserViewState extends State<UserView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.userData.nickname ??
-            (widget.userData.realname == ""
-                ? widget.userData.username
-                : widget.userData.realname)),
+        title: Text(userData.nickname ??
+            (userData.realname == "" ? userData.username : userData.realname)),
         actions: widget.isReorderable
             ? null
             : [
@@ -182,9 +195,9 @@ class _UserViewState extends State<UserView> {
                         String? newNickname = await showDialog(
                           context: context,
                           builder: (context) => NicknameInputDialog(
-                            oldNickname: widget.userData.nickname,
-                            realname: widget.userData.realname,
-                            username: widget.userData.username,
+                            oldNickname: userData.nickname,
+                            realname: userData.realname,
+                            username: userData.username,
                           ),
                         );
 
@@ -193,10 +206,10 @@ class _UserViewState extends State<UserView> {
                         }
 
                         setState(() {
-                          widget.userData.updateNickname(newNickname);
+                          userData.updateNickname(newNickname);
                         });
 
-                        await UserDatabase.put(widget.userData);
+                        await UserDatabase.put(userData);
                       }),
                 ),
                 RefreshIconButton(
@@ -206,7 +219,7 @@ class _UserViewState extends State<UserView> {
                     await _refreshUserImpl();
                   },
                   postHook: () async {
-                    await UserDatabase.put(widget.userData);
+                    await UserDatabase.put(userData);
                     if (mounted) {
                       ScaffoldMessenger.of(context).removeCurrentSnackBar();
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -221,8 +234,8 @@ class _UserViewState extends State<UserView> {
                 IconButton(
                   tooltip: 'Share leetcode profile',
                   icon: const Icon(Icons.share),
-                  onPressed: () => Share.share(
-                      'https://leetcode.com/${widget.userData.username}'),
+                  onPressed: () =>
+                      Share.share('https://leetcode.com/${userData.username}'),
                 ),
               ],
       ),
@@ -236,7 +249,7 @@ class _UserViewState extends State<UserView> {
           : null,
       body: SafeArea(
         child: widget.isReorderable
-            ? ReorderableListView.builder(
+            ? ReorderableListView(
                 onReorder: (oldIndex, newIndex) {
                   if (newIndex > profileComponentList.length) {
                     newIndex = profileComponentList.length;
@@ -253,8 +266,14 @@ class _UserViewState extends State<UserView> {
                         newIndex, componentAsString);
                   });
                 },
-                itemBuilder: (context, index) => profileComponentList[index],
-                itemCount: profileComponentList.length,
+                children: [
+                  for (int index = 0;
+                      index < profileComponentList.length;
+                      ++index)
+                    profileComponentList[index],
+                ],
+                // itemBuilder: (context, index) => profileComponentList[index],
+                // itemCount: profileComponentList.length,
               )
             : ListView.builder(
                 itemBuilder: (context, index) => profileComponentList[index],

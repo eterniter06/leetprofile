@@ -3,12 +3,14 @@ part 'userdata.g.dart';
 
 @collection
 class UserData {
-  final String username;
-
   Id get isarId => fastHash(username);
+
+  // User given data
+  late String? nickname;
   int? listOrder;
 
-  late String? nickname;
+  // Server fetched data
+  final String username;
   late String realname;
   late String avatar;
   late String ranking;
@@ -64,7 +66,8 @@ class UserData {
     solutionCount = updatedUser.solutionCount;
     postViewCount = updatedUser.postViewCount;
 
-    listOrder = updatedUser.listOrder;
+    // Todo: Figure out why this is here and it's effect
+    // listOrder = updatedUser.listOrder;
 
     linkedinUrl = updatedUser.linkedinUrl;
     githubUrl = updatedUser.githubUrl;
@@ -96,9 +99,9 @@ class UserData {
     this.totalActiveDays = 0,
   });
 
-  UserData.fromMap({required Map dataMap})
+  UserData.fromMap({required Map dataMap, String? nickname})
       : username = dataMap['username'],
-        nickname = dataMap['nickname'],
+        nickname = nickname ?? dataMap['nickname'],
         lastFetchTime = dataMap['lastFetchTime'],
         realname = dataMap['realname'],
         avatar = dataMap['avatar'],
