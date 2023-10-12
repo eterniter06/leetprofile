@@ -35,8 +35,17 @@ class ThemeModeModel extends ChangeNotifier {
   static const Color lightTextSelection = Color(0xffFDECD1);
 
   static const Color lightBackground2 = Color(0xffFEF8ED);
-
   static const Color lightBackground = Color(0xfffffdf8);
+
+  static const Color fundamentalBackground = Color.fromARGB(255, 247, 251, 255);
+  static const Color fundamentalBorder = Color.fromARGB(255, 219, 237, 253);
+
+  static const Color intermediateBackground =
+      Color.fromARGB(255, 238, 248, 255);
+  static const Color intermediateBorder = Color.fromARGB(255, 201, 231, 255);
+
+  static const Color advancedBorder = Color.fromRGBO(144, 202, 249, 1);
+  static const Color advancedBackground = Color.fromARGB(255, 223, 241, 255);
 
   static const Color black = Colors.black;
   static const Color white = Colors.white;

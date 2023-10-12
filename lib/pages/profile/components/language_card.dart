@@ -67,9 +67,9 @@ class LanguageCard extends StatelessWidget {
                   width: 52,
                   // padding: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 247, 251, 255),
+                      color: ThemeModeModel.fundamentalBackground,
                       border: Border.all(
-                        color: const Color.fromARGB(255, 219, 237, 253),
+                        color: ThemeModeModel.fundamentalBorder,
                       ),
                       borderRadius:
                           const BorderRadius.all(Radius.circular(80))),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ui_elements/change_notifiers/theme.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/interfaces.dart';
@@ -39,10 +40,10 @@ class _SkillsCardState extends State<SkillsCard> {
       for (TagsSolved skill in widget.fundamentalSkills!) {
         Chip fundamentalSkillChip = Chip(
           side: const BorderSide(
-            color: Color.fromARGB(255, 219, 237, 253),
+            color: ThemeModeModel.fundamentalBorder,
           ),
           label: Text("${skill.tagName!} x${skill.problemsSolved}"),
-          backgroundColor: const Color.fromARGB(255, 247, 251, 255),
+          backgroundColor: ThemeModeModel.fundamentalBackground,
         );
         fundamentalWidgets.add(fundamentalSkillChip);
       }
@@ -52,10 +53,10 @@ class _SkillsCardState extends State<SkillsCard> {
       for (TagsSolved skill in widget.intermediateSkills!) {
         Chip intermediateSkillChip = Chip(
           side: const BorderSide(
-            color: Color.fromARGB(255, 201, 231, 255),
+            color: ThemeModeModel.intermediateBorder,
           ),
           label: Text("${skill.tagName!} x${skill.problemsSolved}"),
-          backgroundColor: const Color.fromARGB(255, 238, 248, 255),
+          backgroundColor: ThemeModeModel.intermediateBackground,
         );
         intermediateWidgets.add(intermediateSkillChip);
       }
@@ -64,11 +65,11 @@ class _SkillsCardState extends State<SkillsCard> {
     if (widget.advancedSkills!.isNotEmpty) {
       for (TagsSolved skill in widget.advancedSkills!) {
         Chip advancedSkillChip = Chip(
-          side: BorderSide(
-            color: Colors.blue.shade200,
+          side: const BorderSide(
+            color: ThemeModeModel.advancedBorder,
           ),
           label: Text("${skill.tagName!} x${skill.problemsSolved}"),
-          backgroundColor: const Color.fromARGB(255, 223, 241, 255),
+          backgroundColor: ThemeModeModel.advancedBackground,
         );
         advancedWidgets.add(advancedSkillChip);
       }
