@@ -319,12 +319,14 @@ class _SettingsState extends State<Settings> {
                           ));
                           return;
                         } else {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(const SnackBar(
-                            content: Text('Loading user data'),
-                            duration: Duration(seconds: 2),
-                            showCloseIcon: true,
-                          ));
+                          if (mounted) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text('Loading user data'),
+                              duration: Duration(seconds: 2),
+                              showCloseIcon: true,
+                            ));
+                          }
                         }
 
                         List userList = await Future.wait(futureGroup);

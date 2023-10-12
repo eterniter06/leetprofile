@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:ui_elements/change_notifiers/theme.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
 class LanguageCard extends StatelessWidget {
@@ -62,8 +63,26 @@ class LanguageCard extends StatelessWidget {
             ),
             Expanded(
               child: Center(
-                child: Text(
-                  languageDetails.problemsSolved.toString(),
+                child: Container(
+                  width: 52,
+                  // padding: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 247, 251, 255),
+                      border: Border.all(
+                        color: const Color.fromARGB(255, 219, 237, 253),
+                      ),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(80))),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 2.0,
+                    ),
+                    child: Text(
+                      languageDetails.problemsSolved.toString(),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
               ),
             ),
