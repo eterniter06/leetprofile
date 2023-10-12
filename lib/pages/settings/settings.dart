@@ -124,6 +124,14 @@ class _SettingsState extends State<Settings> {
                   );
                   if (order != null) {
                     SettingsDatabase.saveProfileComponentsOrder(order);
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Profile layour saved'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
                   }
                 },
               ),
