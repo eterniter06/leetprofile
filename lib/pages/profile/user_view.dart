@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:ui_elements/change_notifiers/user_list.dart';
@@ -53,12 +54,14 @@ class UserView extends StatefulWidget {
   State<UserView> createState() => _UserViewState();
 }
 
-class _UserViewState extends State<UserView> {
+class _UserViewState extends State<UserView>
+    with SingleTickerProviderStateMixin {
   List<String> profileComponentListAsString = [];
   bool isRefreshing = false;
   List<Widget> profileComponentList = [];
   Map<String, Widget?> componentMapper = {};
   late UserData userData = widget.userData;
+  late AnimationController? _controller;
 
   @override
   void initState() {
@@ -67,8 +70,23 @@ class _UserViewState extends State<UserView> {
     profileComponentListAsString =
         SettingsDatabase.profileComponentOrder() ?? widget._defaultOrdering;
 
+    _controller = widget.isReorderable
+        ? AnimationController(
+            upperBound: 1.025,
+            lowerBound: 1,
+            vsync: this,
+            duration: const Duration(milliseconds: 300),
+          )
+        : null;
+
     componentMapper = initMap();
     profileComponentList = initWidgetList();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller?.dispose();
   }
 
   List<Widget> initWidgetList() {
@@ -261,6 +279,16 @@ class _UserViewState extends State<UserView> {
       body: SafeArea(
         child: widget.isReorderable
             ? ReorderableListView(
+                proxyDecorator: (child, index, animation) => ScaleTransition(
+                  scale: Tween<double>(begin: 1, end: 1.025).animate(
+                    CurvedAnimation(
+                      parent: _controller!,
+                      curve: Curves.linear,
+                    ),
+                  ),
+                  child: profileComponentList[index],
+                ),
+
                 onReorder: (oldIndex, newIndex) {
                   if (newIndex > profileComponentList.length) {
                     newIndex = profileComponentList.length;
@@ -277,6 +305,8 @@ class _UserViewState extends State<UserView> {
                         newIndex, componentAsString);
                   });
                 },
+                onReorderStart: (index) => HapticFeedback.lightImpact(),
+
                 children: [
                   for (int index = 0;
                       index < profileComponentList.length;
