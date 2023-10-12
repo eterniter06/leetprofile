@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 
 class SubmissionCountDialogBox extends StatefulWidget {
-  const SubmissionCountDialogBox(
-      {required this.previousSubmissionCount, super.key});
+  const SubmissionCountDialogBox({
+    super.key,
+    required this.previousSubmissionCount,
+    required this.title,
+    this.semanticLabel,
+    this.subtitle,
+  });
+
   final int previousSubmissionCount;
+  final String title;
+  final String? subtitle;
+  final String? semanticLabel;
 
   @override
   State<SubmissionCountDialogBox> createState() =>
@@ -29,15 +38,14 @@ class _SubmissionCountDialogBoxState extends State<SubmissionCountDialogBox> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: const Text('Change user submission count'),
-      semanticLabel:
-          'Dialog box to change the number of user submissions shown by default',
+      title: Text(widget.title),
+      semanticLabel: widget.semanticLabel,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22.0),
-          child: Text(
-              'Submissions currently shown unexpanded: ${widget.previousSubmissionCount}'),
-        ),
+        if (widget.subtitle != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 22.0),
+            child: Text(widget.subtitle!),
+          ),
         Padding(
           padding: const EdgeInsets.fromLTRB(22, 16, 22, 8),
           child: Column(children: [

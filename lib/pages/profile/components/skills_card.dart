@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui_elements/change_notifiers/theme.dart';
+import 'package:ui_elements/database/settings_database.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/interfaces.dart';
@@ -27,7 +28,7 @@ class SkillsCard extends StatefulWidget implements ClassName {
 }
 
 class _SkillsCardState extends State<SkillsCard> {
-  int minTags = 4;
+  late int minTags;
   List<Widget> intermediateWidgets = [];
   List<Widget> fundamentalWidgets = [];
   List<Widget> advancedWidgets = [];
@@ -35,6 +36,8 @@ class _SkillsCardState extends State<SkillsCard> {
   @override
   void initState() {
     super.initState();
+
+    minTags = SettingsDatabase.numberOfShownTags();
 
     if (widget.fundamentalSkills!.isNotEmpty) {
       for (TagsSolved skill in widget.fundamentalSkills!) {

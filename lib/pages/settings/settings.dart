@@ -30,12 +30,14 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   late ThemeMode themeMode;
   late int submissionCount;
+  late int tagCount;
 
   @override
   void initState() {
     super.initState();
     themeMode = SettingsDatabase.themeMode();
     submissionCount = SettingsDatabase.numberOfShownUserSubmissions();
+    tagCount = SettingsDatabase.numberOfShownTags();
   }
 
   String _themeModeAsString(ThemeMode themeMode) {
@@ -90,18 +92,48 @@ class _SettingsState extends State<Settings> {
                 title:
                     const Text('Number of user submissions shown by default'),
                 description: Text(
-                    'The number of submisisons shown when the submission list is collapsed. Submissions shown: $submissionCount'),
+                    'The number of submisisons shown when the submission list is collapsed.\nSubmissions shown: $submissionCount'),
                 onTap: () async {
                   int? count = await showDialog(
                     context: context,
                     builder: (context) => SubmissionCountDialogBox(
-                        previousSubmissionCount: submissionCount),
+                      title: 'Change user submission count',
+                      subtitle:
+                          'Submissions shown unexpanded: $submissionCount',
+                      semanticLabel:
+                          'Dialog box to change the number of user submissions shown by default',
+                      previousSubmissionCount: submissionCount,
+                    ),
                   );
 
                   if (count != null) {
                     SettingsDatabase.changeNumberOfShownUserSubmissions(count);
                     setState(() {
                       submissionCount = count;
+                    });
+                  }
+                },
+              ),
+              SettingTile(
+                title: const Text('Number of tags shown by default'),
+                description: Text(
+                    'The number of problem tags shown by default.\nTags shown: $tagCount'),
+                onTap: () async {
+                  int? count = await showDialog(
+                    context: context,
+                    builder: (context) => SubmissionCountDialogBox(
+                      title: 'Change default tag count',
+                      subtitle: 'Tags shown by default: $tagCount',
+                      semanticLabel:
+                          'Dialog box to change the number of tags shown by default',
+                      previousSubmissionCount: tagCount,
+                    ),
+                  );
+
+                  if (count != null) {
+                    SettingsDatabase.changeNumberOfShownTags(count);
+                    setState(() {
+                      tagCount = count;
                     });
                   }
                 },

@@ -69,4 +69,19 @@ class SettingsDatabase {
   static Future<void> saveProfileComponentsOrder(List<String> order) async {
     await _prefs!.setStringList('profileComponentOrder', order);
   }
+
+  static Future<void> changeNumberOfShownTags(int tags) async {
+    await _prefs!.setInt('tagsToShow', tags);
+  }
+
+  static int numberOfShownTags() {
+    int? count = _prefs!.getInt('tagsToShow');
+
+    if (count == null) {
+      int defaultSubmissionCount = 4;
+      changeNumberOfShownUserSubmissions(defaultSubmissionCount);
+      return defaultSubmissionCount;
+    }
+    return count;
+  }
 }
