@@ -240,11 +240,12 @@ class _UserViewState extends State<UserView> {
               ],
       ),
       floatingActionButton: widget.isReorderable
-          ? FloatingActionButton(
+          ? FloatingActionButton.extended(
+              icon: const Icon(Icons.save),
+              label: const Text('Save'),
               tooltip: 'Save layout',
               onPressed: () =>
                   Navigator.of(context).pop(profileComponentListAsString),
-              child: const Icon(Icons.save),
             )
           : null,
       body: SafeArea(
