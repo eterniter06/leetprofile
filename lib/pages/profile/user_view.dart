@@ -143,6 +143,16 @@ class _UserViewState extends State<UserView> {
       key: UniqueKey(),
     );
 
+    // Prevent interacting with the components when reordering
+    if (widget.isReorderable) {
+      map.forEach((key, value) {
+        map[key] = AbsorbPointer(
+          key: UniqueKey(),
+          child: value,
+        );
+      });
+    }
+
     return map;
   }
 
