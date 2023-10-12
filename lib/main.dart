@@ -13,6 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await UserDatabase.init();
 
+  // Todo: Refactor below code into settingsDatabase
   await SettingsDatabase.init();
   SharedPreferences pref = await SettingsDatabase.sharedPreferences();
 

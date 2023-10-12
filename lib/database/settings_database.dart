@@ -84,4 +84,20 @@ class SettingsDatabase {
     }
     return count;
   }
+
+  static Future<void> changeShowUsernameOnHomeScreen(bool isShown) async {
+    await _prefs!.setBool('showUsernamesOnHomeScreen', isShown);
+  }
+
+  static bool showUsernameOnHomeScreen() {
+    assert(_prefs != null);
+    bool? preference = _prefs!.getBool('showUsernamesOnHomeScreen');
+
+    if (preference == null) {
+      _prefs!.setBool('showUsernamesOnHomeScreen', true);
+      return true;
+    }
+
+    return preference;
+  }
 }

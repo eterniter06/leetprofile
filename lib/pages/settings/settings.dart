@@ -88,6 +88,15 @@ class _SettingsState extends State<Settings> {
                     SettingsDatabase.changeRefreshAllUsersOnStartup,
                 databaseReadCallback: SettingsDatabase.refreshAllUsersOnStartup,
               ),
+              const SettingTileSwitch(
+                title: Text('Show usernames on homescreen'),
+                trueDescription: Text(
+                    'Usernames are shown for each profile in the home screen'),
+                falseDescription: Text('Usernames are not shown'),
+                databaseReadCallback: SettingsDatabase.showUsernameOnHomeScreen,
+                databaseWriteCallback:
+                    SettingsDatabase.changeShowUsernameOnHomeScreen,
+              ),
               SettingTile(
                 title:
                     const Text('Number of user submissions shown by default'),
