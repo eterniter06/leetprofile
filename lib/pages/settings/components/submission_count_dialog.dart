@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SubmissionCountDialogBox extends StatefulWidget {
-  const SubmissionCountDialogBox({super.key});
+  const SubmissionCountDialogBox(
+      {required this.previousSubmissionCount, super.key});
+  final int previousSubmissionCount;
 
   @override
   State<SubmissionCountDialogBox> createState() =>
@@ -32,33 +34,40 @@ class _SubmissionCountDialogBoxState extends State<SubmissionCountDialogBox> {
           'Dialog box to change the number of user submissions shown by default',
       children: [
         Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 22.0),
+          child: Text(
+              'Submissions currently shown unexpanded: ${widget.previousSubmissionCount}'),
+        ),
+        Padding(
           padding: const EdgeInsets.fromLTRB(22, 16, 22, 8),
-          child: Form(
-            key: _formKey,
-            child: TextFormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              autofocus: true,
-              controller: _textController,
-              onTapOutside: (event) => FocusScope.of(context).unfocus(),
-              validator: (String? count) {
-                if (count == null || count.isEmpty) {
-                  return 'Submission to show cannot be empty. If you do not want any submission to be shown by default, enter 0';
-                }
-                return null;
-              },
-              keyboardType: const TextInputType.numberWithOptions(
-                  signed: true, decimal: false),
-              onFieldSubmitted: (value) => submitCountValue(),
-              textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(
-                label: Text('Submission count'),
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.only(left: 8),
-                errorMaxLines: 2,
+          child: Column(children: [
+            Form(
+              key: _formKey,
+              child: TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                autofocus: true,
+                controller: _textController,
+                onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                validator: (String? count) {
+                  if (count == null || count.isEmpty) {
+                    return 'Submission to show cannot be empty. If you do not want any submission to be shown by default, enter 0';
+                  }
+                  return null;
+                },
+                keyboardType: const TextInputType.numberWithOptions(
+                    signed: true, decimal: false),
+                onFieldSubmitted: (value) => submitCountValue(),
+                textInputAction: TextInputAction.done,
+                decoration: const InputDecoration(
+                  label: Text('Submission count'),
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.only(left: 8),
+                  errorMaxLines: 2,
+                ),
+                enableSuggestions: true,
               ),
-              enableSuggestions: true,
             ),
-          ),
+          ]),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 22),

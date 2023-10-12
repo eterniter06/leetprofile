@@ -94,7 +94,8 @@ class _SettingsState extends State<Settings> {
                 onTap: () async {
                   int? count = await showDialog(
                     context: context,
-                    builder: (context) => const SubmissionCountDialogBox(),
+                    builder: (context) => SubmissionCountDialogBox(
+                        previousSubmissionCount: submissionCount),
                   );
 
                   if (count != null) {
