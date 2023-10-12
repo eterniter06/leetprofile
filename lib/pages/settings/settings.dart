@@ -160,7 +160,7 @@ class _SettingsState extends State<Settings> {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Profile layour saved'),
+                          content: Text('Profile layout saved'),
                           duration: Duration(seconds: 2),
                         ),
                       );
