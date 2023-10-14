@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../change_notifiers/theme.dart';
+import '../providers/theme.dart';
 
 class SettingsDatabase {
   SettingsDatabase._();

@@ -9,12 +9,13 @@ import 'package:provider/provider.dart';
 import 'package:ui_elements/pages/profile/user_view.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
+import 'package:ui_elements/providers/settings.dart';
 
 import 'components/section.dart';
 import 'components/setting_option.dart';
 
-import 'package:ui_elements/change_notifiers/theme.dart';
-import 'package:ui_elements/change_notifiers/user_list.dart';
+import 'package:ui_elements/providers/theme.dart';
+import 'package:ui_elements/providers/user_list.dart';
 
 import 'components/setting_tile.dart';
 import 'components/submission_count_dialog.dart';
@@ -88,14 +89,18 @@ class _SettingsState extends State<Settings> {
                     SettingsDatabase.changeRefreshAllUsersOnStartup,
                 databaseReadCallback: SettingsDatabase.refreshAllUsersOnStartup,
               ),
-              const SettingTileSwitch(
-                title: Text('Show usernames on homescreen'),
-                trueDescription: Text(
-                    'Usernames are shown for each profile in the home screen'),
-                falseDescription: Text('Usernames are not shown'),
-                databaseReadCallback: SettingsDatabase.showUsernameOnHomeScreen,
-                databaseWriteCallback:
-                    SettingsDatabase.changeShowUsernameOnHomeScreen,
+              Consumer<SettingsModel>(
+                builder: (context, settingsModel, child) => SettingTileSwitch(
+                  title: const Text('Show usernames on homescreen'),
+                  trueDescription: const Text(
+                      'Usernames are shown for each profile in the home screen'),
+                  falseDescription: const Text('Usernames are not shown'),
+                  databaseReadCallback: () => settingsModel.showUsername,
+                  // Use anonymous functiona to execute actual function;
+                  // Yes this does not seem pretty and a proper fix would be nice
+                  databaseWriteCallback: (_) =>
+                      settingsModel.toggleUsernameOnHomeScreenVisibility(),
+                ),
               ),
               SettingTile(
                 title:

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:ui_elements/change_notifiers/theme.dart';
+import 'package:ui_elements/providers/theme.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/interfaces.dart';

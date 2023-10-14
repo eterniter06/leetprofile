@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:ui_elements/change_notifiers/user_list.dart';
+import 'package:ui_elements/providers/user_list.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/database/user_database.dart';

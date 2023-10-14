@@ -2,7 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:ui_elements/change_notifiers/user_list.dart';
+import 'package:ui_elements/providers/user_list.dart';
 import 'package:ui_elements/pages/profile/user_view.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 

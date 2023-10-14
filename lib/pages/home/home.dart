@@ -8,8 +8,9 @@ import 'package:ui_elements/pages/profile/user_view.dart';
 import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/database/user_database.dart';
 
-import 'package:ui_elements/change_notifiers/theme.dart';
-import 'package:ui_elements/change_notifiers/user_list.dart';
+import 'package:ui_elements/providers/theme.dart';
+import 'package:ui_elements/providers/user_list.dart';
+import 'package:ui_elements/providers/settings.dart';
 
 import 'package:ui_elements/pages/about/about.dart';
 import 'package:ui_elements/pages/settings/settings.dart';
@@ -194,6 +195,8 @@ class _UserListPageState extends State<UserListPage> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsModel>();
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new User',
