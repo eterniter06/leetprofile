@@ -87,7 +87,10 @@ class _SkillsCardState extends State<SkillsCard> {
         if (fundamentalWidgets.isNotEmpty) ...{
           const Padding(
             padding: EdgeInsets.only(left: 8.0),
-            child: Text('Fundamental'),
+            child: Text(
+              'Fundamental',
+              style: TextStyle(fontSize: 16),
+            ),
           ),
           ExtensibleAnimatedWrap(
             defaultItemCount: minTags,
@@ -99,7 +102,10 @@ class _SkillsCardState extends State<SkillsCard> {
           const SizedBox(height: 40),
           const Padding(
             padding: EdgeInsets.only(left: 8.0),
-            child: Text('Intermediate'),
+            child: Text(
+              'Intermediate',
+              style: TextStyle(fontSize: 16),
+            ),
           ),
           ExtensibleAnimatedWrap(
             defaultItemCount: minTags,
@@ -111,7 +117,10 @@ class _SkillsCardState extends State<SkillsCard> {
           const SizedBox(height: 40),
           const Padding(
             padding: EdgeInsets.only(left: 8.0),
-            child: Text('Advanced'),
+            child: Text(
+              'Advanced',
+              style: TextStyle(fontSize: 16),
+            ),
           ),
           ExtensibleAnimatedWrap(
             spacing: 8,
