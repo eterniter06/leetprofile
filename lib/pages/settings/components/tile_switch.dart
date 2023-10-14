@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ui_elements/providers/theme.dart';
 
 class SettingTileSwitch extends StatefulWidget {
   const SettingTileSwitch({
@@ -45,6 +46,7 @@ class _SettingTileSwitchState extends State<SettingTileSwitch> {
         subtitle: toggleStatus == true
             ? widget.trueDescription
             : widget.falseDescription,
+        subtitleTextStyle: ThemeModeModel.defaultSubtitleTextStyle,
         trailing: Switch(
           value: toggleStatus,
           onChanged: (value) => _toggleSwitch(value),

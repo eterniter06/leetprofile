@@ -105,8 +105,20 @@ class _SettingsState extends State<Settings> {
               SettingTile(
                 title:
                     const Text('Number of user submissions shown by default'),
-                description: Text(
-                    'The number of submisisons shown when the submission list is collapsed.\nSubmissions shown: $submissionCount'),
+                description: RichText(
+                  text: TextSpan(
+                    style: ThemeModeModel.defaultSubtitleTextStyle,
+                    text:
+                        'The number of submisisons shown when the submission list is collapsed.\nSubmissions shown: ',
+                    children: [
+                      TextSpan(
+                        text: '$submissionCount',
+                        style: ThemeModeModel.defaultSubtitleTextStyle.copyWith(
+                            color: ThemeModeModel.lightSecondaryInverse),
+                      ),
+                    ],
+                  ),
+                ),
                 onTap: () async {
                   int? count = await showDialog(
                     context: context,
@@ -130,8 +142,20 @@ class _SettingsState extends State<Settings> {
               ),
               SettingTile(
                 title: const Text('Number of tags shown by default'),
-                description: Text(
-                    'The number of problem tags shown by default.\nTags shown: $tagCount'),
+                description: RichText(
+                  text: TextSpan(
+                    style: ThemeModeModel.defaultSubtitleTextStyle,
+                    text:
+                        'The number of problem tags shown by default.\nTags shown: ',
+                    children: [
+                      TextSpan(
+                        text: '$tagCount',
+                        style: ThemeModeModel.defaultSubtitleTextStyle.copyWith(
+                            color: ThemeModeModel.lightSecondaryInverse),
+                      ),
+                    ],
+                  ),
+                ),
                 onTap: () async {
                   int? count = await showDialog(
                     context: context,
@@ -403,20 +427,56 @@ class _SettingsState extends State<Settings> {
                   title: const Text(
                     'Clear Data',
                   ),
-                  description: const Text(
-                    'Remove all users and their stored data. This cannot be undone',
+                  titleTextStyle: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Overpass',
+                    color: Colors.red.shade600,
                   ),
+                  description: RichText(
+                      text: TextSpan(
+                    style: ThemeModeModel.defaultSubtitleTextStyle,
+                    text: 'Remove all users and their stored data. ',
+                    children: [
+                      TextSpan(
+                        text: 'This cannot be undone',
+                        style: ThemeModeModel.defaultSubtitleTextStyle
+                            .copyWith(color: Colors.red.shade900),
+                      ),
+                    ],
+                  )),
                   onTap: userListModel.isEmpty()
                       ? null
                       : () {
                           showDialog(
                             context: context,
                             builder: (dialogContext) => AlertDialog(
-                              title: const Text('Delete all data?'),
+                              title: Text('Delete all data?',
+                                  style: TextStyle(color: Colors.red.shade700)),
                               content: const Text(
-                                  'Existing data will be erased. You can still restore the users using a import file.'),
+                                  'This will delete all stored users and their profile data on this app. Your import files will not be deleted.'),
                               actions: [
                                 ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.resolveWith(
+                                            (states) {
+                                      if (states
+                                          .contains(MaterialState.pressed)) {
+                                        return Colors.red.shade600;
+                                      }
+                                      return const Color.fromARGB(
+                                          255, 241, 107, 107);
+                                    }),
+                                    foregroundColor:
+                                        MaterialStateProperty.resolveWith(
+                                            (states) {
+                                      if (states
+                                          .contains(MaterialState.pressed)) {
+                                        return Colors.white;
+                                      }
+                                      return Colors.white;
+                                    }),
+                                  ),
                                   child: const Text(
                                     'Delete data',
                                   ),

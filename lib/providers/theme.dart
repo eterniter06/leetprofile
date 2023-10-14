@@ -180,6 +180,9 @@ class ThemeModeModel extends ChangeNotifier {
     ),
   );
 
+  static TextStyle defaultSubtitleTextStyle =
+      TextStyle(color: Colors.grey.shade600, fontFamily: 'Overpass');
+
   static ThemeMode themeModeFromString(String? modeAsString) {
     if (modeAsString == ThemeMode.dark.toString()) {
       return ThemeMode.dark;

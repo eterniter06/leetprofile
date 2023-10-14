@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ui_elements/providers/theme.dart';
 
 class Section extends StatelessWidget {
   const Section({
@@ -18,7 +19,11 @@ class Section extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
-            child: Text(header),
+            child: Text(
+              header,
+              style:
+                  const TextStyle(color: ThemeModeModel.lightSecondaryInverse),
+            ),
           ),
           if (children != null) ...children!,
         ]);
