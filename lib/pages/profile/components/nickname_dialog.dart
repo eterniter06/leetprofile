@@ -85,22 +85,6 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),
-        // RichText(
-        //   text: TextSpan(
-        //     text: 'User: ',
-        //     style: DefaultTextStyle.of(context).style,
-        //     children: [
-        //       TextSpan(
-        //         text: displayName(),
-        //         style: const TextStyle(
-        //           inherit: true,
-        //           color: ThemeModeModel.lightPrimaryInverse,
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // const SizedBox(height: 16),
         Form(
           key: _formKey,
           child: TextFormField(
