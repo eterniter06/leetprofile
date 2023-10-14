@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:ui_elements/change_notifiers/user_list.dart';
 import 'package:ui_elements/database/user_database.dart';
 import 'package:ui_elements/change_notifiers/theme.dart';
 
@@ -27,8 +28,17 @@ void main() async {
   ThemeMode startupThemeMode =
       ThemeModeModel.themeModeFromString(themeModePreference);
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => ThemeModeModel(themeMode: startupThemeMode),
-    child: const MyApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => ThemeModeModel(themeMode: startupThemeMode),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UserListModel(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }

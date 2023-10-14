@@ -179,9 +179,9 @@ class UserListModel extends ChangeNotifier {
   }
 
   Future<void> deleteAllDatabaseSync() async {
-    UserDatabase.deleteAll();
     userList.clear();
     notifyListeners();
+    await UserDatabase.deleteAll();
   }
 
   Future<void> syncDatabase() async {
