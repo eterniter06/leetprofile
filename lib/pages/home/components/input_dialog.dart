@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:ui_elements/providers/theme.dart';
 
 class UserInputDialog extends StatefulWidget {
   const UserInputDialog({
@@ -43,53 +45,69 @@ class _UserInputDialogState extends State<UserInputDialog> {
   Widget build(BuildContext context) {
     return SimpleDialog(
       semanticLabel: 'Profile input dialog Box',
-      title: const Text('Enter username'),
+      title: SvgPicture.asset(
+        // More accurate
+        // 'assets/undraw_add_friends_re_3xte.svg',
+
+        // Somehow has a better vibe
+        'assets/profile_data_yellow.svg',
+        fit: BoxFit.contain,
+        height: 160,
+      ),
+      contentPadding: const EdgeInsets.fromLTRB(26, 12, 26, 16),
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(26.0, 8.0, 26.0, 4.0),
-          child: Text(
-            'Enter profile link or username:',
-            softWrap: true,
-            textWidthBasis: TextWidthBasis.parent,
+        const SizedBox(
+          height: 16,
+        ),
+        const Text(
+          'Add a profile',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 24,
+            color: ThemeModeModel.lightPrimaryInverse,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(22, 16, 22, 8),
-          child: Form(
-            key: _formKey,
-            child: TextFormField(
-              keyboardType: TextInputType.name,
-              autofocus: true,
-              controller: _textController,
-              onTapOutside: (event) => FocusScope.of(context).unfocus(),
-              validator: (String? username) {
-                if (username == null || username.isEmpty) {
-                  return 'Username cannot be empty.';
-                }
-                return null;
-              },
-              onFieldSubmitted: (value) => submitUserInput(),
-              textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(
-                label: Text('Leetcode Username'),
-              ),
-              enableSuggestions: true,
+        const SizedBox(
+          height: 16,
+        ),
+        const Text(
+          'Enter profile link or username:',
+          softWrap: true,
+          textWidthBasis: TextWidthBasis.parent,
+        ),
+        const SizedBox(height: 8),
+        Form(
+          key: _formKey,
+          child: TextFormField(
+            keyboardType: TextInputType.name,
+            autofocus: true,
+            controller: _textController,
+            onTapOutside: (event) => FocusScope.of(context).unfocus(),
+            validator: (String? username) {
+              if (username == null || username.isEmpty) {
+                return 'Username cannot be empty.';
+              }
+              return null;
+            },
+            onFieldSubmitted: (value) => submitUserInput(),
+            textInputAction: TextInputAction.done,
+            decoration: const InputDecoration(
+              label: Text('Leetcode Username'),
             ),
+            enableSuggestions: true,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 22),
-          child: ElevatedButton(
-            onPressed: () => submitUserInput(),
-            child: const Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Search '),
-                Icon(Icons.search),
-              ],
-            ),
+        const SizedBox(height: 8),
+        ElevatedButton(
+          onPressed: () => submitUserInput(),
+          child: const Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Search '),
+              Icon(Icons.search),
+            ],
           ),
         ),
       ],

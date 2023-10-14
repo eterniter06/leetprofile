@@ -250,7 +250,9 @@ class _UserListPageState extends State<UserListPage> {
                         (constraints.maxHeight - constraints.minHeight) * 0.2,
                   ),
                   SvgPicture.asset(
-                    'assets/undraw_add_notes_re_ln36.svg',
+                    // 'assets/undraw_add_notes_re_ln36.svg',
+                    'assets/add_friends_yellow.svg',
+
                     height: 200,
                   ),
                   const Center(child: Text('No users yet')),
