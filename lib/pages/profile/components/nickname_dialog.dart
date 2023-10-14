@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:ui_elements/providers/theme.dart';
 
 class NicknameInputDialog extends StatefulWidget {
   const NicknameInputDialog({
@@ -46,59 +48,85 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
     }
   }
 
-  String dialogPromptText() {
+  String displayName() {
     if (widget.oldNickname == null) {
-      return widget.realname == ""
-          ? "Enter a nickname for ${widget.username}"
-          : "Enter a nickname for ${widget.realname}";
+      return widget.realname == "" ? widget.username! : widget.realname!;
     }
 
-    return "Enter a new nickname for ${widget.oldNickname!}";
+    return widget.oldNickname!;
   }
 
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: const Text('Enter nickname'),
+      contentPadding: const EdgeInsets.fromLTRB(26, 12, 26, 16),
+      title: SvgPicture.asset(
+        'assets/profile_details_yellow.svg',
+        height: 200,
+      ),
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(26.0, 8.0, 26.0, 4.0),
-          child: Text(
-            dialogPromptText(),
-            softWrap: true,
-            textWidthBasis: TextWidthBasis.parent,
-          ),
+        RichText(
+          text: TextSpan(
+              style: DefaultTextStyle.of(context).style.copyWith(
+                    fontSize: 24,
+                  ),
+              text: widget.oldNickname == null
+                  ? 'Enter a nickname for\n'
+                  : 'Enter a new nickname for\n',
+              children: [
+                TextSpan(
+                  text: displayName(),
+                  style: const TextStyle(
+                    inherit: true,
+                    color: ThemeModeModel.lightPrimaryInverse,
+                  ),
+                ),
+              ]),
+          textAlign: TextAlign.center,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 22),
-          child: Form(
-            key: _formKey,
-            child: TextFormField(
-              autofocus: true,
-              controller: _textController,
-              validator: (String? username) {
-                if (username == null || username.isEmpty) {
-                  return 'Nickname cannot be empty.';
-                }
-                return null;
-              },
-              onFieldSubmitted: (value) => submitNickname(),
-              textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(
-                label: Text('User Nickname'),
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.only(left: 8),
-              ),
-              enableSuggestions: true,
+        const SizedBox(height: 16),
+        // RichText(
+        //   text: TextSpan(
+        //     text: 'User: ',
+        //     style: DefaultTextStyle.of(context).style,
+        //     children: [
+        //       TextSpan(
+        //         text: displayName(),
+        //         style: const TextStyle(
+        //           inherit: true,
+        //           color: ThemeModeModel.lightPrimaryInverse,
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
+        // const SizedBox(height: 16),
+        Form(
+          key: _formKey,
+          child: TextFormField(
+            autofocus: true,
+            controller: _textController,
+            validator: (String? username) {
+              if (username == null || username.isEmpty) {
+                return 'Nickname cannot be empty.';
+              }
+              return null;
+            },
+            onFieldSubmitted: (value) => submitNickname(),
+            textInputAction: TextInputAction.done,
+            decoration: const InputDecoration(
+              label: Text('Nickname'),
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.only(left: 8),
             ),
+            enableSuggestions: true,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 0),
-          child: ElevatedButton(
-            onPressed: () => submitNickname(),
-            child: const Text('Submit'),
-          ),
+        const SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: () => submitNickname(),
+          child: Text(
+              widget.oldNickname == null ? 'Set nickname' : 'Change nickname'),
         ),
       ],
     );

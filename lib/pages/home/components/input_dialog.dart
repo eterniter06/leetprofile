@@ -75,7 +75,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
           softWrap: true,
           textWidthBasis: TextWidthBasis.parent,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
         Form(
           key: _formKey,
           child: TextFormField(
@@ -97,7 +97,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
             enableSuggestions: true,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () => submitUserInput(),
           child: const Row(
