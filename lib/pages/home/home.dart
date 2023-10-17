@@ -20,17 +20,33 @@ import 'package:uni_links/uni_links.dart';
 import 'components/input_dialog.dart';
 import 'components/reorderable_listview.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class LeetProfile extends StatelessWidget {
+  const LeetProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ThemeModeModel, UserListModel>(
-      builder: (context, appThemeMode, userListModel, child) => MaterialApp(
-        theme: ThemeModeModel.light,
-        darkTheme: ThemeModeModel.dark,
-        themeMode: appThemeMode.themeMode,
-        home: UserListPage(userListModel: userListModel),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UserListModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SettingsModel(
+              showUsernameOnHomeScreen:
+                  SettingsDatabase.showUsernameOnHomeScreen()),
+        ),
+        ChangeNotifierProvider(
+          create: (context) =>
+              ThemeModeModel(themeMode: SettingsDatabase.themeMode()),
+        ),
+      ],
+      child: Consumer2<ThemeModeModel, UserListModel>(
+        builder: (context, appThemeMode, userListModel, child) => MaterialApp(
+          theme: ThemeModeModel.light,
+          darkTheme: ThemeModeModel.dark,
+          themeMode: appThemeMode.themeMode,
+          home: UserListPage(userListModel: userListModel),
+        ),
       ),
     );
   }

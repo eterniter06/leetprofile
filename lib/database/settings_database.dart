@@ -9,18 +9,18 @@ class SettingsDatabase {
   static SharedPreferences? _prefs;
 
   static Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
-  }
-
-  static Future<SharedPreferences> sharedPreferences() async {
     _prefs ??= await SharedPreferences.getInstance();
-    return _prefs!;
   }
 
   /// initSharedPrefs() must have been called at least once before calling.
   static ThemeMode themeMode() {
-    assert(_prefs != null);
-    return ThemeModeModel.themeModeFromString(_prefs!.getString('themeMode'));
+    String? modeAsString = _prefs!.getString('themeMode');
+
+    if (modeAsString == null) {
+      changeTheme(ThemeMode.system);
+      modeAsString = ThemeMode.system.toString();
+    }
+    return ThemeModeModel.themeModeFromString(modeAsString);
   }
 
   static Future<void> changeTheme(ThemeMode chosenTheme) async {
