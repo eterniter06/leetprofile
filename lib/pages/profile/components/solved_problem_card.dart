@@ -92,8 +92,8 @@ class SolvedProblemsCard extends StatelessWidget implements ClassName {
         Container(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             margin: const EdgeInsets.only(bottom: 8),
-            child: RichText(
-              text: TextSpan(
+            child: Text.rich(
+              TextSpan(
                   text: 'Total problems solved: ',
                   style: DefaultTextStyle.of(context).style,
                   children: [

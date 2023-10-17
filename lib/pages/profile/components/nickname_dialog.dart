@@ -65,8 +65,8 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
         height: 200,
       ),
       children: [
-        RichText(
-          text: TextSpan(
+        Text.rich(
+          TextSpan(
               style: DefaultTextStyle.of(context).style.copyWith(
                     fontSize: 24,
                   ),

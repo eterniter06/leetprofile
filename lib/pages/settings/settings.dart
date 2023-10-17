@@ -105,8 +105,8 @@ class _SettingsState extends State<Settings> {
               SettingTile(
                 title:
                     const Text('Number of user submissions shown by default'),
-                description: RichText(
-                  text: TextSpan(
+                description: Text.rich(
+                  TextSpan(
                     style: ThemeModeModel.defaultSubtitleTextStyle,
                     text:
                         'The number of submisisons shown when the submission list is collapsed.\nSubmissions shown: ',
@@ -142,8 +142,8 @@ class _SettingsState extends State<Settings> {
               ),
               SettingTile(
                 title: const Text('Number of tags shown by default'),
-                description: RichText(
-                  text: TextSpan(
+                description: Text.rich(
+                  TextSpan(
                     style: ThemeModeModel.defaultSubtitleTextStyle,
                     text:
                         'The number of problem tags shown by default.\nTags shown: ',
@@ -432,8 +432,7 @@ class _SettingsState extends State<Settings> {
                     fontFamily: 'Overpass',
                     color: Colors.red.shade600,
                   ),
-                  description: RichText(
-                      text: TextSpan(
+                  description: Text.rich(TextSpan(
                     style: ThemeModeModel.defaultSubtitleTextStyle,
                     text: 'Remove all users and their stored data. ',
                     children: [
