@@ -28,10 +28,7 @@ class BadgeCard extends StatelessWidget implements ClassName {
                     children: [
                       SizedBox(
                         width: min(MediaQuery.of(context).size.width / 4, 160),
-                        child: CachedNetworkImage(
-                          imageUrl: badges[index].iconLink!,
-                          // placeholder: (context, url) => AssetImage(asset: 'asset/'),
-                        ),
+                        child: BadgeIcon(badgeLink: badges[index].iconLink!),
                       ),
                       SizedBox(
                         width: min(MediaQuery.of(context).size.width / 4, 160),
@@ -60,5 +57,25 @@ class BadgeCard extends StatelessWidget implements ClassName {
   @override
   String className() {
     return 'BadgeCard';
+  }
+}
+
+class BadgeIcon extends StatelessWidget {
+  const BadgeIcon({
+    super.key,
+    required this.badgeLink,
+  });
+
+  final String badgeLink;
+
+  @override
+  Widget build(BuildContext context) {
+    return badgeLink.contains('http')
+        ? CachedNetworkImage(
+            imageUrl: badgeLink,
+            // Todo: Find a placeholder badge icon
+            // placeholder: (context, url) => AssetImage(asset: 'asset/'),
+          )
+        : Image.asset(badgeLink);
   }
 }

@@ -38,7 +38,7 @@ class BasicInfoExp extends StatelessWidget implements ClassName {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircularNetworkImage(
+                  CircularImage(
                     radius: 80,
                     imageLink: userData.avatar,
                   ),

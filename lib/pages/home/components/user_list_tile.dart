@@ -19,7 +19,7 @@ class UserCard extends StatelessWidget {
         selector: (context, settingsModel) => settingsModel.showUsername,
         builder: (context, showUserName, child) => ListTile(
           tileColor: ThemeModeModel.lightBackground,
-          leading: CircularNetworkImage(imageLink: userData.avatar),
+          leading: CircularImage(imageLink: userData.avatar),
           title: Text(userData.nickname ??
               (userData.realname == ""
                   ? userData.username

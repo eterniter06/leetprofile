@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
+import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/pages/profile/user_view.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
@@ -188,7 +189,7 @@ class _SettingsState extends State<Settings> {
                       builder: (context) => Consumer<UserListModel>(
                         builder: (context, userList, child) =>
                             UserView.reorderableAbsorbPointer(
-                                userData: userList.userList[0]),
+                                userData: UserData.dummyUser),
                       ),
                     ),
                   );

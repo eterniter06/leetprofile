@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:isar/isar.dart';
 part 'userdata.g.dart';
 
@@ -95,9 +97,169 @@ class UserData {
     required this.avatar,
     required this.realname,
     required this.lastFetchTime,
-    this.nickname,
     this.totalActiveDays = 0,
+    this.postViewCount = '0',
+    this.solutionCount = '0',
+    this.reputation = '0',
+    this.ranking = '-1',
+    this.nickname,
+    this.advancedTags,
+    this.allQuestionsCount,
+    this.badges,
+    this.fundamentalTags,
+    this.githubUrl,
+    this.intermediateTags,
+    this.languageProblemCount,
+    this.linkedinUrl,
+    this.listOrder,
+    this.problemData,
+    this.recentAcSubmissionList,
+    this.submissionActivity,
+    this.userContestRanking,
+    this.userContestRankingHistory,
   });
+
+  /// Assets used must not contain 'http' anywhere in their name.
+  /// Whether the full asset name contains 'http' is the criteria to
+  /// load a network (usually cached) image vs an asset image
+  static UserData dummyUser = UserData(
+    username: 'User',
+    avatar: 'assets/default_avatar.png',
+    realname: 'User user',
+    lastFetchTime: DateTime.now(),
+    nickname: 'Eternity',
+    totalActiveDays: 100,
+    listOrder: 0,
+    postViewCount: '42',
+    ranking: '007',
+    solutionCount: '666',
+    reputation: '99',
+    submissionActivity: <SubmissionCalendarDate>[
+      SubmissionCalendarDate(
+        date: DateTime.now(),
+        submissions: 666,
+      ),
+      SubmissionCalendarDate(
+        date: DateTime.now().copyWith(day: DateTime.now().day - 1),
+        submissions: 1,
+      )
+    ],
+    badges: <UserBadge>[
+      UserBadge(
+          creationDate: DateTime.now(),
+          displayName: 'Procrastinator',
+          iconLink: 'assets/image.jpg')
+    ],
+    githubUrl: 'guthib.com',
+    linkedinUrl: 'linkedin.com',
+    languageProblemCount: <LanguageSubmission>[
+      LanguageSubmission(languageName: 'Miau', problemsSolved: 20),
+      LanguageSubmission(languageName: 'Bork bork', problemsSolved: 18),
+    ],
+    recentAcSubmissionList: <RecentSubmission>[
+      RecentSubmission(
+          id: '1',
+          epochInSeconds: (DateTime.now()
+                      .copyWith(day: Random().nextInt(7) + 3)
+                      .millisecondsSinceEpoch /
+                  1000)
+              .truncate()
+              .toString(),
+          title: 'Definitely'),
+      RecentSubmission(
+          id: '2',
+          epochInSeconds: (DateTime.now()
+                      .copyWith(day: Random().nextInt(6) - 3)
+                      .millisecondsSinceEpoch /
+                  1000)
+              .truncate()
+              .toString(),
+          title: 'Yeeee'),
+      RecentSubmission(
+          id: '3',
+          epochInSeconds: (DateTime.now().millisecondsSinceEpoch / 1000)
+              .truncate()
+              .toString(),
+          title: 'Answer'),
+    ],
+    userContestRanking: ContestRanking(
+        attendedContestsCount: -43,
+        globalRanking: -3,
+        rating: 99999,
+        topPercentage: 123.5,
+        totalParticipants: -9),
+    userContestRankingHistory: <ContestSummary>[
+      ContestSummary(
+        problemsSolved: 1,
+        finishTimeInSeconds: 68,
+        ranking: 2,
+        rating: -1234,
+        startTime: (DateTime.now().millisecondsSinceEpoch / 1000).truncate(),
+        title: 'Kontest',
+        totalProblems: -5,
+      ),
+      ContestSummary(
+        problemsSolved: 100,
+        finishTimeInSeconds: 1,
+        ranking: -34,
+        rating: -1234,
+        startTime:
+            (DateTime.now().copyWith(day: -1).millisecondsSinceEpoch / 1000)
+                .truncate(),
+        title: 'Kawntest',
+        totalProblems: 902,
+      ),
+      ContestSummary(
+        problemsSolved: 2,
+        finishTimeInSeconds: 90,
+        ranking: -89,
+        rating: -1234,
+        startTime:
+            (DateTime.now().copyWith(day: -2).millisecondsSinceEpoch / 1000)
+                .truncate(),
+        title: 'Crontest',
+        totalProblems: 473,
+      ),
+    ],
+    allQuestionsCount: <AllQuestions>[
+      AllQuestions(difficulty: 'Asian', total: 50),
+      AllQuestions(difficulty: 'Normal', total: 400),
+      AllQuestions(difficulty: 'Breakfast', total: 150),
+    ],
+    problemData: ProblemData(
+      easySolved: 100,
+      easySubmissions: 120,
+      easyTotal: 150,
+      hardSolved: 5,
+      hardSubmissions: 15,
+      hardTotal: 50,
+      mediumSolved: 50,
+      mediumSubmissions: 60,
+      mediumTotal: 400,
+    ),
+    fundamentalTags: List<TagsSolved>.generate(
+      10,
+      (index) => TagsSolved(
+        tagName: 'Ez pz #$index',
+        problemsSolved: 100 + index * Random().nextInt(100),
+      ),
+    ),
+    intermediateTags: List<TagsSolved>.generate(
+      10,
+      (index) => TagsSolved(
+        tagName: 'Okie dokie #${index - 2 + 6}',
+        problemsSolved: 10 - index + 6,
+      ),
+    ),
+    advancedTags: List<TagsSolved>.generate(
+      10,
+      (index) => TagsSolved(
+        tagName:
+            '*Sweats profusely* #${index * -1 + 2 + Random().nextInt(10) - 7}',
+        problemsSolved: 10 - index - 1,
+      ),
+    ),
+  );
 
   UserData.fromMap({required Map dataMap, String? nickname})
       : username = dataMap['username'],
@@ -206,12 +368,12 @@ class ProblemData {
 class RecentSubmission {
   String? title;
   String? titleSlug;
-  String? timestamp;
+  String? epochInSeconds;
   String? id;
 
   RecentSubmission({
     this.id,
-    this.timestamp,
+    this.epochInSeconds,
     this.title,
     this.titleSlug,
   });

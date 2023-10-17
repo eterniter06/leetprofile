@@ -443,83 +443,83 @@ UserData _userDataDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = UserData(
+    advancedTags: reader.readObjectList<TagsSolved>(
+      offsets[0],
+      TagsSolvedSchema.deserialize,
+      allOffsets,
+      TagsSolved(),
+    ),
+    allQuestionsCount: reader.readObjectList<AllQuestions>(
+      offsets[1],
+      AllQuestionsSchema.deserialize,
+      allOffsets,
+      AllQuestions(),
+    ),
     avatar: reader.readString(offsets[2]),
+    badges: reader.readObjectList<UserBadge>(
+      offsets[3],
+      UserBadgeSchema.deserialize,
+      allOffsets,
+      UserBadge(),
+    ),
+    fundamentalTags: reader.readObjectList<TagsSolved>(
+      offsets[4],
+      TagsSolvedSchema.deserialize,
+      allOffsets,
+      TagsSolved(),
+    ),
+    githubUrl: reader.readStringOrNull(offsets[5]),
+    intermediateTags: reader.readObjectList<TagsSolved>(
+      offsets[6],
+      TagsSolvedSchema.deserialize,
+      allOffsets,
+      TagsSolved(),
+    ),
+    languageProblemCount: reader.readObjectList<LanguageSubmission>(
+      offsets[7],
+      LanguageSubmissionSchema.deserialize,
+      allOffsets,
+      LanguageSubmission(),
+    ),
     lastFetchTime: reader.readDateTime(offsets[8]),
+    linkedinUrl: reader.readStringOrNull(offsets[9]),
+    listOrder: reader.readLongOrNull(offsets[10]),
     nickname: reader.readStringOrNull(offsets[11]),
+    postViewCount: reader.readStringOrNull(offsets[12]) ?? '0',
+    problemData: reader.readObjectOrNull<ProblemData>(
+      offsets[13],
+      ProblemDataSchema.deserialize,
+      allOffsets,
+    ),
+    ranking: reader.readStringOrNull(offsets[14]) ?? '-1',
     realname: reader.readString(offsets[15]),
+    recentAcSubmissionList: reader.readObjectList<RecentSubmission>(
+      offsets[16],
+      RecentSubmissionSchema.deserialize,
+      allOffsets,
+      RecentSubmission(),
+    ),
+    reputation: reader.readStringOrNull(offsets[17]) ?? '0',
+    solutionCount: reader.readStringOrNull(offsets[18]) ?? '0',
+    submissionActivity: reader.readObjectList<SubmissionCalendarDate>(
+      offsets[19],
+      SubmissionCalendarDateSchema.deserialize,
+      allOffsets,
+      SubmissionCalendarDate(),
+    ),
     totalActiveDays: reader.readLongOrNull(offsets[20]) ?? 0,
+    userContestRanking: reader.readObjectOrNull<ContestRanking>(
+      offsets[21],
+      ContestRankingSchema.deserialize,
+      allOffsets,
+    ),
+    userContestRankingHistory: reader.readObjectList<ContestSummary>(
+      offsets[22],
+      ContestSummarySchema.deserialize,
+      allOffsets,
+      ContestSummary(),
+    ),
     username: reader.readString(offsets[23]),
-  );
-  object.advancedTags = reader.readObjectList<TagsSolved>(
-    offsets[0],
-    TagsSolvedSchema.deserialize,
-    allOffsets,
-    TagsSolved(),
-  );
-  object.allQuestionsCount = reader.readObjectList<AllQuestions>(
-    offsets[1],
-    AllQuestionsSchema.deserialize,
-    allOffsets,
-    AllQuestions(),
-  );
-  object.badges = reader.readObjectList<UserBadge>(
-    offsets[3],
-    UserBadgeSchema.deserialize,
-    allOffsets,
-    UserBadge(),
-  );
-  object.fundamentalTags = reader.readObjectList<TagsSolved>(
-    offsets[4],
-    TagsSolvedSchema.deserialize,
-    allOffsets,
-    TagsSolved(),
-  );
-  object.githubUrl = reader.readStringOrNull(offsets[5]);
-  object.intermediateTags = reader.readObjectList<TagsSolved>(
-    offsets[6],
-    TagsSolvedSchema.deserialize,
-    allOffsets,
-    TagsSolved(),
-  );
-  object.languageProblemCount = reader.readObjectList<LanguageSubmission>(
-    offsets[7],
-    LanguageSubmissionSchema.deserialize,
-    allOffsets,
-    LanguageSubmission(),
-  );
-  object.linkedinUrl = reader.readStringOrNull(offsets[9]);
-  object.listOrder = reader.readLongOrNull(offsets[10]);
-  object.postViewCount = reader.readString(offsets[12]);
-  object.problemData = reader.readObjectOrNull<ProblemData>(
-    offsets[13],
-    ProblemDataSchema.deserialize,
-    allOffsets,
-  );
-  object.ranking = reader.readString(offsets[14]);
-  object.recentAcSubmissionList = reader.readObjectList<RecentSubmission>(
-    offsets[16],
-    RecentSubmissionSchema.deserialize,
-    allOffsets,
-    RecentSubmission(),
-  );
-  object.reputation = reader.readString(offsets[17]);
-  object.solutionCount = reader.readString(offsets[18]);
-  object.submissionActivity = reader.readObjectList<SubmissionCalendarDate>(
-    offsets[19],
-    SubmissionCalendarDateSchema.deserialize,
-    allOffsets,
-    SubmissionCalendarDate(),
-  );
-  object.userContestRanking = reader.readObjectOrNull<ContestRanking>(
-    offsets[21],
-    ContestRankingSchema.deserialize,
-    allOffsets,
-  );
-  object.userContestRankingHistory = reader.readObjectList<ContestSummary>(
-    offsets[22],
-    ContestSummarySchema.deserialize,
-    allOffsets,
-    ContestSummary(),
   );
   return object;
 }
@@ -586,7 +586,7 @@ P _userDataDeserializeProp<P>(
     case 11:
       return (reader.readStringOrNull(offset)) as P;
     case 12:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '0') as P;
     case 13:
       return (reader.readObjectOrNull<ProblemData>(
         offset,
@@ -594,7 +594,7 @@ P _userDataDeserializeProp<P>(
         allOffsets,
       )) as P;
     case 14:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '-1') as P;
     case 15:
       return (reader.readString(offset)) as P;
     case 16:
@@ -605,9 +605,9 @@ P _userDataDeserializeProp<P>(
         RecentSubmission(),
       )) as P;
     case 17:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '0') as P;
     case 18:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '0') as P;
     case 19:
       return (reader.readObjectList<SubmissionCalendarDate>(
         offset,
@@ -5146,7 +5146,7 @@ int _recentSubmissionEstimateSize(
     }
   }
   {
-    final value = object.timestamp;
+    final value = object.epochInSeconds;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -5173,7 +5173,7 @@ void _recentSubmissionSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.id);
-  writer.writeString(offsets[1], object.timestamp);
+  writer.writeString(offsets[1], object.epochInSeconds);
   writer.writeString(offsets[2], object.title);
   writer.writeString(offsets[3], object.titleSlug);
 }
@@ -5186,7 +5186,7 @@ RecentSubmission _recentSubmissionDeserialize(
 ) {
   final object = RecentSubmission(
     id: reader.readStringOrNull(offsets[0]),
-    timestamp: reader.readStringOrNull(offsets[1]),
+    epochInSeconds: reader.readStringOrNull(offsets[1]),
     title: reader.readStringOrNull(offsets[2]),
     titleSlug: reader.readStringOrNull(offsets[3]),
   );

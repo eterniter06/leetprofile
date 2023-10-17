@@ -186,7 +186,7 @@ class DataParser {
         title: submission['title'],
         id: submission['id'],
         titleSlug: submission['titleSlug'],
-        timestamp: submission['timestamp'],
+        epochInSeconds: submission['timestamp'],
       ));
     }
     dataMap['recentAcSubmissionList'] = recentSubmissionList;

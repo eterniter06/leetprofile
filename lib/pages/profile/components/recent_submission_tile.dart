@@ -35,15 +35,6 @@ class RecentSubmissionTile extends StatelessWidget {
     }
   }
 
-  // void _launchQuestionMenu() {
-  //   DropdownButton(
-  //     items: [
-  //       Text('Copy Question URL'),
-
-  //     ],
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Tooltip(
@@ -73,9 +64,9 @@ class RecentSubmissionTile extends StatelessWidget {
           title: Text(
             submission.title!,
           ),
-          trailing: Text(Time.timeOfDay(submission.timestamp!)),
+          trailing: Text(Time.timeOfDay(submission.epochInSeconds!)),
           subtitle: Text(
-            Time.dateLong(submission.timestamp!),
+            Time.dateLong(submission.epochInSeconds!),
             style: const TextStyle(
               fontSize: 12,
               inherit: true,
