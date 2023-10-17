@@ -34,7 +34,7 @@ class UserView extends StatefulWidget {
       this.refreshIconKey})
       : isReorderable = false;
 
-  const UserView.reorderable({super.key, required this.userData})
+  const UserView.reorderableAbsorbPointer({super.key, required this.userData})
       : refreshIconButton = null,
         refreshIconKey = null,
         isReorderable = true;

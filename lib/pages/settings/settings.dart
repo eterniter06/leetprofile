@@ -187,7 +187,7 @@ class _SettingsState extends State<Settings> {
                     MaterialPageRoute(
                       builder: (context) => Consumer<UserListModel>(
                         builder: (context, userList, child) =>
-                            UserView.reorderable(
+                            UserView.reorderableAbsorbPointer(
                                 userData: userList.userList[0]),
                       ),
                     ),
