@@ -123,11 +123,11 @@ class UserData {
   /// Whether the full asset name contains 'http' is the criteria to
   /// load a network (usually cached) image vs an asset image
   static UserData dummyUser = UserData(
-    username: 'User',
+    username: 'user',
     avatar: 'assets/default_avatar.png',
-    realname: 'User user',
+    realname: 'Coder',
     lastFetchTime: DateTime.now(),
-    nickname: 'Eternity',
+    nickname: 'Programmer',
     totalActiveDays: 100,
     listOrder: 0,
     postViewCount: '42',
@@ -153,56 +153,58 @@ class UserData {
     githubUrl: 'guthib.com',
     linkedinUrl: 'linkedin.com',
     languageProblemCount: <LanguageSubmission>[
-      LanguageSubmission(languageName: 'Miau', problemsSolved: 20),
-      LanguageSubmission(languageName: 'Bork bork', problemsSolved: 18),
+      LanguageSubmission(languageName: 'C', problemsSolved: 20),
+      LanguageSubmission(languageName: 'Java', problemsSolved: 18),
+      LanguageSubmission(languageName: 'Python3', problemsSolved: 18),
     ],
     recentAcSubmissionList: <RecentSubmission>[
       RecentSubmission(
           id: '1',
           epochInSeconds: (DateTime.now()
-                      .copyWith(day: Random().nextInt(7) + 3)
+                      .copyWith(day: DateTime.now().day - 4)
                       .millisecondsSinceEpoch /
-                  1000)
+                  Duration.millisecondsPerSecond)
               .truncate()
               .toString(),
-          title: 'Definitely'),
+          title: 'Hard question'),
       RecentSubmission(
           id: '2',
           epochInSeconds: (DateTime.now()
-                      .copyWith(day: Random().nextInt(6) - 3)
+                      .copyWith(day: DateTime.now().day - 1)
                       .millisecondsSinceEpoch /
-                  1000)
+                  Duration.millisecondsPerSecond)
               .truncate()
               .toString(),
-          title: 'Yeeee'),
+          title: 'Easy question #1'),
       RecentSubmission(
           id: '3',
-          epochInSeconds: (DateTime.now().millisecondsSinceEpoch / 1000)
+          epochInSeconds: (DateTime.now().millisecondsSinceEpoch /
+                  Duration.millisecondsPerSecond)
               .truncate()
               .toString(),
-          title: 'Answer'),
+          title: 'Easy question #2'),
     ],
     userContestRanking: ContestRanking(
-        attendedContestsCount: -43,
-        globalRanking: -3,
-        rating: 99999,
-        topPercentage: 123.5,
-        totalParticipants: -9),
+        attendedContestsCount: 3,
+        globalRanking: 334,
+        rating: 432,
+        topPercentage: 78,
+        totalParticipants: 9),
     userContestRankingHistory: <ContestSummary>[
       ContestSummary(
         problemsSolved: 1,
         finishTimeInSeconds: 68,
-        ranking: 2,
-        rating: -1234,
+        ranking: 2432,
+        rating: 1234,
         startTime: (DateTime.now().millisecondsSinceEpoch / 1000).truncate(),
         title: 'Kontest',
-        totalProblems: -5,
+        totalProblems: 5,
       ),
       ContestSummary(
         problemsSolved: 100,
         finishTimeInSeconds: 1,
-        ranking: -34,
-        rating: -1234,
+        ranking: 1,
+        rating: 9999,
         startTime:
             (DateTime.now().copyWith(day: -1).millisecondsSinceEpoch / 1000)
                 .truncate(),
@@ -212,8 +214,8 @@ class UserData {
       ContestSummary(
         problemsSolved: 2,
         finishTimeInSeconds: 90,
-        ranking: -89,
-        rating: -1234,
+        ranking: 89,
+        rating: 2344,
         startTime:
             (DateTime.now().copyWith(day: -2).millisecondsSinceEpoch / 1000)
                 .truncate(),
@@ -237,28 +239,32 @@ class UserData {
       mediumSubmissions: 60,
       mediumTotal: 400,
     ),
-    fundamentalTags: List<TagsSolved>.generate(
-      10,
-      (index) => TagsSolved(
-        tagName: 'Ez pz #$index',
-        problemsSolved: 100 + index * Random().nextInt(100),
+    fundamentalTags: <TagsSolved>[
+      TagsSolved(
+        problemsSolved: 2,
+        tagName: 'Playing',
       ),
-    ),
-    intermediateTags: List<TagsSolved>.generate(
-      10,
-      (index) => TagsSolved(
-        tagName: 'Okie dokie #${index - 2 + 6}',
-        problemsSolved: 10 - index + 6,
+      TagsSolved(
+        problemsSolved: 6,
+        tagName: 'Chilling',
       ),
-    ),
-    advancedTags: List<TagsSolved>.generate(
-      10,
-      (index) => TagsSolved(
-        tagName:
-            '*Sweats profusely* #${index * -1 + 2 + Random().nextInt(10) - 7}',
-        problemsSolved: 10 - index - 1,
+      TagsSolved(
+        problemsSolved: 3,
+        tagName: 'Relaxing',
       ),
-    ),
+    ],
+    intermediateTags: <TagsSolved>[
+      TagsSolved(problemsSolved: 3, tagName: 'Time management'),
+      TagsSolved(problemsSolved: 5, tagName: 'Finance management'),
+      TagsSolved(problemsSolved: 7, tagName: 'Cleaning'),
+    ],
+    advancedTags: <TagsSolved>[
+      TagsSolved(problemsSolved: 1, tagName: 'Relationship management'),
+      TagsSolved(problemsSolved: 1, tagName: 'Self care'),
+      TagsSolved(problemsSolved: 2, tagName: 'Discipline'),
+      TagsSolved(problemsSolved: 1, tagName: 'Diet'),
+      TagsSolved(problemsSolved: 3, tagName: 'Dedication'),
+    ],
   );
 
   UserData.fromMap({required Map dataMap, String? nickname})
