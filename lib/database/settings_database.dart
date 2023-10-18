@@ -94,7 +94,22 @@ class SettingsDatabase {
     bool? preference = _prefs!.getBool('showUsernamesOnHomeScreen');
 
     if (preference == null) {
-      _prefs!.setBool('showUsernamesOnHomeScreen', true);
+      changeShowUsernameOnHomeScreen(true);
+      return true;
+    }
+
+    return preference;
+  }
+
+  static void set24HourFormat(bool is24HourFormat) {
+    _prefs!.setBool('is24Hour', is24HourFormat);
+  }
+
+  static bool is24HourFormat() {
+    bool? preference = _prefs!.getBool('is24Hour');
+
+    if (preference == null) {
+      set24HourFormat(true);
       return true;
     }
 

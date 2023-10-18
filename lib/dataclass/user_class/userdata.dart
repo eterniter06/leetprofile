@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:isar/isar.dart';
 part 'userdata.g.dart';
 

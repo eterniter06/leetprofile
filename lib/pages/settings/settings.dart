@@ -74,7 +74,7 @@ class _SettingsState extends State<Settings> {
       body: ListView(
         children: [
           Section(
-            header: 'Profile',
+            header: 'Profile UI',
             children: [
               const SettingTileSwitch(
                 title: Text(
@@ -102,6 +102,13 @@ class _SettingsState extends State<Settings> {
                   databaseWriteCallback: (_) =>
                       settingsModel.toggleUsernameOnHomeScreenVisibility(),
                 ),
+              ),
+              const SettingTileSwitch(
+                databaseReadCallback: SettingsDatabase.is24HourFormat,
+                databaseWriteCallback: SettingsDatabase.set24HourFormat,
+                trueDescription: Text('Using 24 hour format'),
+                falseDescription: Text('Using Am/Pm'),
+                title: Text('Use 24 hour format'),
               ),
               SettingTile(
                 title:

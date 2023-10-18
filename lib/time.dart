@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:ui_elements/database/settings_database.dart';
 
 class Time {
   static String orindal(DateTime submissionTime) {
@@ -19,7 +20,11 @@ class Time {
             int.parse(epochInSeconds) * Duration.millisecondsPerSecond)
         .toLocal();
 
-    return DateFormat("HH:mm:ss").format(submissionTime);
+    String hour24 = "HH:mm:ss";
+    String hour12 = "hh:mm:ss a";
+
+    return DateFormat(SettingsDatabase.is24HourFormat() ? hour24 : hour12)
+        .format(submissionTime);
   }
 
   static String dateLong(String epochsInSeconds) {
