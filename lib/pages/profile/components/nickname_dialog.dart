@@ -19,17 +19,17 @@ class NicknameInputDialog extends StatefulWidget {
 }
 
 class _NicknameInputDialogState extends State<NicknameInputDialog> {
-  final _textController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final _nicknameController = TextEditingController();
+  final _nicknameFormKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    _textController.dispose();
+    _nicknameController.dispose();
     super.dispose();
   }
 
   void submitNickname() {
-    if (_formKey.currentState?.validate() ?? false) {
+    if (_nicknameFormKey.currentState?.validate() ?? false) {
       setState(() {
         ScaffoldMessenger.of(context).removeCurrentSnackBar();
       });
@@ -39,12 +39,12 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
           duration: const Duration(seconds: 2),
           showCloseIcon: true,
           content: Text(widget.oldNickname == null
-              ? 'Nickname set: ${_textController.text}'
-              : 'Nickname changed. ${widget.oldNickname} -> ${_textController.text}'),
+              ? 'Nickname set: ${_nicknameController.text}'
+              : 'Nickname changed. ${widget.oldNickname} -> ${_nicknameController.text}'),
         ),
       );
 
-      Navigator.pop(context, _textController.text);
+      Navigator.pop(context, _nicknameController.text);
     }
   }
 
@@ -86,10 +86,10 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
         ),
         const SizedBox(height: 16),
         Form(
-          key: _formKey,
+          key: _nicknameFormKey,
           child: TextFormField(
             autofocus: true,
-            controller: _textController,
+            controller: _nicknameController,
             validator: (String? username) {
               if (username == null || username.isEmpty) {
                 return 'Nickname cannot be empty.';

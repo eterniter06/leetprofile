@@ -12,17 +12,17 @@ class UserInputDialog extends StatefulWidget {
 }
 
 class _UserInputDialogState extends State<UserInputDialog> {
-  final _textController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _usernameFormKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    _textController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
   void submitUserInput() {
-    if (_formKey.currentState?.validate() ?? false) {
+    if (_usernameFormKey.currentState?.validate() ?? false) {
       setState(() {
         ScaffoldMessenger.of(context).removeCurrentSnackBar();
       });
@@ -32,12 +32,12 @@ class _UserInputDialogState extends State<UserInputDialog> {
           duration: const Duration(seconds: 3),
           showCloseIcon: true,
           content: Text(
-            'Searching user: ${_textController.text}',
+            'Searching user: ${_usernameController.text}',
           ),
         ),
       );
 
-      Navigator.pop(context, _textController.text);
+      Navigator.pop(context, _usernameController.text);
     }
   }
 
@@ -77,11 +77,11 @@ class _UserInputDialogState extends State<UserInputDialog> {
         ),
         const SizedBox(height: 16),
         Form(
-          key: _formKey,
+          key: _usernameFormKey,
           child: TextFormField(
             keyboardType: TextInputType.name,
             autofocus: true,
-            controller: _textController,
+            controller: _usernameController,
             onTapOutside: (event) => FocusScope.of(context).unfocus(),
             validator: (String? username) {
               if (username == null || username.isEmpty) {

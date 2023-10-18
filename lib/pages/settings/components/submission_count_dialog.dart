@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class SubmissionCountDialogBox extends StatefulWidget {
-  const SubmissionCountDialogBox({
+class ChangeCountDialogBox extends StatefulWidget {
+  const ChangeCountDialogBox({
     super.key,
     required this.previousSubmissionCount,
     required this.title,
@@ -15,23 +16,22 @@ class SubmissionCountDialogBox extends StatefulWidget {
   final String? semanticLabel;
 
   @override
-  State<SubmissionCountDialogBox> createState() =>
-      _SubmissionCountDialogBoxState();
+  State<ChangeCountDialogBox> createState() => _ChangeCountDialogBoxState();
 }
 
-class _SubmissionCountDialogBoxState extends State<SubmissionCountDialogBox> {
-  final _textController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+class _ChangeCountDialogBoxState extends State<ChangeCountDialogBox> {
+  final _countController = TextEditingController();
+  final _countFormKey = GlobalKey<FormState>();
 
   void submitCountValue() {
-    if (_formKey.currentState?.validate() ?? false) {
-      Navigator.pop(context, int.parse(_textController.text));
+    if (_countFormKey.currentState?.validate() ?? false) {
+      Navigator.pop(context, int.parse(_countController.text));
     }
   }
 
   @override
   void dispose() {
-    _textController.dispose();
+    _countController.dispose();
     super.dispose();
   }
 
@@ -50,11 +50,12 @@ class _SubmissionCountDialogBoxState extends State<SubmissionCountDialogBox> {
           padding: const EdgeInsets.fromLTRB(22, 16, 22, 8),
           child: Column(children: [
             Form(
-              key: _formKey,
+              key: _countFormKey,
               child: TextFormField(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 autofocus: true,
-                controller: _textController,
+                controller: _countController,
                 onTapOutside: (event) => FocusScope.of(context).unfocus(),
                 validator: (String? count) {
                   if (count == null || count.isEmpty) {

@@ -123,7 +123,7 @@ class _SettingsState extends State<Settings> {
                 onTap: () async {
                   int? count = await showDialog(
                     context: context,
-                    builder: (context) => SubmissionCountDialogBox(
+                    builder: (context) => ChangeCountDialogBox(
                       title: 'Change user submission count',
                       subtitle:
                           'Submissions shown unexpanded: $submissionCount',
@@ -160,7 +160,7 @@ class _SettingsState extends State<Settings> {
                 onTap: () async {
                   int? count = await showDialog(
                     context: context,
-                    builder: (context) => SubmissionCountDialogBox(
+                    builder: (context) => ChangeCountDialogBox(
                       title: 'Change default tag count',
                       subtitle: 'Tags shown by default: $tagCount',
                       semanticLabel:
