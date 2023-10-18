@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ui_elements/providers/theme.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
@@ -25,6 +26,8 @@ class SolvedProblemsCard extends StatelessWidget implements ClassName {
 
   @override
   Widget build(BuildContext context) {
+    Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
+
     return ProfileCard(
       profileHeader: 'Solved Problems',
       children: [
@@ -92,19 +95,25 @@ class SolvedProblemsCard extends StatelessWidget implements ClassName {
         Container(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             margin: const EdgeInsets.only(bottom: 8),
-            child: Text.rich(
-              TextSpan(
-                  text: 'Total problems solved: ',
-                  style: DefaultTextStyle.of(context).style,
-                  children: [
-                    TextSpan(
-                      text: getSolvedCount(problemData).toString(),
-                      style: const TextStyle(
-                        inherit: true,
-                        color: ThemeModeModel.lightSecondaryInverse,
+            child: Consumer<ThemeModeModel>(
+              builder: (context, themeModeModel, child) => Text.rich(
+                TextSpan(
+                    text: 'Total problems solved: ',
+                    style: DefaultTextStyle.of(context).style,
+                    children: [
+                      TextSpan(
+                        text: getSolvedCount(problemData).toString(),
+                        style: TextStyle(
+                          inherit: true,
+                          color: themeModeModel.equivalentThemeMode(
+                                      platformBrightness) ==
+                                  ThemeMode.light
+                              ? ThemeModeModel.lightSecondaryInverse
+                              : ThemeModeModel.lightPrimary,
+                        ),
                       ),
-                    ),
-                  ]),
+                    ]),
+              ),
             )
             // Text(
             //   'Total problems solved: ${getSolvedCount(problemData)}',

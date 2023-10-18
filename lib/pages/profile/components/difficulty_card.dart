@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:ui_elements/providers/theme.dart';
 
 class ProblemCard extends StatelessWidget {
   const ProblemCard({
@@ -10,7 +11,7 @@ class ProblemCard extends StatelessWidget {
     this.radius = 56,
     this.progressColor,
     this.backgroundArcColor,
-    this.containerColor,
+    required this.containerColor,
     this.borderColor = Colors.black,
   });
 
@@ -20,7 +21,7 @@ class ProblemCard extends StatelessWidget {
   final double radius;
   final Color? progressColor;
   final Color? backgroundArcColor;
-  final Color? containerColor;
+  final Color containerColor;
   final Color borderColor;
   double calculatePercent() {
     if (total == 0) return 0;
@@ -69,6 +70,9 @@ class ProblemCard extends StatelessWidget {
                     children: [
                       Text(
                         '$solved',
+                        style: TextStyle(
+                          color: ThemeModeModel.getInverseBW(containerColor),
+                        ),
                       ),
                       Divider(
                         endIndent: constraints.maxWidth * 1 / 3 * 60 / 100,
@@ -76,6 +80,9 @@ class ProblemCard extends StatelessWidget {
                       ),
                       Text(
                         '$total',
+                        style: TextStyle(
+                          color: ThemeModeModel.getInverseBW(containerColor),
+                        ),
                       ),
                     ],
                   ),

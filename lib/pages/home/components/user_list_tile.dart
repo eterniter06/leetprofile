@@ -14,11 +14,12 @@ class UserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
+
     return Material(
       child: Selector<SettingsModel, bool>(
         selector: (context, settingsModel) => settingsModel.showUsername,
         builder: (context, showUserName, child) => ListTile(
-          tileColor: ThemeModeModel.lightBackground,
           leading: CircularImage(imageLink: userData.avatar),
           title: Text(userData.nickname ??
               (userData.realname == ""
@@ -26,12 +27,18 @@ class UserCard extends StatelessWidget {
                   : userData.realname)),
           trailing: LastUpdatedText(lastUpdated: userData.lastFetchTime),
           subtitle: showUserName
-              ? Text(
-                  userData.username,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    inherit: true,
-                    color: ThemeModeModel.lightSecondaryInverse,
+              ? Consumer<ThemeModeModel>(
+                  builder: (context, themeModeModel, child) => Text(
+                    userData.username,
+                    style: TextStyle(
+                      fontSize: 12,
+                      inherit: true,
+                      color: themeModeModel
+                                  .equivalentThemeMode(platformBrightness) ==
+                              ThemeMode.light
+                          ? ThemeModeModel.lightSecondaryInverse
+                          : ThemeModeModel.lightPrimary,
+                    ),
                   ),
                 )
               : null,

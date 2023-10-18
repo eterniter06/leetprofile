@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
+
 import 'package:ui_elements/providers/theme.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
@@ -55,99 +57,105 @@ class _ContestCardState extends State<ContestCard> {
                 MediaQuery.of(context).orientation == Orientation.portrait
                     ? 2
                     : 4,
-            child: LineChart(
-              LineChartData(
-                lineTouchData: LineTouchData(
-                  enabled: true,
-                  touchCallback:
-                      (FlTouchEvent event, LineTouchResponse? touchResponse) {
-                    setState(() {
-                      if (event.isInterestedForInteractions) {
-                        indexTouched =
-                            touchResponse?.lineBarSpots?[0].x.toInt() ??
-                                indexTouched;
-                      } else {
-                        indexTouched = null;
-                      }
-                    });
-                  },
-                  getTouchedSpotIndicator:
-                      (LineChartBarData barData, List<int> indicators) {
-                    return indicators.map(
-                      (int index) {
-                        const line = FlLine(
-                            color: Colors.grey,
-                            strokeWidth: 1,
-                            dashArray: [2, 4]);
-                        return const TouchedSpotIndicatorData(
-                          line,
-                          FlDotData(show: false),
-                        );
-                      },
-                    ).toList();
-                  },
-                  touchTooltipData: LineTouchTooltipData(
-                    tooltipBgColor: ThemeModeModel.lightSecondary,
-                    tooltipRoundedRadius: 20.0,
-                    fitInsideVertically: true,
-                    showOnTopOfTheChartBoxArea: true,
-                    fitInsideHorizontally: true,
-                    tooltipMargin: 0,
-                    getTooltipItems: (touchedSpots) {
-                      return touchedSpots.map(
-                        (LineBarSpot touchedSpot) {
-                          ContestSummary contest =
-                              widget.contests[touchedSpot.spotIndex];
-
-                          return LineTooltipItem(
-                            "${contest.title!}\n${contest.rating}",
-                            const TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
+            child: Consumer<ThemeModeModel>(
+              builder: (context, themeModeModel, child) => LineChart(
+                LineChartData(
+                  lineTouchData: LineTouchData(
+                    enabled: true,
+                    touchCallback:
+                        (FlTouchEvent event, LineTouchResponse? touchResponse) {
+                      setState(() {
+                        if (event.isInterestedForInteractions) {
+                          indexTouched =
+                              touchResponse?.lineBarSpots?[0].x.toInt() ??
+                                  indexTouched;
+                        } else {
+                          indexTouched = null;
+                        }
+                      });
+                    },
+                    getTouchedSpotIndicator:
+                        (LineChartBarData barData, List<int> indicators) {
+                      return indicators.map(
+                        (int index) {
+                          const line = FlLine(
+                              color: Colors.grey,
+                              strokeWidth: 1,
+                              dashArray: [2, 4]);
+                          return const TouchedSpotIndicatorData(
+                            line,
+                            FlDotData(show: false),
                           );
                         },
                       ).toList();
                     },
-                  ),
-                ),
-                borderData: FlBorderData(
-                    border:
-                        const Border(bottom: BorderSide(), left: BorderSide())),
-                gridData: const FlGridData(show: false),
-                titlesData: const FlTitlesData(
-                  rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  topTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                ),
-                lineBarsData: [
-                  LineChartBarData(
-                    color: ThemeModeModel.lightPrimary,
-                    dotData: FlDotData(
-                      getDotPainter: (p0, p1, p2, p3) => FlDotCirclePainter(
-                          radius: 2.5,
-                          // Todo: invert colors according to dark/white mode
-                          color: Colors.white,
-                          strokeColor: Colors.black),
+                    touchTooltipData: LineTouchTooltipData(
+                      tooltipBgColor: ThemeModeModel.lightSecondary,
+                      tooltipRoundedRadius: 20.0,
+                      fitInsideVertically: true,
+                      showOnTopOfTheChartBoxArea: true,
+                      fitInsideHorizontally: true,
+                      tooltipMargin: 0,
+                      getTooltipItems: (touchedSpots) {
+                        return touchedSpots.map(
+                          (LineBarSpot touchedSpot) {
+                            ContestSummary contest =
+                                widget.contests[touchedSpot.spotIndex];
+
+                            return LineTooltipItem(
+                              "${contest.title!}\n${contest.rating}",
+                              const TextStyle(
+                                fontSize: 12,
+                                color: Colors.black,
+                              ),
+                            );
+                          },
+                        ).toList();
+                      },
                     ),
-                    spots: List.generate(
-                      widget.contests.length,
-                      (index) => FlSpot(
-                        index.toDouble(),
-                        widget.contests[index].rating!.toDouble(),
+                  ),
+                  borderData: FlBorderData(
+                      border: const Border(
+                          bottom: BorderSide(), left: BorderSide())),
+                  gridData: const FlGridData(show: false),
+                  titlesData: const FlTitlesData(
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                  ),
+                  lineBarsData: [
+                    LineChartBarData(
+                      color: themeModeModel.equivalentThemeMode(
+                                  MediaQuery.platformBrightnessOf(context)) ==
+                              ThemeMode.light
+                          ? ThemeModeModel.lightPrimary
+                          : ThemeModeModel.lightSecondaryInverse,
+                      dotData: FlDotData(
+                        getDotPainter: (p0, p1, p2, p3) => FlDotCirclePainter(
+                            radius: 2.5,
+                            // Todo: invert colors according to dark/white mode
+                            color: Colors.white,
+                            strokeColor: Colors.black),
+                      ),
+                      spots: List.generate(
+                        widget.contests.length,
+                        (index) => FlSpot(
+                          index.toDouble(),
+                          widget.contests[index].rating!.toDouble(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -240,17 +248,11 @@ class _ContestCardState extends State<ContestCard> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(Time.dateShort(widget
-                                    .contests[indexTouched!].startTime!
-                                    .toString())
-                                .replaceFirst(' ', '*')
-                                .replaceFirst(' ', '\n')
-                                .replaceFirst('*', ' ')
-                            // DateTime.fromMillisecondsSinceEpoch(
-                            //         widget.contests[indexTouched!].startTime! *
-                            //             1000)
-                            //     .toIso8601String()
-                            //     .substring(0, 10),
-                            )
+                                .contests[indexTouched!].startTime!
+                                .toString())
+                            .replaceFirst(' ', '*')
+                            .replaceFirst(' ', '\n')
+                            .replaceFirst('*', ' '))
                       ],
                     ),
                   )

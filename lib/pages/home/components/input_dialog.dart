@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:ui_elements/providers/theme.dart';
 
 class UserInputDialog extends StatefulWidget {
@@ -43,6 +44,8 @@ class _UserInputDialogState extends State<UserInputDialog> {
 
   @override
   Widget build(BuildContext context) {
+    Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
+
     return SimpleDialog(
       semanticLabel: 'Profile input dialog Box',
       title: SvgPicture.asset(
@@ -59,12 +62,17 @@ class _UserInputDialogState extends State<UserInputDialog> {
         const SizedBox(
           height: 16,
         ),
-        const Text(
-          'Add a profile',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 24,
-            color: ThemeModeModel.lightPrimaryInverse,
+        Consumer<ThemeModeModel>(
+          builder: (context, themeModeModel, child) => Text(
+            'Add a profile',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 24,
+              color: themeModeModel.equivalentThemeMode(platformBrightness) ==
+                      ThemeMode.light
+                  ? ThemeModeModel.lightPrimaryInverse
+                  : ThemeModeModel.lightPrimary,
+            ),
           ),
         ),
         const SizedBox(

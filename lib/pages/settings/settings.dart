@@ -67,6 +67,8 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
+    Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -113,18 +115,25 @@ class _SettingsState extends State<Settings> {
               SettingTile(
                 title:
                     const Text('Number of user submissions shown by default'),
-                description: Text.rich(
-                  TextSpan(
-                    style: ThemeModeModel.defaultSubtitleTextStyle,
-                    text:
-                        'The number of submisisons shown when the submission list is collapsed.\nSubmissions shown: ',
-                    children: [
-                      TextSpan(
-                        text: '$submissionCount',
-                        style: ThemeModeModel.defaultSubtitleTextStyle.copyWith(
-                            color: ThemeModeModel.lightSecondaryInverse),
-                      ),
-                    ],
+                description: Consumer<ThemeModeModel>(
+                  builder: (context, themeModel, child) => Text.rich(
+                    TextSpan(
+                      style: ThemeModeModel.defaultSubtitleTextStyle,
+                      text:
+                          'The number of submisisons shown when the submission list is collapsed.\nSubmissions shown: ',
+                      children: [
+                        TextSpan(
+                          text: '$submissionCount',
+                          style: ThemeModeModel.defaultSubtitleTextStyle
+                              .copyWith(
+                                  color: themeModel.equivalentThemeMode(
+                                              platformBrightness) ==
+                                          ThemeMode.light
+                                      ? ThemeModeModel.lightSecondaryInverse
+                                      : ThemeModeModel.lightPrimary),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 onTap: () async {
@@ -150,18 +159,25 @@ class _SettingsState extends State<Settings> {
               ),
               SettingTile(
                 title: const Text('Number of tags shown by default'),
-                description: Text.rich(
-                  TextSpan(
-                    style: ThemeModeModel.defaultSubtitleTextStyle,
-                    text:
-                        'The number of problem tags shown by default.\nTags shown: ',
-                    children: [
-                      TextSpan(
-                        text: '$tagCount',
-                        style: ThemeModeModel.defaultSubtitleTextStyle.copyWith(
-                            color: ThemeModeModel.lightSecondaryInverse),
-                      ),
-                    ],
+                description: Consumer<ThemeModeModel>(
+                  builder: (context, themeModel, child) => Text.rich(
+                    TextSpan(
+                      style: ThemeModeModel.defaultSubtitleTextStyle,
+                      text:
+                          'The number of problem tags shown by default.\nTags shown: ',
+                      children: [
+                        TextSpan(
+                          text: '$tagCount',
+                          style: ThemeModeModel.defaultSubtitleTextStyle
+                              .copyWith(
+                                  color: themeModel.equivalentThemeMode(
+                                              platformBrightness) ==
+                                          ThemeMode.light
+                                      ? ThemeModeModel.lightSecondaryInverse
+                                      : ThemeModeModel.lightPrimary),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 onTap: () async {
@@ -187,7 +203,6 @@ class _SettingsState extends State<Settings> {
               SettingTile(
                 title: const Text('Change profile layout'),
                 description: const Text(
-                    //TODO: Use a dummy profile, not the first profile in the list
                     'Change the way profile details are ordered. Hold section name and then drag and drop to set your own layout.'),
                 onTap: () async {
                   List<String>? order = await Navigator.of(context).push(
@@ -430,15 +445,19 @@ class _SettingsState extends State<Settings> {
                   },
                 ),
               ),
-              Consumer<UserListModel>(
-                builder: (context, userListModel, child) => SettingTile(
+              Consumer2<UserListModel, ThemeModeModel>(
+                builder: (context, userListModel, themeModel, child) =>
+                    SettingTile(
                   title: const Text(
                     'Clear Data',
                   ),
                   titleTextStyle: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Overpass',
-                    color: Colors.red.shade600,
+                    color: themeModel.equivalentThemeMode(platformBrightness) ==
+                            ThemeMode.light
+                        ? Colors.red.shade600
+                        : Colors.red.shade400,
                   ),
                   description: Text.rich(TextSpan(
                     style: ThemeModeModel.defaultSubtitleTextStyle,
@@ -446,8 +465,12 @@ class _SettingsState extends State<Settings> {
                     children: [
                       TextSpan(
                         text: 'This cannot be undone',
-                        style: ThemeModeModel.defaultSubtitleTextStyle
-                            .copyWith(color: Colors.red.shade900),
+                        style: ThemeModeModel.defaultSubtitleTextStyle.copyWith(
+                            color: themeModel.equivalentThemeMode(
+                                        platformBrightness) ==
+                                    ThemeMode.light
+                                ? Colors.red.shade900
+                                : Colors.red.shade400),
                       ),
                     ],
                   )),
@@ -458,7 +481,12 @@ class _SettingsState extends State<Settings> {
                             context: context,
                             builder: (dialogContext) => AlertDialog(
                               title: Text('Delete all data?',
-                                  style: TextStyle(color: Colors.red.shade700)),
+                                  style: TextStyle(
+                                      color: themeModel.equivalentThemeMode(
+                                                  platformBrightness) ==
+                                              ThemeMode.light
+                                          ? Colors.red.shade700
+                                          : Colors.red.shade400)),
                               content: const Text(
                                   'This will delete all stored users and their profile data on this app. Your import files will not be deleted.'),
                               actions: [

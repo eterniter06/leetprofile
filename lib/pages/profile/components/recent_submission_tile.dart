@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:ui_elements/time.dart';
 
@@ -37,6 +38,8 @@ class RecentSubmissionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
+
     return Tooltip(
       message: 'Visit question',
       child: InkWell(
@@ -65,12 +68,17 @@ class RecentSubmissionTile extends StatelessWidget {
             submission.title!,
           ),
           trailing: Text(Time.timeOfDay(submission.epochInSeconds!)),
-          subtitle: Text(
-            Time.dateLong(submission.epochInSeconds!),
-            style: const TextStyle(
-              fontSize: 12,
-              inherit: true,
-              color: ThemeModeModel.lightSecondaryInverse,
+          subtitle: Consumer<ThemeModeModel>(
+            builder: (context, themeModeModel, child) => Text(
+              Time.dateLong(submission.epochInSeconds!),
+              style: TextStyle(
+                fontSize: 12,
+                inherit: true,
+                color: themeModeModel.equivalentThemeMode(platformBrightness) ==
+                        ThemeMode.light
+                    ? ThemeModeModel.lightSecondaryInverse
+                    : ThemeModeModel.lightPrimary,
+              ),
             ),
           ),
         ),

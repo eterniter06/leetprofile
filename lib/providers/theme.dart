@@ -19,10 +19,138 @@ class ThemeModeModel extends ChangeNotifier {
         : const Color(0xff000000);
   }
 
+  static const Color darkBackground = Color.fromARGB(255, 19, 19, 19);
+
   static ThemeData dark = ThemeData(
+    iconButtonTheme: IconButtonThemeData(
+      style: ButtonStyle(
+        iconColor: MaterialStateColor.resolveWith(
+          (states) {
+            if (states.contains(MaterialState.disabled)) {
+              return Colors.grey.shade600;
+            }
+            return black;
+          },
+        ),
+      ),
+    ),
     useMaterial3: true,
     brightness: Brightness.dark,
     fontFamily: 'Overpass',
+    scaffoldBackgroundColor: black,
+    dialogBackgroundColor: black,
+    radioTheme: RadioThemeData(
+      fillColor: MaterialStateColor.resolveWith(
+        (states) {
+          if (states.contains(MaterialState.pressed)) {
+            return lightSecondaryInverse;
+          }
+          if (states.contains(MaterialState.selected)) {
+            return lightSecondaryInverse;
+          }
+          return Colors.grey;
+        },
+      ),
+    ),
+    cardTheme: const CardTheme(
+      color: darkBackground,
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: MaterialStateColor.resolveWith(
+        (states) {
+          if (states.contains(MaterialState.selected)) {
+            return lightPrimaryInverse;
+          }
+          return darkBackground;
+        },
+      ),
+      trackColor: MaterialStateColor.resolveWith(
+        (states) {
+          if (states.contains(MaterialState.selected)) {
+            return lightPrimary;
+          } else if (states.contains(MaterialState.pressed)) {
+            return lightPrimary;
+          }
+          return lightSecondary;
+        },
+      ),
+    ),
+    appBarTheme: const AppBarTheme(
+      foregroundColor: black,
+      centerTitle: false,
+      backgroundColor: lightPrimary,
+      actionsIconTheme: IconThemeData(
+        color: black,
+      ),
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: lightPrimary,
+      foregroundColor: black,
+    ),
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: lightSecondary,
+      selectionColor: lightPrimaryInverse,
+    ),
+    inputDecorationTheme: const InputDecorationTheme(
+      outlineBorder: BorderSide(
+        style: BorderStyle.solid,
+        color: lightSecondary,
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.grey,
+        ),
+      ),
+      border: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.grey,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: lightPrimary,
+        ),
+      ),
+      floatingLabelStyle: TextStyle(
+        color: lightPrimary,
+      ),
+      contentPadding: EdgeInsets.only(left: 8),
+      focusColor: lightPrimary,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return lightPrimary;
+          }
+          return lightSecondary;
+        }),
+        foregroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return lightPrimaryInverse;
+          }
+          return lightSecondaryInverse;
+        }),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        side: const MaterialStatePropertyAll(
+            BorderSide(color: Color.fromARGB(255, 209, 164, 96))),
+        backgroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return lightPrimary;
+          }
+          return lightSecondary;
+        }),
+        foregroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return lightPrimaryInverse;
+          }
+          return lightSecondaryInverse;
+        }),
+      ),
+    ),
   );
 
   // Contrasing pair of colors
@@ -50,32 +178,12 @@ class ThemeModeModel extends ChangeNotifier {
   static const Color black = Colors.black;
   static const Color white = Colors.white;
 
-  // static ThemeData light = ThemeData.from(
-  //   useMaterial3: true,
-  //   colorScheme: const ColorScheme.light(
-  //     brightness: Brightness.light,
-  //     primary: lightPrimary,
-  //     onPrimary: lightPrimaryInverse,
-  //     secondary: lightSecondary,
-  //     onSecondary: lightSecondaryInverse,
-  //     background: Colors.white,
-  //     onBackground: Colors.black,
-
-  //   ),
-  // );
-
   static ThemeData light = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
     fontFamily: 'Overpass',
-
-    // ListTile is not themed here
-    // For listTile, check lib/pages/home/components/user_list_tile.dart
-
-    // textTheme: TextTheme(bodyMedium: TextStyle(color: Color(0xffF9BD5F))),
-    // primaryTextTheme: TextTheme(),
     scaffoldBackgroundColor: white,
-    dialogBackgroundColor: white,
+    dialogBackgroundColor: lightBackground2,
     radioTheme: RadioThemeData(
       fillColor: MaterialStateColor.resolveWith(
         (states) {
@@ -193,5 +301,14 @@ class ThemeModeModel extends ChangeNotifier {
     } else {
       throw "Invalid value for ThemeMode: $modeAsString";
     }
+  }
+
+  ThemeMode equivalentThemeMode(Brightness platformBrightness) {
+    if (themeMode == ThemeMode.system) {
+      return platformBrightness == Brightness.dark
+          ? ThemeMode.dark
+          : ThemeMode.light;
+    }
+    return themeMode;
   }
 }

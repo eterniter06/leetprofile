@@ -46,6 +46,10 @@ class _SkillsCardState extends State<SkillsCard> {
             color: ThemeModeModel.fundamentalBorder,
           ),
           label: Text("${skill.tagName!} x${skill.problemsSolved}"),
+          labelStyle: TextStyle(
+            color: ThemeModeModel.getInverseBW(
+                ThemeModeModel.fundamentalBackground),
+          ),
           backgroundColor: ThemeModeModel.fundamentalBackground,
         );
         fundamentalWidgets.add(fundamentalSkillChip);
@@ -59,6 +63,10 @@ class _SkillsCardState extends State<SkillsCard> {
             color: ThemeModeModel.intermediateBorder,
           ),
           label: Text("${skill.tagName!} x${skill.problemsSolved}"),
+          labelStyle: TextStyle(
+            color: ThemeModeModel.getInverseBW(
+                ThemeModeModel.intermediateBackground),
+          ),
           backgroundColor: ThemeModeModel.intermediateBackground,
         );
         intermediateWidgets.add(intermediateSkillChip);
@@ -72,6 +80,10 @@ class _SkillsCardState extends State<SkillsCard> {
             color: ThemeModeModel.advancedBorder,
           ),
           label: Text("${skill.tagName!} x${skill.problemsSolved}"),
+          labelStyle: TextStyle(
+            color:
+                ThemeModeModel.getInverseBW(ThemeModeModel.advancedBackground),
+          ),
           backgroundColor: ThemeModeModel.advancedBackground,
         );
         advancedWidgets.add(advancedSkillChip);

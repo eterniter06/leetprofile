@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:ui_elements/providers/theme.dart';
 
 class NicknameInputDialog extends StatefulWidget {
@@ -58,6 +59,8 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
 
   @override
   Widget build(BuildContext context) {
+    Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
+
     return SimpleDialog(
       contentPadding: const EdgeInsets.fromLTRB(26, 12, 26, 16),
       title: SvgPicture.asset(
@@ -65,24 +68,35 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
         height: 200,
       ),
       children: [
-        Text.rich(
-          TextSpan(
-              style: DefaultTextStyle.of(context).style.copyWith(
-                    fontSize: 24,
+        Consumer<ThemeModeModel>(
+          builder: (context, themeModeModel, child) => Text.rich(
+            TextSpan(
+                style: DefaultTextStyle.of(context).style.copyWith(
+                      color: themeModeModel
+                                  .equivalentThemeMode(platformBrightness) ==
+                              ThemeMode.light
+                          ? ThemeModeModel.black
+                          : ThemeModeModel.white,
+                      fontSize: 24,
+                    ),
+                text: widget.oldNickname == null
+                    ? 'Enter a nickname for\n'
+                    : 'Enter a new nickname for\n',
+                children: [
+                  TextSpan(
+                    text: displayName(),
+                    style: TextStyle(
+                      inherit: true,
+                      color: themeModeModel
+                                  .equivalentThemeMode(platformBrightness) ==
+                              ThemeMode.light
+                          ? ThemeModeModel.lightPrimaryInverse
+                          : ThemeModeModel.lightPrimary,
+                    ),
                   ),
-              text: widget.oldNickname == null
-                  ? 'Enter a nickname for\n'
-                  : 'Enter a new nickname for\n',
-              children: [
-                TextSpan(
-                  text: displayName(),
-                  style: const TextStyle(
-                    inherit: true,
-                    color: ThemeModeModel.lightPrimaryInverse,
-                  ),
-                ),
-              ]),
-          textAlign: TextAlign.center,
+                ]),
+            textAlign: TextAlign.center,
+          ),
         ),
         const SizedBox(height: 16),
         Form(

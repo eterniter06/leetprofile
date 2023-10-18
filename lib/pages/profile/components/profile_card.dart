@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ui_elements/providers/theme.dart';
 
 class ProfileCard extends StatelessWidget {
   const ProfileCard({super.key, this.children, this.profileHeader});
@@ -8,6 +10,8 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -17,11 +21,17 @@ class ProfileCard extends StatelessWidget {
             if (profileHeader != null)
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  profileHeader!,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: Color(0xff6F480C),
+                child: Consumer<ThemeModeModel>(
+                  builder: (context, themeModeModel, child) => Text(
+                    profileHeader!,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: themeModeModel
+                                  .equivalentThemeMode(platformBrightness) ==
+                              ThemeMode.light
+                          ? ThemeModeModel.lightPrimaryInverse
+                          : ThemeModeModel.lightPrimary,
+                    ),
                   ),
                 ),
               ),

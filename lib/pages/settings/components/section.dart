@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ui_elements/providers/theme.dart';
 
 class Section extends StatelessWidget {
@@ -13,16 +14,24 @@ class Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
+
     return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
-            child: Text(
-              header,
-              style:
-                  const TextStyle(color: ThemeModeModel.lightSecondaryInverse),
+            child: Consumer<ThemeModeModel>(
+              builder: (context, themeModeModel, child) => Text(
+                header,
+                style: TextStyle(
+                    color: themeModeModel
+                                .equivalentThemeMode(platformBrightness) ==
+                            ThemeMode.light
+                        ? ThemeModeModel.lightSecondaryInverse
+                        : ThemeModeModel.lightPrimary),
+              ),
             ),
           ),
           if (children != null) ...children!,

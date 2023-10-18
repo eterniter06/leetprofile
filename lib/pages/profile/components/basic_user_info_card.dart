@@ -27,6 +27,8 @@ class BasicInfoExp extends StatelessWidget implements ClassName {
 
   @override
   Widget build(BuildContext context) {
+    Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.only(top: 20, bottom: 8),
@@ -57,11 +59,17 @@ class BasicInfoExp extends StatelessWidget implements ClassName {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
-                          userData.username,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: ThemeModeModel.lightSecondaryInverse,
+                        Consumer<ThemeModeModel>(
+                          builder: (context, themeModeModel, child) => Text(
+                            userData.username,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: themeModeModel.equivalentThemeMode(
+                                          platformBrightness) ==
+                                      ThemeMode.light
+                                  ? ThemeModeModel.lightSecondaryInverse
+                                  : ThemeModeModel.lightPrimary,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -102,14 +110,11 @@ class BasicInfoExp extends StatelessWidget implements ClassName {
                           // color: const Color(0xff171515),
                           // Workaround so that github logo is visible against dark background
                           // Check to see if logo color and background can be adjusted
-                          color: themeModel.themeMode == ThemeMode.system
-                              ? MediaQuery.of(context).platformBrightness ==
-                                      Brightness.dark
-                                  ? const Color(0xffffffff)
-                                  : const Color(0xff171515)
-                              : themeModel.themeMode == ThemeMode.dark
-                                  ? const Color(0xffffffff)
-                                  : const Color(0xff171515),
+                          color: themeModel.equivalentThemeMode(
+                                      platformBrightness) ==
+                                  ThemeMode.light
+                              ? const Color(0xff171515)
+                              : const Color(0xffffffff),
                           socialMedia: 'Github',
                         ),
                       ),

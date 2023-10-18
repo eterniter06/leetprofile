@@ -80,6 +80,10 @@ class LanguageCard extends StatelessWidget {
                     ),
                     child: Text(
                       languageDetails.problemsSolved.toString(),
+                      style: TextStyle(
+                        color: ThemeModeModel.getInverseBW(
+                            ThemeModeModel.fundamentalBackground),
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
