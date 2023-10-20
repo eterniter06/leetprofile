@@ -20,7 +20,6 @@ class DismissibleListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool removed = false;
-
     // TODO: Adjust sensitivity of drag
     // TODO: Determine if this is a good location for the removed variable
     return Consumer<UserListModel>(
@@ -46,31 +45,36 @@ class DismissibleListTile extends StatelessWidget {
             // and option to stack undo users due to indexing conflict
             // e.g. Delete user at index 5 in a list of size 6 and then delete 2 more users
             // Since list size is now smaller than initial index, exception is thrown
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                duration: const Duration(seconds: 6),
-                content: Text.rich(
-                  TextSpan(
-                    text: 'User ',
-                    children: [
-                      TextSpan(
-                        text: userData.nickname ?? userData.username,
-                      ),
-                      const TextSpan(text: ' removed from list'),
-                    ],
-                  ),
-                ),
-                action: SnackBarAction(
-                  label: 'Undo?',
-                  onPressed: () {
-                    userListModel.insertUser(index, userData);
-                    removed = false;
-                  },
+
+            SnackBar undoDeleteSnack = SnackBar(
+              duration: const Duration(seconds: 6),
+              content: Text.rich(
+                TextSpan(
+                  text: 'User ',
+                  children: [
+                    TextSpan(
+                      text: userData.nickname ?? userData.username,
+                    ),
+                    const TextSpan(text: ' removed from list'),
+                  ],
                 ),
               ),
+              action: SnackBarAction(
+                label: 'Undo?',
+                onPressed: () {
+                  userListModel.insertUser(index, userData);
+                  removed = false;
+                },
+              ),
             );
+
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldFeatureController<SnackBar, SnackBarClosedReason> sfc =
+                ScaffoldMessenger.of(context).showSnackBar(undoDeleteSnack);
+
+            await sfc.closed;
           }
+
           if (removed) {
             UserDatabase.delete(userData);
             userListModel.refreshListOrder();
