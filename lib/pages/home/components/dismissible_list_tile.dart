@@ -50,10 +50,8 @@ class DismissibleListTile extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 duration: const Duration(seconds: 6),
-                showCloseIcon: true,
-                content: RichText(
-                  softWrap: true,
-                  text: TextSpan(
+                content: Text.rich(
+                  TextSpan(
                     text: 'User ',
                     children: [
                       TextSpan(
