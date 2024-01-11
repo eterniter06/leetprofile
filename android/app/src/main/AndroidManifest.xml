@@ -17,6 +17,7 @@
         android:label="LeetProfile"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- android:enableOnBackInvokedCallback="true"> --> <!-- Not clearly implemented in flutter yet (may require version 3.14 or higher) -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
