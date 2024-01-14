@@ -38,7 +38,6 @@ class _NicknameInputDialogState extends State<NicknameInputDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: const Duration(seconds: 2),
-          showCloseIcon: true,
           content: Text(widget.oldNickname == null
               ? 'Nickname set: ${_nicknameController.text}'
               : 'Nickname changed. ${widget.oldNickname} -> ${_nicknameController.text}'),

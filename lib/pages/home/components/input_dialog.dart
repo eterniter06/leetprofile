@@ -31,7 +31,6 @@ class _UserInputDialogState extends State<UserInputDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: const Duration(seconds: 3),
-          showCloseIcon: true,
           content: Text(
             'Searching user: ${_usernameController.text}',
           ),

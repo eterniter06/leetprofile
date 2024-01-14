@@ -151,6 +151,13 @@ class ThemeModeModel extends ChangeNotifier {
         }),
       ),
     ),
+    snackBarTheme: const SnackBarThemeData(
+      actionTextColor: ThemeModeModel.lightSecondaryInverse,
+      actionBackgroundColor: Color.fromARGB(255, 255, 226, 182),
+      showCloseIcon: true,
+      closeIconColor: ThemeModeModel.lightPrimary,
+      backgroundColor: lightBackground2,
+    ),
   );
 
   // Contrasing pair of colors
@@ -285,6 +292,12 @@ class ThemeModeModel extends ChangeNotifier {
           return lightSecondaryInverse;
         }),
       ),
+    ),
+    snackBarTheme: const SnackBarThemeData(
+      actionTextColor: ThemeModeModel.lightSecondaryInverse,
+      actionBackgroundColor: ThemeModeModel.lightBackground2,
+      showCloseIcon: true,
+      closeIconColor: ThemeModeModel.lightPrimary,
     ),
   );
 

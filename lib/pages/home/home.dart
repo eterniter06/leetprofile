@@ -153,7 +153,6 @@ class _UserListPageState extends State<UserListPage> {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          showCloseIcon: true,
           content: content,
           action: action,
         ),

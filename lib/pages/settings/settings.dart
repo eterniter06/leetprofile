@@ -317,7 +317,6 @@ class _SettingsState extends State<Settings> {
                               const SnackBar(
                                 content: Text('No data to export'),
                                 duration: Duration(seconds: 2),
-                                showCloseIcon: true,
                               ),
                             );
                             return;
@@ -417,26 +416,31 @@ class _SettingsState extends State<Settings> {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
                             content: Text('All users are already in list'),
-                            showCloseIcon: true,
                           ));
                           return;
-                        } else {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text('Loading user data'),
-                              duration: Duration(seconds: 2),
-                              showCloseIcon: true,
-                            ));
-                          }
                         }
 
-                        List userList = await Future.wait(futureGroup);
                         if (mounted) {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
+                            content: Text('Loading user data'),
+                            duration: Duration(seconds: 2),
+                          ));
+                        }
+
+                        List userList = await Future.wait(futureGroup);
+
+                        /// * Weird experiment
+                        GlobalKey<ScaffoldState> rootScaffoldKey =
+                            RootScaffoldKey().scaffoldkey;
+
+                        BuildContext? rootContext =
+                            rootScaffoldKey.currentContext;
+
+                        if (rootContext!.mounted) {
+                          ScaffoldMessenger.of(rootContext)
+                              .showSnackBar(const SnackBar(
                             content: Text('Users added'),
-                            showCloseIcon: true,
                           ));
                         }
                         userListModel.importUsersFromList(userList);
@@ -532,7 +536,6 @@ class _SettingsState extends State<Settings> {
                                           .showSnackBar(
                                         SnackBar(
                                           content: Text(snackBarMessage),
-                                          showCloseIcon: true,
                                           duration: const Duration(seconds: 3),
                                         ),
                                       );

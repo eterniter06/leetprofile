@@ -252,7 +252,6 @@ class _UserViewState extends State<UserView>
                       ScaffoldMessenger.of(context).removeCurrentSnackBar();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          showCloseIcon: true,
                           content: Text('User profile has been refreshed.'),
                         ),
                       );
