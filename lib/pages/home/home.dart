@@ -214,6 +214,7 @@ class _UserListPageState extends State<UserListPage> {
     context.watch<SettingsModel>();
 
     return Scaffold(
+      key: RootScaffoldKey().scaffoldkey,
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add new User',
         onPressed: () => addUser(),
