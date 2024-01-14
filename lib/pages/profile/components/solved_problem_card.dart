@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ui_elements/providers/theme.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
-import 'package:ui_elements/interfaces.dart';
+import 'package:ui_elements/common_components/interfaces.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
 import 'difficulty_card.dart';

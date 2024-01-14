@@ -11,7 +11,5 @@ void main() async {
   await UserDatabase.init();
   await SettingsDatabase.init();
 
-  runApp(
-    const LeetProfile(),
-  );
+  runApp(const LeetProfile());
 }

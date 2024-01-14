@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:ui_elements/time.dart';
+import 'package:ui_elements/common_components/lib/time.dart';
 
 import 'package:ui_elements/providers/theme.dart';
 

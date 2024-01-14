@@ -5,7 +5,7 @@ import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
 
-import '../../../interfaces.dart';
+import '../../../common_components/interfaces.dart';
 import 'recent_submission_tile.dart';
 
 class RecentSubmissionCard extends StatefulWidget implements ClassName {

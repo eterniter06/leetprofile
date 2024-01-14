@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
-import 'package:ui_elements/interfaces.dart';
+import 'package:ui_elements/common_components/interfaces.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
 import 'language_card.dart';
 

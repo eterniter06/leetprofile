@@ -6,7 +6,7 @@ import 'package:ui_elements/providers/user_list.dart';
 import 'package:ui_elements/pages/profile/user_view.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
-import 'package:ui_elements/common_components/refresh_icon_button.dart';
+import 'package:ui_elements/common_components/widgets/refresh_icon_button.dart';
 
 import 'dismissible_list_tile.dart';
 import 'user_list_tile.dart';

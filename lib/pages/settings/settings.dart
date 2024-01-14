@@ -11,6 +11,7 @@ import 'package:ui_elements/pages/profile/user_view.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/providers/settings.dart';
+import 'package:ui_elements/common_components/ui_vars.dart';
 
 import 'components/section.dart';
 import 'components/setting_option.dart';

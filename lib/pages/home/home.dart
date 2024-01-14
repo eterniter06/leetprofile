@@ -14,7 +14,8 @@ import 'package:ui_elements/providers/settings.dart';
 
 import 'package:ui_elements/pages/about/about.dart';
 import 'package:ui_elements/pages/settings/settings.dart';
-import 'package:ui_elements/common_components/refresh_icon_button.dart';
+import 'package:ui_elements/common_components/widgets/refresh_icon_button.dart';
+import 'package:ui_elements/common_components/ui_vars.dart';
 import 'package:uni_links/uni_links.dart';
 
 import 'components/input_dialog.dart';

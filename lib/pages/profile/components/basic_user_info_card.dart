@@ -6,8 +6,8 @@ import 'package:ui_elements/providers/theme.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
-import 'package:ui_elements/common_components/circular_network.dart';
-import 'package:ui_elements/interfaces.dart';
+import 'package:ui_elements/common_components/widgets/circular_image.dart';
+import 'package:ui_elements/common_components/interfaces.dart';
 import 'social_media_button.dart';
 
 class BasicInfoExp extends StatelessWidget implements ClassName {

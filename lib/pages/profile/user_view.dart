@@ -9,7 +9,7 @@ import 'package:ui_elements/database/user_database.dart';
 
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
-import 'package:ui_elements/common_components/refresh_icon_button.dart';
+import 'package:ui_elements/common_components/widgets/refresh_icon_button.dart';
 
 import 'components/badge_card.dart';
 import 'components/basic_user_info_card.dart';

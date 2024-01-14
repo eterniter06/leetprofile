@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:ui_elements/providers/theme.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
-import 'package:ui_elements/common_components/circular_network.dart';
+import 'package:ui_elements/common_components/widgets/circular_image.dart';
 import 'package:ui_elements/pages/home/components/last_updated_text.dart';
 
 import 'package:ui_elements/providers/settings.dart';
