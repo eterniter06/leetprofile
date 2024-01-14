@@ -5,30 +5,72 @@ import 'package:flutter/material.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/common_components/interfaces.dart';
 import 'package:ui_elements/pages/profile/components/profile_card.dart';
+import 'package:ui_elements/pages/profile/components/trailing_scroll_button.dart';
 
-class BadgeCard extends StatelessWidget implements ClassName {
+class BadgeCard extends StatefulWidget implements ClassName {
   const BadgeCard({super.key, required this.badges});
   final List<UserBadge> badges;
+
+  @override
+  State<BadgeCard> createState() => _BadgeCardState();
+
+  @override
+  String className() {
+    return 'BadgeCard';
+  }
+}
+
+class _BadgeCardState extends State<BadgeCard> {
+  bool isScrollable = false;
+
+  late ScrollController scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    scrollController = ScrollController();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (scrollController.position.maxScrollExtent > 0) {
+        setState(() {
+          isScrollable = true;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return ProfileCard(
       header: 'Badges',
+      trailer: isScrollable
+          ? TrailingScrollButton(scrollController: scrollController)
+          : null,
       children: [
         SingleChildScrollView(
+          controller: scrollController,
           scrollDirection: Axis.horizontal,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              for (int index = 0; index < badges.length; ++index) ...{
+              for (int index = 0; index < widget.badges.length; ++index) ...{
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
                       SizedBox(
                         width: min(MediaQuery.of(context).size.width / 4, 160),
-                        child: BadgeIcon(badgeLink: badges[index].iconLink!),
+                        child: BadgeIcon(
+                            badgeLink: widget.badges[index].iconLink!),
                       ),
                       SizedBox(
                         width: min(MediaQuery.of(context).size.width / 4, 160),
@@ -36,7 +78,7 @@ class BadgeCard extends StatelessWidget implements ClassName {
                         child: Center(
                           child: Wrap(children: [
                             Text(
-                              badges[index].displayName!,
+                              widget.badges[index].displayName!,
                               softWrap: true,
                             ),
                           ]),
@@ -52,11 +94,6 @@ class BadgeCard extends StatelessWidget implements ClassName {
         ),
       ],
     );
-  }
-
-  @override
-  String className() {
-    return 'BadgeCard';
   }
 }
 

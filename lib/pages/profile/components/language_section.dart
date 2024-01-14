@@ -18,8 +18,7 @@ class LanguageSection extends StatefulWidget implements ClassName {
   }
 }
 
-class _LanguageSectionState extends State<LanguageSection>
-    with TickerProviderStateMixin {
+class _LanguageSectionState extends State<LanguageSection> {
   late ScrollController scrollController;
 
   bool isScrollable = false;
