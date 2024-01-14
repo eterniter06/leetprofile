@@ -48,7 +48,10 @@ class _LanguageSectionState extends State<LanguageSection> {
     return ProfileCard(
       header: 'Languages',
       trailer: isScrollable
-          ? TrailingScrollButton(scrollController: scrollController)
+          ? TrailingScrollButton(
+              scrollController: scrollController,
+              tooltip: 'Scroll languages',
+            )
           : null,
       children: [
         SizedBox(

@@ -52,7 +52,10 @@ class _BadgeCardState extends State<BadgeCard> {
     return ProfileCard(
       header: 'Badges',
       trailer: isScrollable
-          ? TrailingScrollButton(scrollController: scrollController)
+          ? TrailingScrollButton(
+              scrollController: scrollController,
+              tooltip: 'Scroll badges',
+            )
           : null,
       children: [
         SingleChildScrollView(

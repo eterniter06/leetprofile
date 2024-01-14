@@ -4,9 +4,11 @@ class TrailingScrollButton extends StatefulWidget {
   const TrailingScrollButton({
     super.key,
     required this.scrollController,
+    this.tooltip,
   });
 
   final ScrollController scrollController;
+  final String? tooltip;
 
   @override
   State<TrailingScrollButton> createState() => _TrailingScrollButtonState();
@@ -100,7 +102,7 @@ class _TrailingScrollButtonState extends State<TrailingScrollButton>
               : Colors.black,
         ),
       ),
-      tooltip: 'Scroll languages',
+      tooltip: widget.tooltip,
       onPressed: () => widget.scrollController.position.extentAfter > 0
           ? scrollForward()
           : scrollToStart(),
