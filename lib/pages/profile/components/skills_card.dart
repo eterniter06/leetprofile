@@ -94,15 +94,15 @@ class _SkillsCardState extends State<SkillsCard> {
   @override
   Widget build(BuildContext context) {
     return ProfileCard(
+      contentPadding: const EdgeInsets.only(
+        left: 8.0,
+      ),
       profileHeader: 'Skills',
       children: [
         if (fundamentalWidgets.isNotEmpty) ...{
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0),
-            child: Text(
-              'Fundamental',
-              style: TextStyle(fontSize: 16),
-            ),
+          const Text(
+            'Fundamental',
+            style: TextStyle(fontSize: 16),
           ),
           ExtensibleAnimatedWrap(
             defaultItemCount: minTags,
@@ -112,12 +112,9 @@ class _SkillsCardState extends State<SkillsCard> {
         },
         if (intermediateWidgets.isNotEmpty) ...{
           const SizedBox(height: 40),
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0),
-            child: Text(
-              'Intermediate',
-              style: TextStyle(fontSize: 16),
-            ),
+          const Text(
+            'Intermediate',
+            style: TextStyle(fontSize: 16),
           ),
           ExtensibleAnimatedWrap(
             defaultItemCount: minTags,
@@ -127,12 +124,9 @@ class _SkillsCardState extends State<SkillsCard> {
         },
         if (advancedWidgets.isNotEmpty) ...{
           const SizedBox(height: 40),
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0),
-            child: Text(
-              'Advanced',
-              style: TextStyle(fontSize: 16),
-            ),
+          const Text(
+            'Advanced',
+            style: TextStyle(fontSize: 16),
           ),
           ExtensibleAnimatedWrap(
             spacing: 8,

@@ -3,10 +3,18 @@ import 'package:provider/provider.dart';
 import 'package:ui_elements/providers/theme.dart';
 
 class ProfileCard extends StatelessWidget {
-  const ProfileCard({super.key, this.children, this.profileHeader});
+  const ProfileCard({
+    super.key,
+    this.children,
+    this.profileHeader,
+    this.contentPadding,
+  });
 
   final List<Widget>? children;
   final String? profileHeader;
+
+  /// Default padding is EdgeInsets.zero
+  final EdgeInsets? contentPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +43,17 @@ class ProfileCard extends StatelessWidget {
                   ),
                 ),
               ),
-            if (children != null) ...children!,
+            if (children != null)
+              ...(children!
+                  .map(
+                    (widget) => contentPadding == null
+                        ? widget
+                        : Padding(
+                            padding: contentPadding!,
+                            child: widget,
+                          ),
+                  )
+                  .toList()),
           ],
         ),
       ),
