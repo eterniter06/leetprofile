@@ -72,6 +72,13 @@ class _SettingsState extends State<Settings> {
 
     return Scaffold(
       appBar: AppBar(
+        // TODO: ProgressIndicator for importing profiles
+        // bottom: const PreferredSize(
+        //   preferredSize: Size(double.infinity, 0),
+        //   child: LinearProgressIndicator(
+        //     backgroundColor: Colors.blue,
+        //   ),
+        // ),
         title: const Text('Settings'),
       ),
       body: ListView(
