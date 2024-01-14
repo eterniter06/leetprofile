@@ -18,17 +18,17 @@ class UserDatabase {
   }
 
   static Future<IsarCollection<UserData>?> database() async {
-    if (_isar == null) init();
+    if (_isar == null) await init();
     return _isar?.collection<UserData>();
   }
 
   static Future<Isar?> isar() async {
-    if (_isar == null) init();
+    if (_isar == null) await init();
     return _isar;
   }
 
   static Future<int> size() async {
-    if (_isar == null) init();
+    if (_isar == null) await init();
     return _isar!.collection<UserData>().count();
   }
 
