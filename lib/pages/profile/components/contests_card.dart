@@ -48,7 +48,7 @@ class _ContestCardState extends State<ContestCard> {
   @override
   Widget build(BuildContext context) {
     return ProfileCard(
-      profileHeader: 'Contests',
+      header: 'Contests',
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),

@@ -29,7 +29,7 @@ class SolvedProblemsCard extends StatelessWidget implements ClassName {
     Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
 
     return ProfileCard(
-      profileHeader: 'Solved Problems',
+      header: 'Solved Problems',
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4.0),

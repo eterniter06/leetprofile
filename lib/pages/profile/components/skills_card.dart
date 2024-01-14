@@ -97,7 +97,7 @@ class _SkillsCardState extends State<SkillsCard> {
       contentPadding: const EdgeInsets.only(
         left: 8.0,
       ),
-      profileHeader: 'Skills',
+      header: 'Skills',
       children: [
         if (fundamentalWidgets.isNotEmpty) ...{
           const Text(

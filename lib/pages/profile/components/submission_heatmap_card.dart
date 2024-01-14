@@ -20,13 +20,9 @@ class SubmissionHeatMap extends StatelessWidget implements ClassName {
     };
 
     Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
-    print(platformBrightness);
-    print(context.read<ThemeModeModel>().themeMode);
-    print(
-        context.read<ThemeModeModel>().equivalentThemeMode(platformBrightness));
 
     return ProfileCard(
-      profileHeader: 'Submission Heatmap',
+      header: 'Submission Heatmap',
       children: [
         Center(
           child: Consumer<ThemeModeModel>(

@@ -25,6 +25,7 @@ class _RecentSubmissionCardState extends State<RecentSubmissionCard>
   bool expanded = false;
   late int recentSubmissionsShownUnexpanded;
   late bool moreEntries;
+
   late final AnimationController _controller = AnimationController(
     duration: const Duration(milliseconds: 600),
     vsync: this,
@@ -42,6 +43,12 @@ class _RecentSubmissionCardState extends State<RecentSubmissionCard>
         SettingsDatabase.numberOfShownUserSubmissions());
     moreEntries =
         recentSubmissionsShownUnexpanded < widget.submissionList.length;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> showMoreItems() async {
@@ -65,7 +72,7 @@ class _RecentSubmissionCardState extends State<RecentSubmissionCard>
   @override
   Widget build(BuildContext context) {
     return ProfileCard(
-      profileHeader: widget.submissionList.isEmpty
+      header: widget.submissionList.isEmpty
           ? 'No Recent Submissions'
           : 'Recent Submissions',
 

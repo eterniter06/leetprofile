@@ -6,12 +6,14 @@ class ProfileCard extends StatelessWidget {
   const ProfileCard({
     super.key,
     this.children,
-    this.profileHeader,
+    this.header,
     this.contentPadding,
+    this.trailer,
   });
 
   final List<Widget>? children;
-  final String? profileHeader;
+  final String? header;
+  final Widget? trailer;
 
   /// Default padding is EdgeInsets.zero
   final EdgeInsets? contentPadding;
@@ -24,25 +26,36 @@ class ProfileCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (profileHeader != null)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Consumer<ThemeModeModel>(
-                  builder: (context, themeModeModel, child) => Text(
-                    profileHeader!,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: themeModeModel
-                                  .equivalentThemeMode(platformBrightness) ==
-                              ThemeMode.light
-                          ? ThemeModeModel.lightPrimaryInverse
-                          : ThemeModeModel.lightPrimary,
+            Stack(
+              fit: StackFit.loose,
+              children: [
+                if (header != null)
+                  Consumer<ThemeModeModel>(
+                    builder: (context, themeModeModel, child) => Padding(
+                      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 12.0),
+                      child: Text(
+                        header!,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: themeModeModel.equivalentThemeMode(
+                                      platformBrightness) ==
+                                  ThemeMode.light
+                              ? ThemeModeModel.lightPrimaryInverse
+                              : ThemeModeModel.lightPrimary,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                if (trailer != null)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: trailer!,
+                  ),
+              ],
+            ),
             if (children != null)
               ...(children!
                   .map(

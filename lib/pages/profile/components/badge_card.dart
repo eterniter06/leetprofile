@@ -13,7 +13,7 @@ class BadgeCard extends StatelessWidget implements ClassName {
   @override
   Widget build(BuildContext context) {
     return ProfileCard(
-      profileHeader: 'Badges',
+      header: 'Badges',
       children: [
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
