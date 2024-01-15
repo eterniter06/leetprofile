@@ -85,10 +85,10 @@ packages:
     dependency: "direct dev"
     description:
       name: build_runner
-      sha256: "67d591d602906ef9201caf93452495ad1812bea2074f04e25dbd7c133785821b"
+      sha256: "581bacf68f89ec8792f5e5a0b2c4decd1c948e97ce659dc783688c8a88fbec21"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.7"
+    version: "2.4.8"
   build_runner_core:
     dependency: transitive
     description:
@@ -329,7 +329,7 @@ packages:
       path: "../flutter_heatmap_calendar"
       relative: true
     source: path
-    version: "1.0.11"
+    version: "1.0.12"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -397,18 +397,18 @@ packages:
     dependency: transitive
     description:
       name: gql
-      sha256: af87d4a25d8e5d91ade5c2620b30c962d4c342fab38dbe506ddc67e5ef43125e
+      sha256: "0bdd22c3a9464970ae590559e4f0568769b219dda9e94cb10c4cf999a3e263f7"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.1-alpha+1704976947827"
+    version: "1.0.1-alpha+1705114622973"
   gql_dedupe_link:
     dependency: transitive
     description:
       name: gql_dedupe_link
-      sha256: ab65209efad037c1ab7f02358a17b4f207cbdb0fe83924a20f37cdcaac0a32d7
+      sha256: e5359dd0c7a38f95e2b12f6ab305989a4e30028e4032825c8e9f610150999c69
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.4-alpha+1704976947915"
+    version: "2.0.4-alpha+1705114623057"
   gql_error_link:
     dependency: transitive
     description:
@@ -437,10 +437,10 @@ packages:
     dependency: transitive
     description:
       name: gql_link
-      sha256: d81c1032d5e81739b479684c3c04dbd89c1e35fd54e566deef19bb2186422e8e
+      sha256: "63941513a688d856546f0c3218e7ad94d47fc6e04662dcdb06de92a4cde2d7db"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.1-alpha+1704976947842"
+    version: "1.0.1-alpha+1705114622987"
   gql_transform_link:
     dependency: transitive
     description:
@@ -682,10 +682,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_foundation
-      sha256: "19314d595120f82aca0ba62787d58dde2cc6b5df7d2f0daf72489e38d1b57f2d"
+      sha256: "5a7999be66e000916500be4f15a3633ebceb8302719b47b9cc49ce924125350f"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.1"
+    version: "2.3.2"
   path_provider_linux:
     dependency: transitive
     description:
@@ -826,10 +826,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_foundation
-      sha256: "7bf53a9f2d007329ee6f3df7268fd498f8373602f943c975598bbb34649b62a7"
+      sha256: "7708d83064f38060c7b39db12aefe449cb8cdc031d6062280087bc4cdb988f5c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.4"
+    version: "2.3.5"
   shared_preferences_linux:
     dependency: transitive
     description:
@@ -1055,10 +1055,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_ios
-      sha256: cdb7b6da34483f9b2c9f8b2b29bc468fa7271d92e2021607ca0c4d3bcb04cdd4
+      sha256: "75bb6fe3f60070407704282a2d295630cab232991eb52542b18347a8a941df03"
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.3"
+    version: "6.2.4"
   url_launcher_linux:
     dependency: transitive
     description:

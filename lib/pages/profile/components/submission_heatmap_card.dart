@@ -27,16 +27,22 @@ class SubmissionHeatMap extends StatelessWidget implements ClassName {
         Center(
           child: Consumer<ThemeModeModel>(
             builder: (context, themeModeModel, child) => HeatMapCalendar(
-              prevMonthIconColor:
-                  themeModeModel.equivalentThemeMode(platformBrightness) ==
-                          ThemeMode.light
-                      ? ThemeModeModel.black
-                      : ThemeModeModel.white,
-              nextMonthIconColor:
-                  themeModeModel.equivalentThemeMode(platformBrightness) ==
-                          ThemeMode.light
-                      ? ThemeModeModel.black
-                      : ThemeModeModel.white,
+              prevMonthIcon: Icon(
+                Icons.arrow_back_ios,
+                size: 14,
+                color: themeModeModel.equivalentThemeMode(platformBrightness) ==
+                        ThemeMode.light
+                    ? ThemeModeModel.black
+                    : ThemeModeModel.white,
+              ),
+              nextMonthIcon: Icon(
+                Icons.arrow_forward_ios,
+                size: 14,
+                color: themeModeModel.equivalentThemeMode(platformBrightness) ==
+                        ThemeMode.light
+                    ? ThemeModeModel.black
+                    : ThemeModeModel.white,
+              ),
               leadingColorTipHelper: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text('Less'),
