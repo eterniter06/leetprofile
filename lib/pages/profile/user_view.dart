@@ -16,7 +16,7 @@ import 'components/basic_user_info_card.dart';
 import 'components/contests_card.dart';
 import 'components/language_section.dart';
 import 'components/recent_submission_card.dart';
-import 'components/skills_card.dart';
+import 'components/skill_card.dart';
 import 'components/solved_problem_card.dart';
 import 'components/submission_heatmap_card.dart';
 import 'components/nickname_dialog.dart';
@@ -134,7 +134,7 @@ class _UserViewState extends State<UserView>
         : null;
 
     map['SkillsCard'] = hasSkills()
-        ? SkillsCard(
+        ? SkillCard(
             fundamentalSkills: userData.fundamentalTags,
             intermediateSkills: userData.intermediateTags,
             advancedSkills: userData.advancedTags,
