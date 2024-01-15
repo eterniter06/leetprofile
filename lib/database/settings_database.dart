@@ -94,8 +94,9 @@ class SettingsDatabase {
     bool? preference = _prefs!.getBool('showUsernamesOnHomeScreen');
 
     if (preference == null) {
-      changeShowUsernameOnHomeScreen(true);
-      return true;
+      bool defaultOption = true;
+      changeShowUsernameOnHomeScreen(defaultOption);
+      preference = defaultOption;
     }
 
     return preference;
@@ -109,8 +110,25 @@ class SettingsDatabase {
     bool? preference = _prefs!.getBool('is24Hour');
 
     if (preference == null) {
-      set24HourFormat(true);
-      return true;
+      bool defaultOption = true;
+      set24HourFormat(defaultOption);
+      preference = defaultOption;
+    }
+
+    return preference;
+  }
+
+  static Future<void> setShowSkillPieChart(bool showPieChart) async {
+    await _prefs!.setBool('showSkillPieChart', showPieChart);
+  }
+
+  static bool showSkillPieChart() {
+    bool? preference = _prefs!.getBool('showSkillPieChart');
+
+    if (preference == null) {
+      bool defaultOption = false;
+      setShowSkillPieChart(defaultOption);
+      preference = defaultOption;
     }
 
     return preference;

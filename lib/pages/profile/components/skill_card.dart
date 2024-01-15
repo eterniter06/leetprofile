@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/pages/profile/components/skill_view.dart';
 import 'package:ui_elements/providers/theme.dart';
 
@@ -26,7 +27,19 @@ class SkillCard extends StatefulWidget implements ClassName {
 }
 
 class _SkillCardState extends State<SkillCard> {
-  bool showPieChart = false;
+  late bool showPieChart;
+
+  @override
+  void initState() {
+    super.initState();
+    showPieChart = SettingsDatabase.showSkillPieChart();
+  }
+
+  @override
+  void dispose() {
+    SettingsDatabase.setShowSkillPieChart(showPieChart);
+    super.dispose();
+  }
 
   void toggleViews() {
     setState(() {
