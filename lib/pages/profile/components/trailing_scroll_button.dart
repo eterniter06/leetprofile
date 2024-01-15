@@ -16,14 +16,15 @@ class TrailingScrollButton extends StatefulWidget {
 
 class _TrailingScrollButtonState extends State<TrailingScrollButton>
     with TickerProviderStateMixin {
+  late final AnimationController animationController = AnimationController(
+    duration: const Duration(milliseconds: 300),
+    reverseDuration: const Duration(milliseconds: 100),
+    vsync: this,
+  );
+
   late final Animation<double> animation = CurvedAnimation(
     parent: animationController,
     curve: Curves.fastOutSlowIn,
-  );
-
-  late final AnimationController animationController = AnimationController(
-    duration: const Duration(milliseconds: 300),
-    vsync: this,
   );
 
   late Axis axis;
