@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 
+class SkillChipTheme {
+  BorderSide? side;
+  TextStyle? labelStyle;
+  Color? backgroundColor;
+
+  SkillChipTheme({this.side, this.labelStyle, this.backgroundColor});
+}
+
 class ThemeModeModel extends ChangeNotifier {
   ThemeModeModel({required ThemeMode themeMode}) : _themeMode = themeMode;
 
@@ -184,6 +192,36 @@ class ThemeModeModel extends ChangeNotifier {
 
   static const Color black = Colors.black;
   static const Color white = Colors.white;
+
+  static SkillChipTheme fundamentalSkillChipTheme = SkillChipTheme(
+    side: const BorderSide(
+      color: fundamentalBorder,
+    ),
+    labelStyle: TextStyle(
+      color: getInverseBW(fundamentalBackground),
+    ),
+    backgroundColor: fundamentalBackground,
+  );
+
+  static SkillChipTheme intermediateSkillChipTheme = SkillChipTheme(
+    side: const BorderSide(
+      color: intermediateBorder,
+    ),
+    labelStyle: TextStyle(
+      color: getInverseBW(intermediateBackground),
+    ),
+    backgroundColor: intermediateBackground,
+  );
+
+  static SkillChipTheme advancedSkillChipTheme = SkillChipTheme(
+    side: const BorderSide(
+      color: advancedBorder,
+    ),
+    labelStyle: TextStyle(
+      color: getInverseBW(advancedBackground),
+    ),
+    backgroundColor: advancedBackground,
+  );
 
   static ThemeData light = ThemeData(
     useMaterial3: true,
