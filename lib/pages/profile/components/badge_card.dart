@@ -47,6 +47,12 @@ class _BadgeCardState extends State<BadgeCard> {
     super.dispose();
   }
 
+  double badgeWidth() {
+    return MediaQuery.of(context).orientation == Orientation.portrait
+        ? min(MediaQuery.of(context).size.width / 4, 160)
+        : min(MediaQuery.of(context).size.height / 4, 160);
+  }
+
   @override
   Widget build(BuildContext context) {
     return ProfileCard(
@@ -71,12 +77,12 @@ class _BadgeCardState extends State<BadgeCard> {
                   child: Column(
                     children: [
                       SizedBox(
-                        width: min(MediaQuery.of(context).size.width / 4, 160),
+                        width: badgeWidth(),
                         child: BadgeIcon(
                             badgeLink: widget.badges[index].iconLink!),
                       ),
                       SizedBox(
-                        width: min(MediaQuery.of(context).size.width / 4, 160),
+                        width: badgeWidth(),
                         height: 60,
                         child: Center(
                           child: Wrap(children: [
