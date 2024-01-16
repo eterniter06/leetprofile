@@ -8,6 +8,28 @@ class SkillChipTheme {
   SkillChipTheme({this.side, this.labelStyle, this.backgroundColor});
 }
 
+class SkillPieSectionThemeData {
+  double alpha;
+  double saturation;
+  double lightness;
+
+  SkillPieSectionThemeData.dark({
+    this.alpha = 1.0,
+    this.saturation = 1.0,
+    this.lightness = 0.8,
+  });
+
+  SkillPieSectionThemeData.light({
+    this.alpha = 1.0,
+    this.saturation = 0.65,
+    this.lightness = 0.75,
+  });
+
+  Color fromASL(double hue) {
+    return HSLColor.fromAHSL(alpha, hue, saturation, lightness).toColor();
+  }
+}
+
 class ThemeModeModel extends ChangeNotifier {
   ThemeModeModel({required ThemeMode themeMode}) : _themeMode = themeMode;
 

@@ -9,6 +9,8 @@ class SkillView extends StatelessWidget {
   const SkillView({
     super.key,
     required this.showPieChart,
+    required this.pieSectionDarkTheme,
+    required this.pieSectionLightTheme,
     required this.skills,
     required this.skillChipTheme,
   });
@@ -16,13 +18,18 @@ class SkillView extends StatelessWidget {
   final List<TagsSolved> skills;
   final bool showPieChart;
   final SkillChipTheme skillChipTheme;
+  final SkillPieSectionThemeData pieSectionDarkTheme, pieSectionLightTheme;
 
   @override
   Widget build(BuildContext context) {
     return showPieChart
         ? Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 0),
-            child: SkillPieChart(skills: skills),
+            child: SkillPieChart(
+              skills: skills,
+              darkSectionTheme: pieSectionDarkTheme,
+              lightSectionTheme: pieSectionLightTheme,
+            ),
           )
         : Padding(
             padding: const EdgeInsets.only(left: 8.0),

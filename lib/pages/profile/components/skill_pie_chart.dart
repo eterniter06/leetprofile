@@ -3,11 +3,18 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
+import 'package:ui_elements/providers/theme.dart';
 
 class SkillPieChart extends StatefulWidget {
-  const SkillPieChart({super.key, required this.skills});
+  const SkillPieChart({
+    super.key,
+    required this.skills,
+    required this.darkSectionTheme,
+    required this.lightSectionTheme,
+  });
 
   final List<TagsSolved>? skills;
+  final SkillPieSectionThemeData darkSectionTheme, lightSectionTheme;
 
   @override
   State<SkillPieChart> createState() => _SkillPieChartState();
@@ -18,28 +25,22 @@ class _SkillPieChartState extends State<SkillPieChart> {
     // https://stackoverflow.com/questions/10014271/generate-random-color-distinguishable-to-humans
     // https://en.wikipedia.org/wiki/Golden_angle
     final double goldenAngle = 180 * (3 - sqrt(5));
+    final double hue = goldenAngle * index % 360.0;
 
-    double lightness =
+    SkillPieSectionThemeData theme =
         MediaQuery.of(context).platformBrightness == Brightness.dark
-            ? 0.8
-            : 0.75;
+            ? widget.darkSectionTheme
+            : widget.lightSectionTheme;
 
-    double saturation =
-        MediaQuery.of(context).platformBrightness == Brightness.dark
-            ? 1.0
-            : 0.65;
-
-    return HSLColor.fromAHSL(
-      1.0,
-      goldenAngle * index % 360.0,
-      saturation,
-      lightness,
-    ).toColor();
+    return theme.fromASL(hue);
   }
 
   int touchedSectionIndex = -1;
 
-  final double sectionRadiusDivisor = 4;
+  double diameter() {
+    Size size = MediaQuery.of(context).size;
+    return min(size.width, size.height) / 2;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +48,8 @@ class _SkillPieChartState extends State<SkillPieChart> {
       children: [
         Expanded(
           child: SizedBox(
-            // height: MediaQuery.of(context).size.width / 1.6,
-            // width: MediaQuery.of(context).size.width / 1.75,
-            height:
-                MediaQuery.of(context).size.width / (sectionRadiusDivisor / 2),
-            width:
-                MediaQuery.of(context).size.width / (sectionRadiusDivisor / 2),
+            height: diameter(),
+            width: diameter(),
             child: PieChart(
               PieChartData(
                 pieTouchData: PieTouchData(
@@ -78,18 +75,22 @@ class _SkillPieChartState extends State<SkillPieChart> {
                     TagsSolved skill = widget.skills![index];
                     return PieChartSectionData(
                       value: skill.problemsSolved!.toDouble(),
-                      // badgeWidget: Text(skill.tagName!),
-                      // showTitle: true,
+                      badgeWidget: touchedSectionIndex == index
+                          ? Text(
+                              skill.problemsSolved!.toString(),
+                              style: const TextStyle(color: Colors.black),
+                            )
+                          : null,
+                      badgePositionPercentageOffset: 0.75,
                       color: sectionColor(index),
                       showTitle: false,
                       title: skill.tagName,
-                      radius: MediaQuery.of(context).size.width /
-                          sectionRadiusDivisor,
-                      // radius: MediaQuery.of(context).size.width / 3.5,
+                      radius: diameter() / 2 +
+                          (touchedSectionIndex == index ? 8 : 0),
                     );
                   },
                 ),
-                centerSpaceRadius: double.infinity,
+                centerSpaceRadius: 0,
               ),
             ),
           ),
@@ -97,11 +98,19 @@ class _SkillPieChartState extends State<SkillPieChart> {
         Column(
           children: [
             Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  widget.skills!.length,
-                  (index) => Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                widget.skills!.length,
+                (index) => GestureDetector(
+                  onTapDown: (details) => setState(() {
+                    touchedSectionIndex = index;
+                  }),
+                  onTapUp: (TapUpDetails _) => setState(() {
+                    touchedSectionIndex = -1;
+                  }),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
                     children: [
                       Container(
                         color: sectionColor(index),
@@ -114,12 +123,14 @@ class _SkillPieChartState extends State<SkillPieChart> {
                         style: TextStyle(
                           color: touchedSectionIndex == index
                               ? sectionColor(index)
-                              : Colors.grey,
+                              : Colors.grey.shade700,
                         ),
                       ),
                     ],
                   ),
-                )),
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
