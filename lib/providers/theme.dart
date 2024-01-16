@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// Theme class for changing how the chips in the Skill view appear
+/// These values are passed on to their respective fields in the [Chip] widget
+/// For info on these fields, check the [Chip] widget.
 class SkillChipTheme {
   BorderSide? side;
   TextStyle? labelStyle;
@@ -8,6 +11,9 @@ class SkillChipTheme {
   SkillChipTheme({this.side, this.labelStyle, this.backgroundColor});
 }
 
+/// Theme how the sections in the pie chart appear
+/// Hue is not stored as the [SkillPieChart] class sets hue
+/// by itself using the golden angle.
 class SkillPieSectionThemeData {
   double alpha;
   double saturation;
@@ -30,6 +36,8 @@ class SkillPieSectionThemeData {
   }
 }
 
+/// Main theme class
+/// Contains  mostly all theme properties used throught the app.
 class ThemeModeModel extends ChangeNotifier {
   ThemeModeModel({required ThemeMode themeMode}) : _themeMode = themeMode;
 
@@ -244,6 +252,24 @@ class ThemeModeModel extends ChangeNotifier {
     ),
     backgroundColor: advancedBackground,
   );
+
+  static SkillPieSectionThemeData darkFundamentalSkillPieSectionTheme =
+      SkillPieSectionThemeData.dark(saturation: 0.7, lightness: 0.84);
+
+  static SkillPieSectionThemeData darkIntermediateSkillPieSectionTheme =
+      SkillPieSectionThemeData.dark(saturation: 0.8);
+
+  static SkillPieSectionThemeData darkAdvancedSkillPieSectionTheme =
+      SkillPieSectionThemeData.dark(lightness: 0.75);
+
+  static SkillPieSectionThemeData lightFundamentalSkillPieSectionTheme =
+      SkillPieSectionThemeData.light(lightness: 0.8, saturation: 0.55);
+
+  static SkillPieSectionThemeData lightIntermediateSkillPieSectionTheme =
+      SkillPieSectionThemeData.light();
+
+  static SkillPieSectionThemeData lightAdvancedSkillPieSectionTheme =
+      SkillPieSectionThemeData.light(saturation: 0.85, lightness: 0.72);
 
   static ThemeData light = ThemeData(
     useMaterial3: true,

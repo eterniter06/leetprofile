@@ -101,8 +101,9 @@ class _SkillCardState extends State<SkillCard> {
             skillChipTheme: ThemeModeModel.fundamentalSkillChipTheme,
             skills: widget.fundamentalSkills!,
             pieSectionDarkTheme:
-                SkillPieSectionThemeData.dark(saturation: 0.7, lightness: 0.84),
-            pieSectionLightTheme: SkillPieSectionThemeData.light(),
+                ThemeModeModel.darkFundamentalSkillPieSectionTheme,
+            pieSectionLightTheme:
+                ThemeModeModel.lightFundamentalSkillPieSectionTheme,
           ),
         },
         if (skillCategoryExists(widget.intermediateSkills)) ...{
@@ -118,8 +119,10 @@ class _SkillCardState extends State<SkillCard> {
             showPieChart: showPieChart,
             skillChipTheme: ThemeModeModel.intermediateSkillChipTheme,
             skills: widget.intermediateSkills!,
-            pieSectionDarkTheme: SkillPieSectionThemeData.dark(saturation: 0.8),
-            pieSectionLightTheme: SkillPieSectionThemeData.light(),
+            pieSectionDarkTheme:
+                ThemeModeModel.darkIntermediateSkillPieSectionTheme,
+            pieSectionLightTheme:
+                ThemeModeModel.lightIntermediateSkillPieSectionTheme,
           )
         },
         if (skillCategoryExists(widget.advancedSkills)) ...{
@@ -135,8 +138,10 @@ class _SkillCardState extends State<SkillCard> {
             showPieChart: showPieChart,
             skillChipTheme: ThemeModeModel.advancedSkillChipTheme,
             skills: widget.advancedSkills!,
-            pieSectionDarkTheme: SkillPieSectionThemeData.dark(lightness: 0.75),
-            pieSectionLightTheme: SkillPieSectionThemeData.light(),
+            pieSectionDarkTheme:
+                ThemeModeModel.darkAdvancedSkillPieSectionTheme,
+            pieSectionLightTheme:
+                ThemeModeModel.lightAdvancedSkillPieSectionTheme,
           )
         },
       ],
