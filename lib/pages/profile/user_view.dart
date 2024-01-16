@@ -85,8 +85,16 @@ class _UserViewState extends State<UserView>
 
   @override
   void dispose() {
-    super.dispose();
     _controller?.dispose();
+
+    // Since status bar is only not shown for the profile view
+    // All other pages show the status bar at all times
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.edgeToEdge,
+      overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top],
+    );
+
+    super.dispose();
   }
 
   List<Widget> initWidgetList() {
@@ -324,7 +332,10 @@ class _UserViewState extends State<UserView>
           : OrientationBuilder(
               builder: (context, orientation) {
                 if (orientation == Orientation.portrait) {
-                  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                  SystemChrome.setEnabledSystemUIMode(
+                    SystemUiMode.edgeToEdge,
+                    overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top],
+                  );
                   return ListView.builder(
                     itemBuilder: (context, index) =>
                         profileComponentList[index],
