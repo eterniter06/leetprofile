@@ -209,63 +209,69 @@ class _UserViewState extends State<UserView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(userData.nickname ??
-            (userData.realname == "" ? userData.username : userData.realname)),
-        actions: widget.isReorderable
-            ? null
-            : [
-                Consumer<UserListModel>(
-                  builder: (context, userListModel, child) => IconButton(
-                      icon: const Icon(Icons.edit),
-                      tooltip: 'Edit nickname',
-                      onPressed: () async {
-                        String? newNickname = await showDialog(
-                          context: context,
-                          builder: (context) => NicknameInputDialog(
-                            oldNickname: userData.nickname,
-                            realname: userData.realname,
-                            username: userData.username,
-                          ),
-                        );
+      appBar: MediaQuery.of(context).orientation == Orientation.portrait
+          ? AppBar(
+              title: Text(userData.nickname ??
+                  (userData.realname == ""
+                      ? userData.username
+                      : userData.realname)),
+              actions: widget.isReorderable
+                  ? null
+                  : [
+                      Consumer<UserListModel>(
+                        builder: (context, userListModel, child) => IconButton(
+                            icon: const Icon(Icons.edit),
+                            tooltip: 'Edit nickname',
+                            onPressed: () async {
+                              String? newNickname = await showDialog(
+                                context: context,
+                                builder: (context) => NicknameInputDialog(
+                                  oldNickname: userData.nickname,
+                                  realname: userData.realname,
+                                  username: userData.username,
+                                ),
+                              );
 
-                        if (newNickname == null) {
-                          return;
-                        }
+                              if (newNickname == null) {
+                                return;
+                              }
 
-                        setState(() {
-                          userData.updateNickname(newNickname);
-                        });
+                              setState(() {
+                                userData.updateNickname(newNickname);
+                              });
 
-                        await UserDatabase.put(userData);
-                      }),
-                ),
-                RefreshIconButton(
-                  globalKey: widget.refreshIconKey,
-                  tooltip: 'Refresh user',
-                  task: () async {
-                    await _refreshUserImpl();
-                  },
-                  postHook: () async {
-                    await UserDatabase.put(userData);
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('User profile has been refreshed.'),
-                        ),
-                      );
-                    }
-                  },
-                ),
-                IconButton(
-                  tooltip: 'Share leetcode profile',
-                  icon: const Icon(Icons.share),
-                  onPressed: () =>
-                      Share.share('https://leetcode.com/${userData.username}'),
-                ),
-              ],
-      ),
+                              await UserDatabase.put(userData);
+                            }),
+                      ),
+                      RefreshIconButton(
+                        globalKey: widget.refreshIconKey,
+                        tooltip: 'Refresh user',
+                        task: () async {
+                          await _refreshUserImpl();
+                        },
+                        postHook: () async {
+                          await UserDatabase.put(userData);
+                          if (mounted) {
+                            ScaffoldMessenger.of(context)
+                                .removeCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content:
+                                    Text('User profile has been refreshed.'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      IconButton(
+                        tooltip: 'Share leetcode profile',
+                        icon: const Icon(Icons.share),
+                        onPressed: () => Share.share(
+                            'https://leetcode.com/${userData.username}'),
+                      ),
+                    ],
+            )
+          : null,
       floatingActionButton: widget.isReorderable
           ? FloatingActionButton.extended(
               icon: const Icon(Icons.save),
@@ -275,51 +281,140 @@ class _UserViewState extends State<UserView>
                   Navigator.of(context).pop(profileComponentListAsString),
             )
           : null,
-      body: SafeArea(
-        child: widget.isReorderable
-            ? ReorderableListView(
-                proxyDecorator: (child, index, animation) => ScaleTransition(
-                  scale: Tween<double>(begin: 1, end: 1.025).animate(
-                    CurvedAnimation(
-                      parent: _controller!,
-                      curve: Curves.linear,
-                    ),
+      body: widget.isReorderable
+          ? ReorderableListView(
+              proxyDecorator: (child, index, animation) => ScaleTransition(
+                scale: Tween<double>(begin: 1, end: 1.025).animate(
+                  CurvedAnimation(
+                    parent: _controller!,
+                    curve: Curves.linear,
                   ),
-                  child: profileComponentList[index],
                 ),
-
-                onReorder: (oldIndex, newIndex) {
-                  if (newIndex > profileComponentList.length) {
-                    newIndex = profileComponentList.length;
-                  }
-                  if (oldIndex < newIndex) newIndex--;
-
-                  setState(() {
-                    Widget component = profileComponentList.removeAt(oldIndex);
-                    String componentAsString =
-                        profileComponentListAsString.removeAt(oldIndex);
-
-                    profileComponentList.insert(newIndex, component);
-                    profileComponentListAsString.insert(
-                        newIndex, componentAsString);
-                  });
-                },
-                onReorderStart: (index) => HapticFeedback.lightImpact(),
-
-                children: [
-                  for (int index = 0;
-                      index < profileComponentList.length;
-                      ++index)
-                    profileComponentList[index],
-                ],
-                // itemBuilder: (context, index) => profileComponentList[index],
-                // itemCount: profileComponentList.length,
-              )
-            : ListView.builder(
-                itemBuilder: (context, index) => profileComponentList[index],
-                itemCount: profileComponentList.length,
+                child: profileComponentList[index],
               ),
-      ),
+
+              onReorder: (oldIndex, newIndex) {
+                if (newIndex > profileComponentList.length) {
+                  newIndex = profileComponentList.length;
+                }
+                if (oldIndex < newIndex) newIndex--;
+
+                setState(() {
+                  Widget component = profileComponentList.removeAt(oldIndex);
+                  String componentAsString =
+                      profileComponentListAsString.removeAt(oldIndex);
+
+                  profileComponentList.insert(newIndex, component);
+                  profileComponentListAsString.insert(
+                      newIndex, componentAsString);
+                });
+              },
+              onReorderStart: (index) => HapticFeedback.lightImpact(),
+
+              children: [
+                for (int index = 0;
+                    index < profileComponentList.length;
+                    ++index)
+                  profileComponentList[index],
+              ],
+              // What is this here for?
+              // itemBuilder: (context, index) => profileComponentList[index],
+              // itemCount: profileComponentList.length,
+            )
+          : OrientationBuilder(
+              builder: (context, orientation) {
+                if (orientation == Orientation.portrait) {
+                  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                  return ListView.builder(
+                    itemBuilder: (context, index) =>
+                        profileComponentList[index],
+                    itemCount: profileComponentList.length,
+                  );
+                } else {
+                  SystemChrome.setEnabledSystemUIMode(
+                    SystemUiMode.manual,
+                    overlays: [SystemUiOverlay.bottom],
+                  );
+                  return CustomScrollView(
+                    slivers: [
+                      SliverAppBar(
+                        floating: true,
+                        title: Text(userData.nickname ??
+                            (userData.realname == ""
+                                ? userData.username
+                                : userData.realname)),
+                        actions: widget.isReorderable
+                            ? null
+                            : [
+                                Consumer<UserListModel>(
+                                  builder: (context, userListModel, child) =>
+                                      IconButton(
+                                          icon: const Icon(Icons.edit),
+                                          tooltip: 'Edit nickname',
+                                          onPressed: () async {
+                                            String? newNickname =
+                                                await showDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                                  NicknameInputDialog(
+                                                oldNickname: userData.nickname,
+                                                realname: userData.realname,
+                                                username: userData.username,
+                                              ),
+                                            );
+
+                                            if (newNickname == null) {
+                                              return;
+                                            }
+
+                                            setState(() {
+                                              userData
+                                                  .updateNickname(newNickname);
+                                            });
+
+                                            await UserDatabase.put(userData);
+                                          }),
+                                ),
+                                RefreshIconButton(
+                                  globalKey: widget.refreshIconKey,
+                                  tooltip: 'Refresh user',
+                                  task: () async {
+                                    await _refreshUserImpl();
+                                  },
+                                  postHook: () async {
+                                    await UserDatabase.put(userData);
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .removeCurrentSnackBar();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'User profile has been refreshed.'),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                                IconButton(
+                                  tooltip: 'Share leetcode profile',
+                                  icon: const Icon(Icons.share),
+                                  onPressed: () => Share.share(
+                                      'https://leetcode.com/${userData.username}'),
+                                ),
+                              ],
+                      ),
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) => profileComponentList[index],
+                          childCount: profileComponentList.length,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
     );
   }
 }
