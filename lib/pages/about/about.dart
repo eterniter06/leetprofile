@@ -6,12 +6,14 @@ import 'package:ui_elements/common_components/widgets/circular_image.dart';
 import 'package:ui_elements/providers/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+class StaticLinks {
+  //TODO: fix appLink
+  static String authorGithubProfileLink = 'https://github.com/eterniter06';
+  static String appGithubRepoLink = '$authorGithubProfileLink/leetprofile';
+}
+
 class About extends StatelessWidget {
   const About({super.key});
-
-  //TODO: fix appLink
-  final String githubRepoLink = 'https://github.com/appLink';
-  final String githubProfileLink = 'https://github.com/eterniter06';
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,7 @@ class About extends StatelessWidget {
                     'A simple app for viewing leetcode profiles.\n\nFor bug reports and feature requests, please visit the app repo on github: ',
                 children: [
                   TextSpan(
-                    text: githubRepoLink,
+                    text: StaticLinks.appGithubRepoLink,
                     style: const TextStyle(
                       color: Colors.blue,
                       decoration: TextDecoration.underline,
@@ -58,7 +60,7 @@ class About extends StatelessWidget {
                     ),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () async => launchLink(
-                            link: githubRepoLink,
+                            link: StaticLinks.appGithubRepoLink,
                             errorMessage:
                                 'Could not open link to the repository.',
                           ),
@@ -71,7 +73,7 @@ class About extends StatelessWidget {
               child: InkWell(
                 customBorder: const CircleBorder(),
                 onTap: () => launchLink(
-                  link: githubProfileLink,
+                  link: StaticLinks.authorGithubProfileLink,
                   errorMessage: "Failed to open Profile link.",
                 ),
                 child: Padding(
