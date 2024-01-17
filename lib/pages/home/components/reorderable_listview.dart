@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:ui_elements/providers/theme.dart';
 import 'package:ui_elements/providers/user_list.dart';
 import 'package:ui_elements/pages/profile/user_view.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
@@ -85,10 +86,18 @@ class _ReorderableUserListViewState extends State<ReorderableUserListView>
                 refreshIconKey: widget.refreshIconKey,
                 userData: userListModel.userAtIndex(index),
               ),
+              openColor:
+                  MediaQuery.platformBrightnessOf(context) == Brightness.dark
+                      ? Colors.black
+                      : Colors.white,
               closedBuilder: (context, action) => DismissibleListTile(
                 userData: userListModel.userAtIndex(index),
                 openView: action,
               ),
+              closedColor:
+                  MediaQuery.platformBrightnessOf(context) == Brightness.dark
+                      ? Colors.black
+                      : Colors.white,
             ),
         ],
       ),
