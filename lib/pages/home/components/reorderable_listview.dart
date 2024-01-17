@@ -79,6 +79,7 @@ class _ReorderableUserListViewState extends State<ReorderableUserListView>
         children: [
           for (int index = 0; index < userListModel.length(); ++index)
             OpenContainer(
+              tappable: false,
               key: UniqueKey(),
               openBuilder: (context, action) => UserView(
                 refreshIconKey: widget.refreshIconKey,
@@ -86,6 +87,7 @@ class _ReorderableUserListViewState extends State<ReorderableUserListView>
               ),
               closedBuilder: (context, action) => DismissibleListTile(
                 userData: userListModel.userAtIndex(index),
+                openView: action,
               ),
             ),
         ],

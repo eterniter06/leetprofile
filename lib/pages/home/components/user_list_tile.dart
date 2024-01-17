@@ -9,8 +9,9 @@ import 'package:ui_elements/pages/home/components/last_updated_text.dart';
 import 'package:ui_elements/providers/settings.dart';
 
 class UserCard extends StatelessWidget {
-  const UserCard({super.key, required this.userData});
+  const UserCard({super.key, required this.userData, this.openView});
   final UserData userData;
+  final Function? openView;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +43,7 @@ class UserCard extends StatelessWidget {
                   ),
                 )
               : null,
+          onTap: () => openView?.call(),
         ),
       ),
     );

@@ -13,9 +13,11 @@ class DismissibleListTile extends StatelessWidget {
   const DismissibleListTile({
     super.key,
     required this.userData,
+    this.openView,
   });
 
   final UserData userData;
+  final Function? openView;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +84,7 @@ class DismissibleListTile extends StatelessWidget {
           }
         },
         key: UniqueKey(),
-        child: UserCard(userData: userData),
+        child: UserCard(userData: userData, openView: openView),
       ),
     );
   }
