@@ -445,7 +445,7 @@ class _SettingsState extends State<Settings> {
                         BuildContext? rootContext =
                             rootScaffoldKey.currentContext;
 
-                        if (rootContext!.mounted) {
+                        if (rootContext != null && rootContext.mounted) {
                           ScaffoldMessenger.of(rootContext)
                               .showSnackBar(const SnackBar(
                             content: Text('Users added'),

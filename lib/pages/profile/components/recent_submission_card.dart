@@ -70,6 +70,14 @@ class _RecentSubmissionCardState extends State<RecentSubmissionCard>
     expanded == false ? showMoreItems() : collapseList();
   }
 
+  Text expandOrCollapseText() {
+    if (expanded == true) return const Text('Collapse list');
+
+    return recentSubmissionsShownUnexpanded == 0
+        ? const Text('Expand submissions')
+        : const Text('Show more submissions');
+  }
+
   @override
   Widget build(BuildContext context) {
     return ProfileCard(
@@ -108,12 +116,7 @@ class _RecentSubmissionCardState extends State<RecentSubmissionCard>
                       ),
                     ),
                     title: Center(
-                      // TODO: Refactor this garbage
-                      child: expanded == false
-                          ? recentSubmissionsShownUnexpanded == 0
-                              ? const Text('Expand submissions')
-                              : const Text('Show more submissions')
-                          : const Text('Collapse list'),
+                      child: expandOrCollapseText(),
                     ),
                   ),
                 )

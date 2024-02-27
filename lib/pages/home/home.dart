@@ -142,7 +142,6 @@ class _UserListPageState extends State<UserListPage> {
     await widget.userListModel.loadUsersFromDatabase();
     final bool refreshOnStartup = SettingsDatabase.refreshAllUsersOnStartup();
 
-    // TODO: figure out a less uglier way
     if (refreshOnStartup && widget.userListModel.isNotEmpty()) {
       refreshKey.currentState!.onPress();
     }
