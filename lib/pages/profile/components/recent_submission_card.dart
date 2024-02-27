@@ -11,6 +11,7 @@ import 'recent_submission_tile.dart';
 class RecentSubmissionCard extends StatefulWidget implements ClassName {
   const RecentSubmissionCard({super.key, required this.submissionList});
   final List<RecentSubmission> submissionList;
+
   @override
   State<RecentSubmissionCard> createState() => _RecentSubmissionCardState();
 
@@ -75,7 +76,6 @@ class _RecentSubmissionCardState extends State<RecentSubmissionCard>
       header: widget.submissionList.isEmpty
           ? 'No Recent Submissions'
           : 'Recent Submissions',
-
       children: widget.submissionList.isEmpty
           ? null
           : [
@@ -108,6 +108,7 @@ class _RecentSubmissionCardState extends State<RecentSubmissionCard>
                       ),
                     ),
                     title: Center(
+                      // TODO: Refactor this garbage
                       child: expanded == false
                           ? recentSubmissionsShownUnexpanded == 0
                               ? const Text('Expand submissions')
@@ -118,50 +119,54 @@ class _RecentSubmissionCardState extends State<RecentSubmissionCard>
                 )
               }
             ],
+    );
+  }
+}
 
-      // Card(
-      //     child: ExpansionTile(
-      //       onExpansionChanged: (value) {
-      //         if (expanded != value) {
-      //           setState(() {
-      //             expanded = value;
-      //           });
-      //         }
-      //       },
-      //       tilePadding: const EdgeInsets.only(left: 4, right: 20),
-      //       childrenPadding: const EdgeInsets.symmetric(horizontal: 4),
-      //       shape: const Border(),
-      //       initiallyExpanded: false,
-      //       title: Column(
-      //         crossAxisAlignment: CrossAxisAlignment.start,
-      //         children: [
-      //           const Padding(
-      //             padding:
-      //                 EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-      //             child: Text(
-      //               'Recent Submissions',
-      //             ),
-      //           ),
-      //           RecentSubmissionTile(submission: widget.submissionList[0]),
-      //           if (expanded)
-      //             const Divider(
-      //               height: 0,
-      //             ),
-      //         ],
-      //       ),
-      //       children: [
-      //         ListView.separated(
-      //           physics: const NeverScrollableScrollPhysics(),
-      //           shrinkWrap: true,
-      //           itemCount: widget.submissionList.length - 1,
-      //           itemBuilder: (context, index) => RecentSubmissionTile(
-      //               submission: widget.submissionList[index + 1]),
-      //           separatorBuilder: (context, index) => const Divider(
-      //             height: 0,
-      //           ),
-      //         ),
-      //       ],
-      //     ),
+class RecentSubmissionCardAbsorbPointer extends StatelessWidget
+    implements ClassName {
+  const RecentSubmissionCardAbsorbPointer({
+    super.key,
+    required this.submissionList,
+  });
+
+  final List<RecentSubmission> submissionList;
+
+  @override
+  String className() {
+    return 'RecentSubmissionCard';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    int recentSubmissionsShownUnexpanded = min(
+        submissionList.length, SettingsDatabase.numberOfShownUserSubmissions());
+    bool moreEntries = recentSubmissionsShownUnexpanded < submissionList.length;
+
+    return ProfileCard(
+      header: submissionList.isEmpty
+          ? 'No Recent Submissions'
+          : 'Recent Submissions',
+      children: submissionList.isEmpty
+          ? null
+          : [
+              for (int index = 0;
+                  index < recentSubmissionsShownUnexpanded;
+                  ++index)
+                RecentSubmissionTile(submission: submissionList[index]),
+              if (moreEntries) ...{
+                ListTile(
+                  trailing: const Icon(
+                    Icons.expand_more,
+                  ),
+                  title: Center(
+                    child: recentSubmissionsShownUnexpanded == 0
+                        ? const Text('Expand submissions')
+                        : const Text('Show more submissions'),
+                  ),
+                )
+              }
+            ],
     );
   }
 }
