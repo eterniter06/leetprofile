@@ -158,7 +158,8 @@ class _SettingsState extends State<Settings> {
                   );
 
                   if (count != null) {
-                    SettingsDatabase.changeNumberOfShownUserSubmissions(count);
+                    await SettingsDatabase.changeNumberOfShownUserSubmissions(
+                        count);
                     setState(() {
                       submissionCount = count;
                     });

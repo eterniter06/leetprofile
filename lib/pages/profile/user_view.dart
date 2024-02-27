@@ -21,6 +21,7 @@ import 'components/solved_problem_card.dart';
 import 'components/submission_heatmap_card.dart';
 import 'components/nickname_dialog.dart';
 
+// Todo: Separate into 2 classes
 class UserView extends StatefulWidget {
   final UserData userData;
   final Widget? refreshIconButton;
@@ -57,9 +58,12 @@ class UserView extends StatefulWidget {
 class _UserViewState extends State<UserView>
     with SingleTickerProviderStateMixin {
   List<String> profileComponentListAsString = [];
+
   bool isRefreshing = false;
+
   List<Widget> profileComponentList = [];
   Map<String, Widget?> componentMapper = {};
+
   late UserData userData = widget.userData;
   late AnimationController? _controller;
 
@@ -67,8 +71,9 @@ class _UserViewState extends State<UserView>
   void initState() {
     super.initState();
 
-    profileComponentListAsString =
-        SettingsDatabase.profileComponentOrder() ?? widget._defaultOrdering;
+    // Assigning _defaultOrdering directly leads to assigning const to non-const
+    profileComponentListAsString = SettingsDatabase.profileComponentOrder() ??
+        widget._defaultOrdering.toList();
 
     _controller = widget.isReorderable
         ? AnimationController(
@@ -164,10 +169,13 @@ class _UserViewState extends State<UserView>
           )
         : null;
 
-    map['RecentSubmissionCard'] = RecentSubmissionCard(
-      submissionList: userData.recentAcSubmissionList ?? [],
-      key: UniqueKey(),
-    );
+    map['RecentSubmissionCard'] = widget.isReorderable
+        ? RecentSubmissionCardAbsorbPointer(
+            submissionList: UserData.dummyUser.recentAcSubmissionList!)
+        : RecentSubmissionCard(
+            submissionList: userData.recentAcSubmissionList ?? [],
+            key: UniqueKey(),
+          );
 
     // Prevent interacting with the components when reordering
     if (widget.isReorderable) {
