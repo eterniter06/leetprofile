@@ -2,13 +2,14 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:ui_elements/database/user_database.dart';
+import 'package:ui_elements/pages/home/components/dismissible_background.dart';
 import 'package:ui_elements/providers/user_list.dart';
 import 'package:ui_elements/pages/profile/user_view.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
 import 'package:ui_elements/common_components/widgets/refresh_icon_button.dart';
 
-import 'dismissible_list_tile.dart';
 import 'user_list_tile.dart';
 
 class ReorderableUserListView extends StatefulWidget {
@@ -77,26 +78,83 @@ class _ReorderableUserListViewState extends State<ReorderableUserListView>
           await userListModel.syncDatabase();
         },
         children: [
-          for (int index = 0; index < userListModel.length(); ++index)
-            OpenContainer(
-              tappable: false,
+          for (int loopIndex = 0;
+              loopIndex < userListModel.length();
+              ++loopIndex)
+            Dismissible(
               key: UniqueKey(),
-              openBuilder: (context, action) => UserView(
-                refreshIconKey: widget.refreshIconKey,
-                userData: userListModel.userAtIndex(index),
+              background: const DismissableBackground(
+                alignment: AlignmentDirectional.centerStart,
               ),
-              openColor:
-                  MediaQuery.platformBrightnessOf(context) == Brightness.dark
-                      ? Colors.black
-                      : Colors.white,
-              closedBuilder: (context, action) => DismissibleListTile(
-                userData: userListModel.userAtIndex(index),
-                openView: action,
+              secondaryBackground: const DismissableBackground(
+                alignment: AlignmentDirectional.centerEnd,
               ),
-              closedColor:
-                  MediaQuery.platformBrightnessOf(context) == Brightness.dark
-                      ? Colors.black
-                      : Colors.white,
+              dismissThresholds: const {DismissDirection.horizontal: 0.45},
+              onUpdate: (details) {
+                if (!details.previousReached && details.reached) {
+                  HapticFeedback.lightImpact();
+                }
+              },
+              confirmDismiss: (DismissDirection direction) async {
+                UserData userData = userListModel.userAtIndex(loopIndex);
+                bool removed = true;
+
+                if (context.mounted) {
+                  SnackBar undoDeleteSnack = SnackBar(
+                    duration: const Duration(seconds: 6),
+                    content: Text.rich(
+                      TextSpan(
+                        text: 'User ',
+                        children: [
+                          TextSpan(
+                            text: userData.nickname ?? userData.username,
+                          ),
+                          const TextSpan(text: ' removed from list'),
+                        ],
+                      ),
+                    ),
+                    action: SnackBarAction(
+                      label: 'Undo?',
+                      onPressed: () {
+                        removed = false;
+                      },
+                    ),
+                  );
+
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>
+                      sfc = ScaffoldMessenger.of(context)
+                          .showSnackBar(undoDeleteSnack);
+
+                  await sfc.closed;
+                }
+                return removed;
+              },
+              onDismissed: (direction) async {
+                UserDatabase.delete(userListModel.userAtIndex(loopIndex));
+                userListModel.deleteUserAt(loopIndex);
+                userListModel.refreshListOrder();
+                await userListModel.syncDatabase();
+              },
+              child: OpenContainer(
+                tappable: false,
+                openBuilder: (context, action) => UserView(
+                  refreshIconKey: widget.refreshIconKey,
+                  userData: userListModel.userAtIndex(loopIndex),
+                ),
+                openColor:
+                    MediaQuery.platformBrightnessOf(context) == Brightness.dark
+                        ? Colors.black
+                        : Colors.white,
+                closedBuilder: (context, action) => UserCard(
+                  userData: userListModel.userAtIndex(loopIndex),
+                  openView: action,
+                ),
+                closedColor:
+                    MediaQuery.platformBrightnessOf(context) == Brightness.dark
+                        ? Colors.black
+                        : Colors.white,
+              ),
             ),
         ],
       ),
