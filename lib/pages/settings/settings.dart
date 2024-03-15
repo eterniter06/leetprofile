@@ -6,12 +6,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
+import 'package:ui_elements/common_components/widgets/profile_import_progress_indicator.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/pages/profile/user_view.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
+import 'package:ui_elements/providers/profile_importing.dart';
 import 'package:ui_elements/providers/settings.dart';
-import 'package:ui_elements/common_components/ui_vars.dart';
 
 import 'components/section.dart';
 import 'components/setting_option.dart';
@@ -72,13 +73,9 @@ class _SettingsState extends State<Settings> {
 
     return Scaffold(
       appBar: AppBar(
-        // TODO: ProgressIndicator for importing profiles
-        // bottom: const PreferredSize(
-        //   preferredSize: Size(double.infinity, 0),
-        //   child: LinearProgressIndicator(
-        //     backgroundColor: Colors.blue,
-        //   ),
-        // ),
+        bottom: Provider.of<ProfileImportStatus>(context).isProfileBeingImported
+            ? const ProfileImportProgressIndicator()
+            : null,
         title: const Text('Settings'),
       ),
       body: ListView(
@@ -370,8 +367,9 @@ class _SettingsState extends State<Settings> {
                         },
                 ),
               ),
-              Consumer<UserListModel>(
-                builder: (context, userListModel, child) => SettingTile(
+              Consumer2<UserListModel, ProfileImportStatus>(
+                builder: (context, userListModel, profileImportStatus, child) =>
+                    SettingTile(
                   title: const Text(
                     'Import users',
                   ),
@@ -382,19 +380,22 @@ class _SettingsState extends State<Settings> {
                     FilePickerResult? result =
                         await FilePicker.platform.pickFiles(
                       allowMultiple: false,
-                      allowedExtensions: ['json', 'csv'],
+                      //TODO: add json as supported export file type
+                      //TODO: Test what happens on picking an unsupported file
+                      allowedExtensions: ['csv'],
                       type: FileType.custom,
                       dialogTitle: 'Pick import file',
                     );
 
+                    // No file picked
                     if (result == null) {
                       return;
                     }
 
-                    String importFile = result.files[0].path!;
-                    final inputFile = File(importFile).openRead();
+                    String importFilename = result.files[0].path!;
+                    final importFile = File(importFilename).openRead();
 
-                    final csvList = await inputFile
+                    final csvList = await importFile
                         .transform(utf8.decoder)
                         .transform(const CsvToListConverter())
                         .toList();
@@ -411,13 +412,14 @@ class _SettingsState extends State<Settings> {
 
                         bool listUpdated = false;
                         for (var username in values) {
-                          if (userListModel.contains(username)) {
-                            continue;
-                          }
+                          if (userListModel.doesNotContain(username)) {
+                            listUpdated = true;
 
-                          listUpdated = true;
-                          futureGroup.add(
-                              UserListModel.createUserFromUsername(username));
+                            profileImportStatus.isProfileBeingImported = true;
+
+                            futureGroup.add(
+                                UserListModel.createUserFromUsername(username));
+                          }
                         }
 
                         if (!listUpdated && mounted) {
@@ -438,19 +440,8 @@ class _SettingsState extends State<Settings> {
 
                         List userList = await Future.wait(futureGroup);
 
-                        /// * Weird experiment
-                        GlobalKey<ScaffoldState> rootScaffoldKey =
-                            RootScaffoldKey().scaffoldkey;
+                        profileImportStatus.isProfileBeingImported = false;
 
-                        BuildContext? rootContext =
-                            rootScaffoldKey.currentContext;
-
-                        if (rootContext != null && rootContext.mounted) {
-                          ScaffoldMessenger.of(rootContext)
-                              .showSnackBar(const SnackBar(
-                            content: Text('Users added'),
-                          ));
-                        }
                         userListModel.importUsersFromList(userList);
                         userListModel.syncDatabase();
                       }

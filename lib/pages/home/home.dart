@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:ui_elements/common_components/widgets/profile_import_progress_indicator.dart';
 import 'package:ui_elements/pages/profile/user_view.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/database/user_database.dart';
+import 'package:ui_elements/providers/profile_importing.dart';
 
 import 'package:ui_elements/providers/theme.dart';
 import 'package:ui_elements/providers/user_list.dart';
@@ -40,6 +42,9 @@ class LeetProfile extends StatelessWidget {
           create: (context) =>
               ThemeModeModel(themeMode: SettingsDatabase.themeMode()),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ProfileImportStatus(),
+        )
       ],
       child: Consumer2<ThemeModeModel, UserListModel>(
         builder: (context, appThemeMode, userListModel, child) => MaterialApp(
@@ -221,6 +226,9 @@ class _UserListPageState extends State<UserListPage> {
       ),
       appBar: AppBar(
         title: const Text('LeetProfile'),
+        bottom: Provider.of<ProfileImportStatus>(context).isProfileBeingImported
+            ? const ProfileImportProgressIndicator()
+            : null,
         actions: [
           const IconButton(
             tooltip: "Today's daily question",

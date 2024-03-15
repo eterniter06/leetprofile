@@ -201,6 +201,7 @@ class ThemeModeModel extends ChangeNotifier {
   // Contrasing pair of colors
   static const Color lightPrimary = Color(0xFFFAC16B);
   static const Color lightPrimaryInverse = Color(0xFF4A3008);
+  static const Color lightPrimaryComplementary = Color(0xFF6BA4FA);
 
   static const Color lightSecondary = Color(0xFFFEF1DD);
   static const Color lightSecondaryInverse = Color(0xFF6F480C);
