@@ -33,6 +33,10 @@ class UserListModel extends ChangeNotifier {
     return indexOfUsername(username) != -1;
   }
 
+  bool doesNotContain(String username) {
+    return !contains(username);
+  }
+
   UserData? findUserFromUsername(String username) {
     int index = indexOfUsername(username);
     return index == -1 ? null : userList[index];

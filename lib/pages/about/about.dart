@@ -7,9 +7,10 @@ import 'package:ui_elements/providers/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StaticLinks {
-  //TODO: fix appLink
-  static String authorGithubProfileLink = 'https://github.com/eterniter06';
-  static String appGithubRepoLink = '$authorGithubProfileLink/leetprofile';
+  static const String author = 'eterniter06';
+  static const String authorGithubProfileLink = 'https://github.com/$author';
+  static const String appGithubRepoLink =
+      '$authorGithubProfileLink/leetprofile';
 }
 
 class About extends StatelessWidget {
@@ -95,7 +96,7 @@ class About extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text('eterniter06'),
+                      const Text(StaticLinks.author),
                     ],
                   ),
                 ),
