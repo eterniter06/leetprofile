@@ -308,7 +308,6 @@ class _UserViewState extends State<UserView>
                 ),
                 child: profileComponentList[index],
               ),
-
               onReorder: (oldIndex, newIndex) {
                 if (newIndex > profileComponentList.length) {
                   newIndex = profileComponentList.length;
@@ -326,34 +325,30 @@ class _UserViewState extends State<UserView>
                 });
               },
               onReorderStart: (index) => HapticFeedback.lightImpact(),
-
               children: [
                 for (int index = 0;
                     index < profileComponentList.length;
                     ++index)
                   profileComponentList[index],
               ],
-              // What is this here for?
-              // itemBuilder: (context, index) => profileComponentList[index],
-              // itemCount: profileComponentList.length,
             )
           : OrientationBuilder(
               builder: (context, orientation) {
                 if (orientation == Orientation.portrait) {
-                  SystemChrome.setEnabledSystemUIMode(
-                    SystemUiMode.edgeToEdge,
-                    overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top],
-                  );
+                  // SystemChrome.setEnabledSystemUIMode(
+                  //   SystemUiMode.edgeToEdge,
+                  //   overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top],
+                  // );
                   return ListView.builder(
                     itemBuilder: (context, index) =>
                         profileComponentList[index],
                     itemCount: profileComponentList.length,
                   );
                 } else {
-                  SystemChrome.setEnabledSystemUIMode(
-                    SystemUiMode.manual,
-                    overlays: [SystemUiOverlay.bottom],
-                  );
+                  // SystemChrome.setEnabledSystemUIMode(
+                  //   SystemUiMode.manual,
+                  //   overlays: [SystemUiOverlay.bottom],
+                  // );
                   return CustomScrollView(
                     slivers: [
                       SliverAppBar(

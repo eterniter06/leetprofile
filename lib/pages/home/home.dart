@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_elements/common_components/widgets/profile_import_progress_indicator.dart';
+import 'package:ui_elements/pages/home/components/reorderable_user_grid_view.dart';
 import 'package:ui_elements/pages/profile/user_view.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
@@ -192,20 +193,25 @@ class _UserListPageState extends State<UserListPage> {
       }
     } else if (mounted) {
       if (userLink != null) {
-        Navigator.of(context).push(MaterialPageRoute(
+        Navigator.of(context).push(
+          MaterialPageRoute(
             builder: (context) => UserView(
-                userData:
-                    widget.userListModel.findUserFromUsername(username)!)));
+                userData: widget.userListModel.findUserFromUsername(username)!),
+          ),
+        );
       } else {
         _informUser(
           Text('$username is already in list'),
           SnackBarAction(
             label: 'Visit?',
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
+              Navigator.of(context).push(
+                MaterialPageRoute(
                   builder: (context) => UserView(
-                      userData: widget.userListModel
-                          .findUserFromUsername(username)!)));
+                      userData:
+                          widget.userListModel.findUserFromUsername(username)!),
+                ),
+              );
             },
           ),
         );
@@ -216,7 +222,6 @@ class _UserListPageState extends State<UserListPage> {
   @override
   Widget build(BuildContext context) {
     context.watch<SettingsModel>();
-
     return Scaffold(
       key: RootScaffoldKey().scaffoldkey,
       floatingActionButton: FloatingActionButton(
@@ -267,16 +272,13 @@ class _UserListPageState extends State<UserListPage> {
           ? LayoutBuilder(
               builder: (context, constraints) => Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                // mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(
                     height:
                         (constraints.maxHeight - constraints.minHeight) * 0.2,
                   ),
                   SvgPicture.asset(
-                    // 'assets/undraw_add_notes_re_ln36.svg',
                     'assets/add_friends_yellow.svg',
-
                     height: 200,
                   ),
                   const Center(child: Text('No users yet')),
@@ -284,13 +286,19 @@ class _UserListPageState extends State<UserListPage> {
                 ],
               ),
             )
-          : ReorderableUserListView(
-              refreshIconKey: refreshKey,
+          : OrientationBuilder(
+              builder: (context, orientation) => orientation ==
+                      Orientation.portrait
+                  ? ReorderableUserListView(
+                      refreshIconKey: refreshKey,
+                    )
+                  //TODO: Try a custom grid implementation
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child:
+                          ReorderableUserGridView(refreshIconKey: refreshKey),
+                    ),
             ),
-
-      // Future feature
-      // body: RefreshIndicator(
-      //     onRefresh: _updateUsers, child: const ReorderableUserListView()),
     );
   }
 

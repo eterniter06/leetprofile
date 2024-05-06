@@ -18,6 +18,10 @@ class UserData {
   late String solutionCount;
   late String postViewCount;
 
+  String displayName() {
+    return nickname ?? (realname == "" ? username : realname);
+  }
+
   List<SubmissionCalendarDate>? submissionActivity;
   int totalActiveDays;
 

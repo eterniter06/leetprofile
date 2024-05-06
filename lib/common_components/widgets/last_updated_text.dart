@@ -3,8 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class LastUpdatedText extends StatefulWidget {
-  const LastUpdatedText({super.key, required this.lastUpdated});
+  const LastUpdatedText({super.key, required this.lastUpdated, this.fontStyle})
+      : shortForm = false;
+
+  const LastUpdatedText.short(
+      {super.key, required this.lastUpdated, this.fontStyle})
+      : shortForm = true;
+
   final DateTime lastUpdated;
+  final TextStyle? fontStyle;
+  final bool shortForm;
 
   @override
   State<LastUpdatedText> createState() => _LastUpdatedTextState();
@@ -47,23 +55,38 @@ class _LastUpdatedTextState extends State<LastUpdatedText> {
     int minutes = duration.inMinutes;
 
     if (days > 0) {
-      String singularForm = "day";
-      String pluralForm = "${singularForm}s";
-      String form = days > 1 ? pluralForm : singularForm;
+      const String singularForm = "day";
+      const String pluralForm = "${singularForm}s";
+      final String longForm = days > 1 ? pluralForm : singularForm;
 
-      return "${duration.inDays.toString()} $form ago";
+      const String shortForm = "d";
+      final String durationInDay = duration.inDays.toString();
+
+      return widget.shortForm
+          ? "$durationInDay$shortForm"
+          : "$durationInDay $longForm ago";
     } else if (hours > 0) {
-      String singularForm = "hr";
-      String pluralForm = "${singularForm}s";
-      String form = hours > 1 ? pluralForm : singularForm;
+      const String singularForm = "hr";
+      const String pluralForm = "${singularForm}s";
+      final String longForm = hours > 1 ? pluralForm : singularForm;
 
-      return "${duration.inHours.toString()} $form ago";
+      const String shortForm = "h";
+
+      final String durationInHour = duration.inHours.toString();
+
+      return widget.shortForm
+          ? "$durationInHour$shortForm"
+          : "$durationInHour $longForm ago";
     } else if (minutes > 0) {
-      String singularForm = "min";
-      String pluralForm = "${singularForm}s";
-      String form = minutes > 1 ? pluralForm : singularForm;
+      const String singularForm = "min";
+      const String pluralForm = "${singularForm}s";
+      final String longForm = minutes > 1 ? pluralForm : singularForm;
 
-      return "${duration.inMinutes.toString()} $form ago";
+      const String shortForm = "m";
+      final String durationInMinute = duration.inMinutes.toString();
+      return widget.shortForm
+          ? "$durationInMinute$shortForm"
+          : "$durationInMinute $longForm ago";
     } else {
       return "now";
     }
@@ -71,6 +94,9 @@ class _LastUpdatedTextState extends State<LastUpdatedText> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(_duration);
+    return Text(
+      _duration,
+      style: widget.fontStyle,
+    );
   }
 }
