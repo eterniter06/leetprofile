@@ -22,20 +22,21 @@ import 'components/submission_heatmap_card.dart';
 import 'components/nickname_dialog.dart';
 
 // Todo: Separate into 2 classes
-class UserView extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
   final UserData userData;
   final Widget? refreshIconButton;
   final GlobalKey<RefreshIconButtonState>? refreshIconKey;
   final bool isReorderable;
 
-  const UserView(
+  const ProfilePage(
       {super.key,
       required this.userData,
       this.refreshIconButton,
       this.refreshIconKey})
       : isReorderable = false;
 
-  const UserView.reorderableAbsorbPointer({super.key, required this.userData})
+  const ProfilePage.reorderableAbsorbPointer(
+      {super.key, required this.userData})
       : refreshIconButton = null,
         refreshIconKey = null,
         isReorderable = true;
@@ -52,10 +53,10 @@ class UserView extends StatefulWidget {
   ];
 
   @override
-  State<UserView> createState() => _UserViewState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _UserViewState extends State<UserView>
+class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   List<String> profileComponentListAsString = [];
 

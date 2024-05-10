@@ -5,7 +5,7 @@ import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 import 'package:ui_elements/common_components/widgets/refresh_icon_button.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import 'package:ui_elements/pages/home/components/user_grid_card.dart';
-import 'package:ui_elements/pages/profile/user_view.dart';
+import 'package:ui_elements/pages/profile/profile.dart';
 import 'package:ui_elements/providers/user_list.dart';
 
 class ReorderableUserGridView extends StatelessWidget {
@@ -44,7 +44,7 @@ class ReorderableUserGridView extends StatelessWidget {
         itemBuilder: (context, index) => Card(
           key: Key(userList.userAtIndex(index).username),
           child: OpenContainer(
-            openBuilder: (context, action) => UserView(
+            openBuilder: (context, action) => ProfilePage(
               refreshIconKey: refreshIconKey,
               userData: userList.userAtIndex(index),
             ),

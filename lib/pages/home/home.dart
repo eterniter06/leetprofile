@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_elements/common_components/widgets/profile_import_progress_indicator.dart';
 import 'package:ui_elements/pages/home/components/reorderable_user_grid_view.dart';
-import 'package:ui_elements/pages/profile/user_view.dart';
+import 'package:ui_elements/pages/profile/profile.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/database/user_database.dart';
@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePage> {
       if (userLink != null) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => UserView(
+            builder: (context) => ProfilePage(
                 userData: widget.userListModel.findUserFromUsername(username)!),
           ),
         );
@@ -173,7 +173,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => UserView(
+                  builder: (context) => ProfilePage(
                       userData:
                           widget.userListModel.findUserFromUsername(username)!),
                 ),

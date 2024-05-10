@@ -8,7 +8,7 @@ import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 import 'package:ui_elements/common_components/widgets/profile_import_progress_indicator.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
-import 'package:ui_elements/pages/profile/user_view.dart';
+import 'package:ui_elements/pages/profile/profile.dart';
 
 import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/providers/profile_importing.dart';
@@ -216,7 +216,7 @@ class _SettingsState extends State<Settings> {
                     MaterialPageRoute(
                       builder: (context) => Consumer<UserListModel>(
                         builder: (context, userList, child) =>
-                            UserView.reorderableAbsorbPointer(
+                            ProfilePage.reorderableAbsorbPointer(
                                 userData: UserData.dummyUser),
                       ),
                     ),

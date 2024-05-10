@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:ui_elements/database/user_database.dart';
 import 'package:ui_elements/pages/home/components/dismissible_background.dart';
 import 'package:ui_elements/providers/user_list.dart';
-import 'package:ui_elements/pages/profile/user_view.dart';
+import 'package:ui_elements/pages/profile/profile.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 
 import 'package:ui_elements/common_components/widgets/refresh_icon_button.dart';
@@ -138,7 +138,7 @@ class _ReorderableUserListViewState extends State<ReorderableUserListView>
               },
               child: OpenContainer(
                 tappable: false,
-                openBuilder: (context, action) => UserView(
+                openBuilder: (context, action) => ProfilePage(
                   refreshIconKey: widget.refreshIconKey,
                   userData: userListModel.userAtIndex(loopIndex),
                 ),
