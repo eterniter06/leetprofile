@@ -11,7 +11,6 @@ import 'package:ui_elements/database/settings_database.dart';
 import 'package:ui_elements/database/user_database.dart';
 import 'package:ui_elements/providers/profile_importing.dart';
 
-import 'package:ui_elements/providers/theme.dart';
 import 'package:ui_elements/providers/user_list.dart';
 import 'package:ui_elements/providers/settings.dart';
 
@@ -24,45 +23,12 @@ import 'package:uni_links/uni_links.dart';
 import 'components/input_dialog.dart';
 import 'components/reorderable_listview.dart';
 
-class LeetProfile extends StatelessWidget {
-  const LeetProfile({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => UserListModel(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => SettingsModel(
-              showUsernameOnHomeScreen:
-                  SettingsDatabase.showUsernameOnHomeScreen()),
-        ),
-        ChangeNotifierProvider(
-          create: (context) =>
-              ThemeModeModel(themeMode: SettingsDatabase.themeMode()),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ProfileImportStatus(),
-        )
-      ],
-      child: Consumer2<ThemeModeModel, UserListModel>(
-        builder: (context, appThemeMode, userListModel, child) => MaterialApp(
-          theme: ThemeModeModel.light,
-          darkTheme: ThemeModeModel.dark,
-          themeMode: appThemeMode.themeMode,
-          home: UserListPage(userListModel: userListModel),
-        ),
-      ),
-    );
-  }
-}
+//TODO: Replace uni_links with app_links: https://pub.dev/packages/app_links
 
 enum HomePopupMenuValue { about, settings }
 
-class UserListPage extends StatefulWidget {
-  const UserListPage({
+class HomePage extends StatefulWidget {
+  const HomePage({
     super.key,
     required this.userListModel,
   });
@@ -70,12 +36,12 @@ class UserListPage extends StatefulWidget {
   final UserListModel userListModel;
 
   @override
-  State<UserListPage> createState() => _UserListPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 bool _initialUriIsHandled = false;
 
-class _UserListPageState extends State<UserListPage> {
+class _HomePageState extends State<HomePage> {
   late final AnimationController _controller;
   late final Widget refreshIcon;
   final refreshKey = GlobalKey<RefreshIconButtonState>();
