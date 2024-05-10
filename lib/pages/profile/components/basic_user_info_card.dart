@@ -43,6 +43,7 @@ class BasicInfoExp extends StatelessWidget implements ClassName {
                   CircularImage(
                     radius: 80,
                     imageLink: userData.avatar,
+                    expandOnTap: true,
                   ),
                   const SizedBox(width: 32),
                   Expanded(
