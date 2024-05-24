@@ -9,7 +9,7 @@
   <br>
 </p>
 
-[Insert some pics] 
+[Screenshots](./screenshots/)
 
 # Getting started
 ## Getting the apk
@@ -23,11 +23,11 @@ This app is not available on the play store and it may remain that way. There ar
 4. Send the apk to your phone and install manually or connect your android device to your computer and run `flutter install`.
 
 # Todos
-[] Fuzzy search on existing profiles 
-[] App localization
-[] Option to disable UserView listings (Skills/Language/...)
-[] Select multiple profiles by tapping on the profile picture
-[] Fix opening links in app
+- [ ] Fuzzy search on existing profiles 
+- [ ] App localization
+- [ ] Option to disable UserView listings (Skills/Language/...)
+- [ ] Select multiple profiles by tapping on the profile picture
+- [ ] Fix opening links in app
 
 # References
 - List of languages usable on Leetcode: https://support.leetcode.com/hc/en-us/articles/360011833974-What-are-the-environments-for-the-programming-languages-
