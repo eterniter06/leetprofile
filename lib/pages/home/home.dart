@@ -201,11 +201,12 @@ class _HomePageState extends State<HomePage> {
             ? const ProfileImportProgressIndicator()
             : null,
         actions: [
-          const IconButton(
-            tooltip: "Today's daily question",
-            icon: Icon(Icons.local_fire_department_rounded),
-            onPressed: null,
-          ),
+          //TODO: implement
+          // const IconButton(
+          //   tooltip: "Today's daily question",
+          //   icon: Icon(Icons.local_fire_department_rounded),
+          //   onPressed: null,
+          // ),
           refreshIcon,
           PopupMenuButton(
             onSelected: (value) {

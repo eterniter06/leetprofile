@@ -93,14 +93,13 @@ class _TrailingScrollButtonState extends State<TrailingScrollButton>
 
   @override
   Widget build(BuildContext context) {
+    Brightness brightness = MediaQuery.of(context).platformBrightness;
     return IconButton(
       icon: RotationTransition(
         turns: Tween(begin: 0.0, end: 0.5).animate(animation),
         child: Icon(
           Icons.double_arrow_rounded,
-          color: MediaQuery.of(context).platformBrightness == Brightness.dark
-              ? Colors.white
-              : Colors.black,
+          color: brightness == Brightness.dark ? Colors.white : Colors.black54,
         ),
       ),
       tooltip: widget.tooltip,

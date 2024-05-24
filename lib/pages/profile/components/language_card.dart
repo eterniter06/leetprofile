@@ -22,8 +22,6 @@ class LanguageCard extends StatelessWidget {
     'python': 'pythonYellow.svg',
     'python3': 'python.svg',
     'typescript': 'typescript.svg',
-    // Languages below haven't been tested and may not be rendered
-    //due to a possible difference in how the language name is stored
     'dart': 'dart.svg',
     'elixir': 'elixir.svg',
     'erlang': 'erlang.svg',
@@ -65,7 +63,6 @@ class LanguageCard extends StatelessWidget {
               child: Center(
                 child: Container(
                   width: 52,
-                  // padding: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                       color: ThemeModeModel.fundamentalBackground,
                       border: Border.all(

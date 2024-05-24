@@ -71,7 +71,7 @@ class _SkillCardState extends State<SkillCard> {
                   color: MediaQuery.of(context).platformBrightness ==
                           Brightness.dark
                       ? Colors.white
-                      : Colors.black,
+                      : Colors.black54,
                   key: const ValueKey('SkillCardTrailerViewToggle1'),
                 )
               : Icon(
@@ -79,7 +79,7 @@ class _SkillCardState extends State<SkillCard> {
                   color: MediaQuery.of(context).platformBrightness ==
                           Brightness.dark
                       ? Colors.white
-                      : Colors.black,
+                      : Colors.black54,
                   key: const ValueKey('SkillCardTrailerViewToggle2'),
                 ),
         ),

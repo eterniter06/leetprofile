@@ -83,7 +83,7 @@ class _BadgeCardState extends State<BadgeCard> {
                       ),
                       SizedBox(
                         width: badgeWidth(),
-                        height: 60,
+                        height: 80,
                         child: Center(
                           child: Wrap(children: [
                             Text(
