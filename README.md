@@ -9,7 +9,11 @@
   <br>
 </p>
 
-[Screenshots](./screenshots/)
+> [!IMPORTANT]
+> LeetProfile is in no way affiliated to Leetcode. This is a third-party app that exists to solve a niche problem.
+
+# [Screenshots](./screenshots/)
+
 
 # Getting started
 ## Getting the apk
