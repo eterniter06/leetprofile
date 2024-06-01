@@ -340,8 +340,9 @@ class _SettingsState extends State<Settings> {
                           //Todo: Add option to export as profile links or as usernames
                           //Todo: Contemplate using json vs csv
 
-                          String usernameListAsString = userListModel
-                              .exportUsernamesAsCSV(withTLD: false);
+                          String usernameListAsString =
+                              userListModel.exportUsernamesAsCSV(
+                                  usernameType: ExportUsernameType.normal);
 
                           String? directory =
                               await FilePicker.platform.getDirectoryPath(
@@ -412,6 +413,9 @@ class _SettingsState extends State<Settings> {
 
                         bool listUpdated = false;
                         for (var username in values) {
+                          username =
+                              UserListModel.extractUsernameFromLink(username);
+
                           if (userListModel.doesNotContain(username)) {
                             listUpdated = true;
 

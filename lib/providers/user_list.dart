@@ -6,10 +6,36 @@ import 'package:ui_elements/dataclass/http_wrapper/data_parser.dart';
 import 'package:ui_elements/dataclass/user_class/userdata.dart';
 import '../database/user_database.dart';
 
+enum ExportUsernameType {
+  /// Export only the username without any link
+  normal,
+
+  /// Exports username in the old format, ie `https://leetcode.com/$username`
+  asLegacyLink,
+
+  /// exports the username in the current format: `https://leetcode.com/$username`
+  asLink
+}
+
 class UserListModel extends ChangeNotifier {
   List<UserData> userList = [];
 
   bool _isInitialized = false;
+
+  ///Assumes that the link is indeed a username link, i.e.
+  ///the link is either of the following: `https://leetcode.com/u/$username` or
+  ///`https://leetcode.com/$username`
+  static String extractUsernameFromLink(String usernameInput) {
+    usernameInput = usernameInput.trim();
+
+    if (usernameInput.lastIndexOf('/') == usernameInput.length - 1) {
+      usernameInput =
+          usernameInput.substring(0, usernameInput.lastIndexOf('/'));
+    }
+
+    usernameInput = usernameInput.substring(usernameInput.lastIndexOf('/') + 1);
+    return usernameInput;
+  }
 
   int length() {
     return userList.length;
@@ -154,11 +180,18 @@ class UserListModel extends ChangeNotifier {
     }
   }
 
-  String exportUsernamesAsCSV({bool withTLD = false}) {
+  String exportUsernamesAsCSV(
+      {ExportUsernameType usernameType = ExportUsernameType.normal}) {
     String headerColumn = 'Username';
 
     String csv = headerColumn;
-    String topLevelDomain = withTLD ? 'https://leetcode.com/' : '';
+    String topLevelDomain = '';
+
+    if (usernameType == ExportUsernameType.asLegacyLink) {
+      topLevelDomain = 'https://leetcode.com/';
+    } else if (usernameType == ExportUsernameType.asLink) {
+      topLevelDomain = 'https://leetcode.com/u/';
+    }
 
     for (var user in userList) {
       csv = "$csv\n$topLevelDomain${user.username}";

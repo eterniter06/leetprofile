@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_elements/common_components/widgets/profile_import_progress_indicator.dart';
@@ -141,7 +142,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: Preferably use a class for the following:
     if (usernameInput == null) return;
 
-    String username = _processInputtedUsername(usernameInput);
+    String username = UserListModel.extractUsernameFromLink(usernameInput);
 
     if (!widget.userListModel.contains(username)) {
       var user =
@@ -267,23 +268,5 @@ class _HomePageState extends State<HomePage> {
                     ),
             ),
     );
-  }
-
-  String _processInputtedUsername(String usernameInput) {
-    String username = usernameInput.trim();
-    String domainNameWithSlash = 'leetcode.com/';
-
-    if (username.contains(domainNameWithSlash)) {
-      int usernameStart =
-          username.indexOf(domainNameWithSlash) + domainNameWithSlash.length;
-      int? usernameEnd = username.indexOf('/', usernameStart);
-
-      if (usernameEnd < usernameStart) {
-        usernameEnd = null;
-      }
-
-      username = username.substring(usernameStart, usernameEnd);
-    }
-    return username;
   }
 }
