@@ -55,15 +55,16 @@ class _SettingsState extends State<Settings> {
     return finalModeString;
   }
 
-  void _updateThemeMode(ThemeMode chosenTheme) async {
-    await SettingsDatabase.changeTheme(chosenTheme);
+  void _updateThemeMode(BuildContext context,
+      {required ThemeMode themeMode}) async {
+    await SettingsDatabase.changeTheme(themeMode);
     setState(() {
-      themeMode = chosenTheme;
+      this.themeMode = themeMode;
     });
 
     if (context.mounted) {
       Provider.of<ThemeModeModel>(context, listen: false)
-          .changeThemeMode(chosenTheme);
+          .changeThemeMode(themeMode);
     }
   }
 
@@ -223,7 +224,7 @@ class _SettingsState extends State<Settings> {
                   );
                   if (order != null) {
                     SettingsDatabase.saveProfileComponentsOrder(order);
-                    if (mounted) {
+                    if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Profile layout saved'),
@@ -262,7 +263,7 @@ class _SettingsState extends State<Settings> {
                             value: ThemeMode.dark,
                             groupValue: themeMode,
                             onChanged: (value) {
-                              _updateThemeMode(value!);
+                              _updateThemeMode(context, themeMode: value!);
                               setDialogState(() {
                                 themeMode = value;
                               });
@@ -274,7 +275,7 @@ class _SettingsState extends State<Settings> {
                             value: ThemeMode.light,
                             groupValue: themeMode,
                             onChanged: (value) {
-                              _updateThemeMode(value!);
+                              _updateThemeMode(context, themeMode: value!);
                               setDialogState(() {
                                 themeMode = value;
                               });
@@ -286,7 +287,7 @@ class _SettingsState extends State<Settings> {
                             value: ThemeMode.system,
                             groupValue: themeMode,
                             onChanged: (value) {
-                              _updateThemeMode(value!);
+                              _updateThemeMode(context, themeMode: value!);
                               setDialogState(() {
                                 themeMode = value;
                               });
@@ -357,7 +358,7 @@ class _SettingsState extends State<Settings> {
                               File(p.join(directory, csvFilename));
                           await exportFile.writeAsString(usernameListAsString);
 
-                          if (mounted) {
+                          if (context.mounted) {
                             ScaffoldMessenger.maybeOf(context)
                                 ?.showSnackBar(SnackBar(
                               content: Text(
@@ -426,7 +427,7 @@ class _SettingsState extends State<Settings> {
                           }
                         }
 
-                        if (!listUpdated && mounted) {
+                        if (!listUpdated && context.mounted) {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
                             content: Text('All users are already in list'),
@@ -434,7 +435,7 @@ class _SettingsState extends State<Settings> {
                           return;
                         }
 
-                        if (mounted) {
+                        if (context.mounted) {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
                             content: Text('Loading user data'),

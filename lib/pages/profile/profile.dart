@@ -268,7 +268,7 @@ class _ProfilePageState extends State<ProfilePage>
                         },
                         postHook: () async {
                           await UserDatabase.put(userData);
-                          if (mounted) {
+                          if (context.mounted) {
                             ScaffoldMessenger.of(context)
                                 .removeCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -398,7 +398,7 @@ class _ProfilePageState extends State<ProfilePage>
                                   },
                                   postHook: () async {
                                     await UserDatabase.put(userData);
-                                    if (mounted) {
+                                    if (context.mounted) {
                                       ScaffoldMessenger.of(context)
                                           .removeCurrentSnackBar();
                                       ScaffoldMessenger.of(context)

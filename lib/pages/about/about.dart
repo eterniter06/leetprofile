@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_elements/common_components/widgets/circular_image.dart';
+import 'package:ui_elements/main.dart';
 import 'package:ui_elements/providers/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -45,7 +46,10 @@ class About extends StatelessWidget {
                     TextStyle(fontSize: 20, color: ThemeModeModel.lightPrimary),
               ),
             ),
-            const Center(child: Text('v0.0.9')),
+            Center(
+                child: Text(Provider.of<AppInfoProvider>(context, listen: false)
+                    .packageInfo
+                    .version)),
             const SizedBox(height: 40),
             Text.rich(
               TextSpan(
